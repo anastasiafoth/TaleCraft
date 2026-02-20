@@ -1,4 +1,4 @@
-from data_manager import DataManager
+from data_manager import UserManager, ChildManager, BookManager, ChapterManager, PageManager, PersonalizationManager
 from models import db, User
 from flask import Flask, request, url_for,jsonify
 import os
@@ -12,7 +12,7 @@ load_dotenv()
 NEON_KEY = os.getenv("NEON_KEY")
 app = Flask(__name__)
 app.debug = True
-app.config['SECRET_KEY'] = 'top secret'
+app.config['SECRET_KEY'] = 'a_very_long_random_secret_key_at_least_32_chars'
 app.config['JWT_ACCESS_LIFESPAN'] = {'hours': 24}
 app.config['JWT_REFRESH_LIFESPAN'] = {'days': 30}
 
@@ -41,11 +41,16 @@ cors.init_app(app)
 
 # Run only once to create tables
 
-"""with app.app_context():
-    db.create_all()"""
+with app.app_context():
+    db.create_all()
 
-# Create an object of your DataManager class
-data_manager = DataManager()
+# Create objects of all DataManager classes
+user_manager = UserManager()
+child_manager = ChildManager()
+book_manager = BookManager()
+chapter_manager = ChapterManager()
+page_manager = PageManager()
+personalization_manager = PersonalizationManager()
 
 # user handling
 @app.route('/api/login', methods=['POST'])
@@ -64,8 +69,6 @@ def login():
     user = guard.authenticate(email, password)
 
     return jsonify({'access_token': guard.encode_jwt_token(user)}), 200
-
-""" eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA4OTMzNjAsImV4cCI6MTc3MDk3OTc2MCwianRpIjoiOGIxNzlmMjktMmJkZC00ODVmLTkwODUtNzc2MGZhODFkNGJkIiwiaWQiOjEsInJscyI6IkF1dGhvciIsInJmX2V4cCI6MTc3MzQ4NTM2MH0.u8eaeOUomgXYLmByCoA6uJdJexOsIU1tRZ4FT5ZkX3A"""
 
 @app.route('/api/refresh', methods=['POST'])
 def refresh():
@@ -99,7 +102,7 @@ def protected():
 def create_user():
     data = request.get_json()
 
-    new_user = data_manager.create_user(
+    new_user = user_manager.create_user(
         first_name=data["first_name"],
         last_name=data["last_name"],
         email=data["email"],
@@ -107,82 +110,100 @@ def create_user():
         password=guard.hash_password(data["password"])
     )
 
-    return jsonify({
-        "id": new_user.id,
-        "first_name": new_user.first_name,
-        "last_name": new_user.last_name,
-        "email": new_user.email,
-        "role": new_user.role
-    }), 201
+    return jsonify(new_user), 201
 
 @app.route('/api/logout', methods=['POST'])
 @flask_praetorian.auth_required
 def logout():
     """
-    JWT token delete??
+    JWT token delete from frontend
     """
     return jsonify({"message": "Successfully logged out"}), 200
+
+@app.route('/api/user', methods=['GET', 'PATCH', 'DELETE'])
+@flask_praetorian.auth_required
+def handle_user():
+    user = flask_praetorian.current_user()
+    current_user = user_manager.get_user_by_id(user.id)
+
+    if request.method == 'GET':
+        return jsonify(current_user), 200
+
+    elif request.method == 'PATCH':
+        data = request.get_json()
+        updated_user = user_manager.update_user(user.id, data)
+        return jsonify(updated_user), 200
+
 
 
 # children handling
 @app.route('/api/children', methods=['GET', 'POST'])
 @flask_praetorian.auth_required
-@flask_praetorian.roles_required("parent")
+@flask_praetorian.roles_required("Parent")
 def children():
     user = flask_praetorian.current_user()
 
     if request.method == 'GET':
-        data_manager.get_all_children(parent_id=user.id)
+        all_children = child_manager.get_all_children(parent_id=user.id)
+
+        return jsonify(all_children)
 
     elif request.method == 'POST':
         data = request.get_json()
-        data_manager.create_child(parent_id=user.id, data=data)
+        new_child = child_manager.create_child(
+            parent_id=user.id,
+            first_name=data["first_name"],
+            birthdate=data["birthdate"],
+            profile_img=data["profile_img"])
+
+        return jsonify(new_child), 201
+
+    return jsonify({"error": "Method not allowed"}), 405
 
 @app.route('/api/children/<int:child_id>', methods=['GET', 'PUT', 'DELETE'])
 @flask_praetorian.auth_required
-@flask_praetorian.roles_required("parent")
+@flask_praetorian.roles_required("Parent")
 def children_detail(child_id):
     user = flask_praetorian.current_user()
 
     if request.method == 'GET':
-        child = data_manager.get_child(child_id, parent_id=user.id)
+        child = child_manager.get_child(child_id, parent_id=user.id)
         if not child:
-            return {"error": "Book not found"}, 404
+            return {"error": "Child not found"}, 404
     elif request.method == 'PUT':
         data = request.get_json()
-        data_manager.update_child(child_id, data, parent_id=user.id)
+        child_manager.update_child(child_id, data, parent_id=user.id)
     elif request.method == 'DELETE':
-        data_manager.delete_child(child_id, parent_id=user.id)
+        child_manager.delete_child(child_id, parent_id=user.id)
 
 
 # books handling
-@app.route('/api/books', methods=['GET', 'POST'])
+@app.route('/api/books/all')
+def books_get_all():
+    book_manager.get_all_books()
+
+@app.route('/api/books/add', methods=['POST'])
 @flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
 def books():
     user = flask_praetorian.current_user()
-
-    if request.method == 'GET':
-        data_manager.get_all_books()
-
-    elif request.method == 'POST':
-        #flask_praetorian.roles_required("author")
-        data = request.get_json()
-        data_manager.create_book(data)
+    data = request.get_json()
+    book_manager.create_book(user.id, data)
 
 @app.route('/api/books/<int:book_id>', methods=['GET', 'PUT', 'DELETE'])
 @flask_praetorian.auth_required
 def book_detail(book_id):
     if request.method == 'GET':
-        book = data_manager.get_book(book_id)
+        book = book_manager.get_book(book_id)
         if not book:
             return {"error": "Book not found"}, 404
     elif request.method == 'PUT':
         #flask_praetorian.roles_required("author")
         data = request.get_json()
-        data_manager.update_book(book_id, data)
+        book_manager.update_book(book_id, data)
     elif request.method == 'DELETE':
         #flask_praetorian.roles_required("author")
-        data_manager.delete_book(book_id)
+        book_manager.delete_book(book_id)
 
 
 # chapters handling
@@ -190,65 +211,65 @@ def book_detail(book_id):
 
 def chapters(book_id):
     if request.method == 'GET':
-        data_manager.get_all_chapters(book_id)
+        chapter_manager.get_all_chapters(book_id)
 
     elif request.method == 'POST':
-        data_manager.create_chapter(book_id)
+        chapter_manager.create_chapter(book_id)
 
 @app.route('/api/chapters/<int:chapter_id>', methods=['GET', 'PUT', 'DELETE'])
 def chapter_detail(chapter_id):
     if request.method == 'GET':
-        chapter = data_manager.get_chapter(chapter_id)
+        chapter = chapter_manager.get_chapter(chapter_id)
         if not chapter:
             return {"error": "Book not found"}, 404
     elif request.method == 'PUT':
         data = request.get_json()
-        data_manager.update_chapter(chapter_id, data)
+        chapter_manager.update_chapter(chapter_id, data)
     elif request.method == 'DELETE':
-        data_manager.delete_chapter(chapter_id)
+        chapter_manager.delete_chapter(chapter_id)
 
 
 # pages handling
 @app.route('/api/chapters/<int:chapter_id>/pages', methods=['GET', 'POST'])
 def pages(chapter_id):
     if request.method == 'GET':
-        data_manager.get_all_pages(chapter_id)
+        page_manager.get_all_pages(chapter_id)
 
     elif request.method == 'POST':
-        data_manager.create_page(chapter_id)
+        page_manager.create_page(chapter_id)
 
 @app.route('/api/pages/<int:page_id>', methods=['GET', 'PUT', 'DELETE'])
 def page_detail(page_id):
     if request.method == 'GET':
-        page = data_manager.get_page(page_id)
+        page = page_manager.get_page(page_id)
         if not page:
             return {"error": "Book not found"}, 404
     elif request.method == 'PUT':
         data = request.get_json()
-        data_manager.update_page(page_id, data)
+        page_manager.update_page(page_id, data)
     elif request.method == 'DELETE':
-        data_manager.delete_page(page_id)
+        page_manager.delete_page(page_id)
 
 
 # personalization handling
-@app.route('/api/parent/<int: parent_id>/personalization', methods=['GET', 'POST'])
+@app.route('/api/parent/<int:parent_id>/personalization', methods=['GET', 'POST'])
 def personalizations(parent_id):
     if request.method == 'GET':
-        data_manager.get_all_personalizations(parent_id)
+        personalization_manager.get_all_personalizations(parent_id)
 
     elif request.method == 'POST':
-        data_manager.create_personalization(parent_id)
+        personalization_manager.create_personalization(parent_id)
 
-@app.route('/api/parent/<int: parent_id>/personalization/<personalization_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/parent/<int:parent_id>/personalization/<personalization_id>', methods=['GET', 'PUT', 'DELETE'])
 def personalization_detail(personalization_id):
     if request.method == 'GET':
-        personalization = data_manager.get_personalization(personalization_id)
+        personalization = personalization_manager.get_personalization(personalization_id)
         if not personalization:
             return {"error": "Book not found"}, 404
     elif request.method == 'PUT':
-        data_manager.update_personalization(personalization_id)
+        personalization_manager.update_personalization(personalization_id)
     elif request.method == 'DELETE':
-        data_manager.delete_personalization(personalization_id)
+        personalization_manager.delete_personalization(personalization_id)
 
 
 # reading process
