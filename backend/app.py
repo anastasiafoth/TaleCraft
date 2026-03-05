@@ -1,4 +1,4 @@
-from data_manager import UserManager, ChildManager, BookManager, ChapterManager, PageManager, PersonalizationManager
+from data_manager import UserManager, ChildManager, BookManager, ChapterManager, PageManager, BookCharacterTemplateManager, PersonalizationManager, PersonalizationCharactersManager, ReadingProgressManager
 from models import db, User
 from flask import Flask, request, url_for,jsonify
 import os
@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import flask_praetorian
 import flask_cors
 
+from flask_migrate import Migrate
 
 load_dotenv()
 
@@ -15,6 +16,7 @@ app.debug = True
 app.config['SECRET_KEY'] = 'a_very_long_random_secret_key_at_least_32_chars'
 app.config['JWT_ACCESS_LIFESPAN'] = {'hours': 24}
 app.config['JWT_REFRESH_LIFESPAN'] = {'days': 30}
+
 
 #jwt auth
 guard = flask_praetorian.Praetorian()
@@ -39,6 +41,9 @@ db.init_app(app)
 # Initializes CORS so that the api_tool can talk to the app
 cors.init_app(app)
 
+# Initializes Flask Migrate, for updating db
+migrate = Migrate(app, db)
+
 # Run only once to create tables
 
 with app.app_context():
@@ -51,8 +56,12 @@ book_manager = BookManager()
 chapter_manager = ChapterManager()
 page_manager = PageManager()
 personalization_manager = PersonalizationManager()
+book_character_template_manager = BookCharacterTemplateManager()
+personalization_characters_manager = PersonalizationCharactersManager()
+reading_progress_manager = ReadingProgressManager()
 
-# user handling
+
+""" __________________ User ________________________"""
 @app.route('/api/login', methods=['POST'])
 def login():
     """
@@ -65,6 +74,9 @@ def login():
     req = request.get_json()
     email = req.get("email")
     password = req.get("password")
+
+    # Email not case-sensitive
+    email = email.strip().lower()
 
     user = guard.authenticate(email, password)
 
@@ -102,17 +114,21 @@ def protected():
 def create_user():
     data = request.get_json()
 
-    new_user = user_manager.create_user(
-        first_name=data["first_name"],
-        last_name=data["last_name"],
-        email=data["email"],
-        role=data["role"],
-        password=guard.hash_password(data["password"])
-    )
+    try:
+        new_user = user_manager.create_user(
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            email=data["email"],
+            role=data["role"],
+            password=guard.hash_password(data["password"])
+        )
 
-    return jsonify(new_user), 201
+        return jsonify(new_user), 201
 
-@app.route('/api/logout', methods=['POST'])
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/api/logout', methods=['PATCH'])
 @flask_praetorian.auth_required
 def logout():
     """
@@ -120,7 +136,7 @@ def logout():
     """
     return jsonify({"message": "Successfully logged out"}), 200
 
-@app.route('/api/user', methods=['GET', 'PATCH', 'DELETE'])
+@app.route('/api/user', methods=['GET', 'PATCH'])
 @flask_praetorian.auth_required
 def handle_user():
     user = flask_praetorian.current_user()
@@ -134,9 +150,10 @@ def handle_user():
         updated_user = user_manager.update_user(user.id, data)
         return jsonify(updated_user), 200
 
+    return jsonify({"error": "Method not allowed"}), 405
 
 
-# children handling
+""" __________________ Children ________________________"""
 @app.route('/api/children', methods=['GET', 'POST'])
 @flask_praetorian.auth_required
 @flask_praetorian.roles_required("Parent")
@@ -160,7 +177,7 @@ def children():
 
     return jsonify({"error": "Method not allowed"}), 405
 
-@app.route('/api/children/<int:child_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/children/<int:child_id>', methods=['GET', 'PATCH', 'DELETE'])
 @flask_praetorian.auth_required
 @flask_praetorian.roles_required("Parent")
 def children_detail(child_id):
@@ -168,112 +185,326 @@ def children_detail(child_id):
 
     if request.method == 'GET':
         child = child_manager.get_child(child_id, parent_id=user.id)
-        if not child:
-            return {"error": "Child not found"}, 404
-    elif request.method == 'PUT':
+        return jsonify(child), 200
+
+    elif request.method == 'PATCH':
         data = request.get_json()
-        child_manager.update_child(child_id, data, parent_id=user.id)
+
+        updated_child = child_manager.update_child(child_id, data, parent_id=user.id)
+        return jsonify(updated_child), 200
+
     elif request.method == 'DELETE':
         child_manager.delete_child(child_id, parent_id=user.id)
+        return "", 204
+
+    return jsonify({"error": "Method not allowed"}), 405
 
 
-# books handling
-@app.route('/api/books/all')
+""" __________________ Books ________________________"""
+@app.route('/api/books/')
 def books_get_all():
-    book_manager.get_all_books()
+    all_books = book_manager.get_all_books()
+    return jsonify(all_books), 200
 
-@app.route('/api/books/add', methods=['POST'])
+@app.route('/api/books/<int:book_id>')
+def book_get_by_id(book_id):
+    book = book_manager.get_book(book_id)
+    return jsonify(book), 200
+
+@app.route('/api/books', methods=['POST'])
 @flask_praetorian.auth_required
 @flask_praetorian.roles_required("Author")
-def books():
+def add_book():
     user = flask_praetorian.current_user()
     data = request.get_json()
-    book_manager.create_book(user.id, data)
 
-@app.route('/api/books/<int:book_id>', methods=['GET', 'PUT', 'DELETE'])
+    new_book = book_manager.create_book(user, data)
+    return jsonify(new_book), 201
+
+@app.route('/api/books/<int:book_id>', methods=['PATCH', 'DELETE'])
 @flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
 def book_detail(book_id):
-    if request.method == 'GET':
-        book = book_manager.get_book(book_id)
-        if not book:
-            return {"error": "Book not found"}, 404
-    elif request.method == 'PUT':
-        #flask_praetorian.roles_required("author")
+    user = flask_praetorian.current_user()
+
+    if request.method == 'PATCH':
         data = request.get_json()
-        book_manager.update_book(book_id, data)
+        updated_book = book_manager.update_book(book_id, data, author_id=user.id)
+        return jsonify(updated_book), 200
+
     elif request.method == 'DELETE':
-        #flask_praetorian.roles_required("author")
-        book_manager.delete_book(book_id)
+        book_manager.delete_book(book_id, author_id=user.id)
+        return "", 204
+
+    return jsonify({"error": "Method not allowed"}), 405
 
 
-# chapters handling
-@app.route('/api/books/<int:book_id>/chapters', methods=['GET', 'POST'])
-
+""" __________________ Chapters ________________________"""
+@app.route('/api/books/<int:book_id>/chapters')
 def chapters(book_id):
-    if request.method == 'GET':
-        chapter_manager.get_all_chapters(book_id)
+    all_chapters = chapter_manager.get_all_chapters(book_id)
+    return jsonify(all_chapters), 200
 
-    elif request.method == 'POST':
-        chapter_manager.create_chapter(book_id)
+@app.route('/api/chapters/<int:chapter_id>')
+def get_chapter_by_id(chapter_id):
+    chapter = chapter_manager.get_chapter(chapter_id)
+    return jsonify(chapter), 200
 
-@app.route('/api/chapters/<int:chapter_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/books/<int:book_id>/chapters', methods=['POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
+def add_chapter(book_id):
+    user = flask_praetorian.current_user()
+    data = request.get_json()
+    new_chapter = chapter_manager.create_chapter(book_id, data, author_id=user.id)
+
+    return jsonify(new_chapter), 201
+
+@app.route('/api/chapters/<int:chapter_id>', methods=['PATCH', 'DELETE'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
 def chapter_detail(chapter_id):
-    if request.method == 'GET':
-        chapter = chapter_manager.get_chapter(chapter_id)
-        if not chapter:
-            return {"error": "Book not found"}, 404
-    elif request.method == 'PUT':
+    user = flask_praetorian.current_user()
+    if request.method == 'PATCH':
         data = request.get_json()
-        chapter_manager.update_chapter(chapter_id, data)
+        updated_chapter = chapter_manager.update_chapter(chapter_id, data, author_id=user.id)
+        return jsonify(updated_chapter), 200
     elif request.method == 'DELETE':
-        chapter_manager.delete_chapter(chapter_id)
+        chapter_manager.delete_chapter(chapter_id, author_id=user.id)
+        return "", 204
+    return jsonify({"error": "Method not allowed"}), 405
 
 
-# pages handling
-@app.route('/api/chapters/<int:chapter_id>/pages', methods=['GET', 'POST'])
-def pages(chapter_id):
-    if request.method == 'GET':
-        page_manager.get_all_pages(chapter_id)
+""" __________________ Pages ________________________"""
+@app.route('/api/chapters/<int:chapter_id>/pages')
+def all_pages(chapter_id):
+    all_pages = page_manager.get_all_pages(chapter_id)
+    return jsonify(all_pages), 200
 
-    elif request.method == 'POST':
-        page_manager.create_page(chapter_id)
+@app.route('/api/chapters/<int:chapter_id>/pages', methods=['POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
+def add_page(chapter_id):
+    user = flask_praetorian.current_user()
+    data = request.get_json()
+    new_page = page_manager.create_page(chapter_id, data, author_id=user.id)
+    return jsonify(new_page), 201
 
-@app.route('/api/pages/<int:page_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/api/pages/<int:page_id>')
+def get_page_by_id(page_id):
+    page = page_manager.get_page(page_id)
+    return jsonify(page), 200
+
+@app.route('/api/pages/<int:page_id>', methods=['PATCH', 'DELETE'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
 def page_detail(page_id):
-    if request.method == 'GET':
-        page = page_manager.get_page(page_id)
-        if not page:
-            return {"error": "Book not found"}, 404
-    elif request.method == 'PUT':
+    user = flask_praetorian.current_user()
+    if request.method == 'PATCH':
         data = request.get_json()
-        page_manager.update_page(page_id, data)
+        updated_page = page_manager.update_page(page_id, data, author_id=user.id)
+        return jsonify(updated_page), 200
     elif request.method == 'DELETE':
-        page_manager.delete_page(page_id)
+        page_manager.delete_page(page_id, author_id=user.id)
+        return "", 204
+    return jsonify({"error": "Method not allowed"}), 405
 
 
-# personalization handling
-@app.route('/api/parent/<int:parent_id>/personalization', methods=['GET', 'POST'])
-def personalizations(parent_id):
+""" __________________ Personalization ________________________"""
+@app.route('/api/books/<int:book_id>/personalization', methods=['GET', 'POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
+def personalizations(book_id):
+    user = flask_praetorian.current_user()
     if request.method == 'GET':
-        personalization_manager.get_all_personalizations(parent_id)
+        personalization = personalization_manager.get_all_personalizations(parent_id=user.id)
+        return jsonify(personalization)
 
     elif request.method == 'POST':
-        personalization_manager.create_personalization(parent_id)
+        personalization = personalization_manager.create_personalization(book_id, parent_id=user.id)
+        return jsonify(personalization)
 
-@app.route('/api/parent/<int:parent_id>/personalization/<personalization_id>', methods=['GET', 'PUT', 'DELETE'])
+    return jsonify({"error": "Method not allowed"}), 405
+
+@app.route('/api/personalization/<personalization_id>', methods=['GET', 'DELETE'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
 def personalization_detail(personalization_id):
+    user = flask_praetorian.current_user()
     if request.method == 'GET':
-        personalization = personalization_manager.get_personalization(personalization_id)
+        personalization = personalization_manager.get_personalization(personalization_id, parent_id=user.id)
         if not personalization:
             return {"error": "Book not found"}, 404
-    elif request.method == 'PUT':
-        personalization_manager.update_personalization(personalization_id)
+        return jsonify(personalization)
+
     elif request.method == 'DELETE':
-        personalization_manager.delete_personalization(personalization_id)
+        personalization_manager.delete_personalization(personalization_id, parent_id=user.id)
+        return "", 204
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+""" __________________ Book Character Template ________________________"""
+
+@app.route('/api/books/<int:book_id>/character-templates', methods=['GET', 'POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
+def book_character_templates(book_id):
+    user = flask_praetorian.current_user()
+
+    if request.method == 'GET':
+        templates = book_character_template_manager.get_all_book_character_templates(
+            book_id=book_id,
+            author_id=user.id
+        )
+        return jsonify(templates)
+
+    elif request.method == 'POST':
+        data = request.json
+        template = book_character_template_manager.create_book_character_template(
+            book_id=book_id,
+            data=data,
+            author_id=user.id
+        )
+        return jsonify(template), 201
+
+    return jsonify({"error": "Method not allowed"}), 405
 
 
-# reading process
+@app.route('/api/character-templates/<int:template_id>', methods=['GET', 'PATCH', 'DELETE'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
+def book_character_template_detail(template_id):
+    user = flask_praetorian.current_user()
 
+    if request.method == 'GET':
+        template = book_character_template_manager.get_book_character_template(
+            template_id=template_id,
+            author_id=user.id
+        )
+        return jsonify(template)
+
+    elif request.method == 'PATCH':
+        data = request.json
+        template = book_character_template_manager.update_book_character_template(
+            template_id=template_id,
+            data=data,
+            author_id=user.id
+        )
+        return jsonify(template)
+
+    elif request.method == 'DELETE':
+        book_character_template_manager.delete_book_character_template(
+            template_id=template_id,
+            author_id=user.id
+        )
+        return "", 204
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+""" __________________ Personalization Characters ________________________"""
+@app.route('/api/personalizations/<int:personalization_id>/characters', methods=['GET'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
+def personalization_characters(personalization_id):
+    # No POST request, since the characters are already copied
+    # from the templates to the personalization_characters table, when the user creates a personalization
+    user = flask_praetorian.current_user()
+
+    characters = personalization_characters_manager.get_all_personalization_characters(
+        personalization_id=personalization_id,
+        parent_id=user.id
+    )
+
+    return jsonify(characters)
+
+@app.route('/api/characters/<int:character_id>', methods=['GET', 'PATCH'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
+def personalization_character_detail(character_id):
+    user = flask_praetorian.current_user()
+
+    if request.method == 'GET':
+        character = personalization_characters_manager.get_personalization_character(
+            character_id=character_id,
+            parent_id=user.id
+        )
+        return jsonify(character)
+
+    elif request.method == 'PATCH':
+        data = request.json
+        character = personalization_characters_manager.update_personalization_character(
+            character_id=character_id,
+            parent_id=user.id,
+            data=data
+        )
+        return jsonify(character)
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+@app.route('/api/characters/<int:character_id>/reset', methods=['POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
+def personalization_character_reset(character_id):
+    user = flask_praetorian.current_user()
+    reset_character = personalization_characters_manager.reset_character(character_id, parent_id=user.id)
+
+    return jsonify(reset_character)
+
+
+""" __________________ Reading Progress ________________________"""
+@app.route('/api/reading-progress', methods=['GET', 'POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
+def reading_progress():
+    user = flask_praetorian.current_user()
+
+    data = request.json
+    progress = reading_progress_manager.create_reading_progress(
+        data, parent_id=user.id)
+    return jsonify(progress), 201
+
+@app.route('/api/reading-progress/<int:progress_id>', methods=['PATCH', 'DELETE'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
+def reading_progress_detail(progress_id):
+    user = flask_praetorian.current_user()
+
+    if request.method == 'GET':
+        progress = reading_progress_manager.get_reading_progress(
+            progress_id=progress_id,
+            parent_id=user.id
+        )
+        if not progress:
+            return jsonify({"error": "Reading progress not found"}), 404
+
+        return jsonify(progress)
+
+    elif request.method == 'PATCH':
+        data = request.json
+        progress = reading_progress_manager.update_reading_progress(
+            progress_id=progress_id,
+            parent_id=user.id,
+            data=data
+        )
+        return jsonify(progress)
+
+    elif request.method == 'DELETE':
+        reading_progress_manager.delete_reading_progress(
+            progress_id=progress_id,
+            parent_id=user.id
+        )
+        return "", 204
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+""" __________________ Errors ________________________"""
+@app.errorhandler(ValueError)
+def handle_value_error(e):
+    return jsonify({"error": str(e)}), 404
+
+@app.errorhandler(PermissionError)
+def handle_permission_error(e):
+    return jsonify({"error": str(e)}), 403
 
 if __name__ == "__main__":
     app.run(debug=True)
