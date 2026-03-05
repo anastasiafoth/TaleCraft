@@ -986,6 +986,33 @@ class PersonalizationCharactersManager:
 
 
 class ReadingProgressManager:
+
+    @staticmethod
+    def get_all_reading_progress(data, parent_id):
+        child_id = data.get("child_id")
+
+        progresses = ReadingProgress.query \
+            .join(Child) \
+            .filter(
+            Child.parent_id == parent_id,
+            Child.id == child_id
+        ).all()
+
+        if not progresses:
+            raise ValueError("Reading progress not found or not authorized")
+
+        result = []
+
+        for progress in progresses:
+            result.append({
+            "id": progress.id,
+            "book_id": progress.book_id,
+            "child_id": progress.child_id,
+            "current_page_id": progress.current_page_id,
+        })
+
+        return result
+
     @staticmethod
     def create_reading_progress(data, parent_id):
         child_id = data.get("child_id")
@@ -1020,7 +1047,7 @@ class ReadingProgressManager:
                       .filter(Chapter.book_id==book_id).order_by(Page.order_index).first())
 
         if not first_page:
-            raise ValueError(f'Book: "{book.title}" has no pages yet')
+            raise ValueError(f"Book:'{book.title}' has no pages yet")
 
         progress = ReadingProgress(
             book_id=book_id,
@@ -1035,7 +1062,7 @@ class ReadingProgressManager:
                 "id": progress.id,
                 "book_id": progress.book_id,
                 "child_id": progress.child_id,
-                "current_page": progress.current_page_id
+                "current_page_id": progress.current_page_id
             }
 
 
@@ -1055,7 +1082,7 @@ class ReadingProgressManager:
             "id": progress.id,
             "book_id": progress.book_id,
             "child_id": progress.child_id,
-            "current_page": progress.current_page_id,
+            "current_page_id": progress.current_page_id,
         }
 
     @staticmethod
@@ -1070,8 +1097,16 @@ class ReadingProgressManager:
         if not progress:
             raise ValueError("Reading progress not found or not authorized")
 
-        if "current_page" in data:
-            progress.current_page = data["current_page"]
+        if "current_page_id" in data:
+            current_page_id_from_user = data["current_page_id"]
+            book_id = data["book_id"]
+            current_page_id_check = (Page.query.join(Chapter).filter(Page.id == current_page_id_from_user, Chapter.book_id == book_id).first())
+
+            if current_page_id_check:
+                progress.current_page_id = current_page_id_from_user
+            else:
+                raise ValueError("Page does not exists in this chapter")
+
 
         db.session.commit()
 
@@ -1079,7 +1114,7 @@ class ReadingProgressManager:
             "id": progress.id,
             "book_id": progress.book_id,
             "child_id": progress.child_id,
-            "current_page": progress.current_page,
+            "current_page_id": progress.current_page_id,
         }
 
     @staticmethod
@@ -1088,7 +1123,7 @@ class ReadingProgressManager:
             .join(Child) \
             .filter(
                 ReadingProgress.id == progress_id,
-                Child.parent_id == parent_id
+                Child.parent_id == parent_id,
             ).first()
 
         if not progress:

@@ -457,13 +457,26 @@ def personalization_character_reset(character_id):
 @flask_praetorian.roles_required("Parent")
 def reading_progress():
     user = flask_praetorian.current_user()
+    data = request.get_json()
 
-    data = request.json
-    progress = reading_progress_manager.create_reading_progress(
-        data, parent_id=user.id)
-    return jsonify(progress), 201
+    if request.method == 'GET':
+        progress = reading_progress_manager.get_all_reading_progress(
+            data, parent_id=user.id
+        )
+        if not progress:
+            return jsonify({"error": "Reading progress not found"}), 404
 
-@app.route('/api/reading-progress/<int:progress_id>', methods=['PATCH', 'DELETE'])
+        return jsonify(progress)
+
+    elif request.method == 'POST':
+        data = request.json
+        progress = reading_progress_manager.create_reading_progress(
+            data, parent_id=user.id)
+        return jsonify(progress), 201
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+@app.route('/api/reading-progress/<int:progress_id>', methods=['GET', 'PATCH', 'DELETE'])
 @flask_praetorian.auth_required
 @flask_praetorian.roles_required("Parent")
 def reading_progress_detail(progress_id):
