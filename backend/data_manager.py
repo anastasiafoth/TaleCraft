@@ -1099,14 +1099,15 @@ class ReadingProgressManager:
 
         if "current_page_id" in data:
             current_page_id_from_user = data["current_page_id"]
-            book_id = data["book_id"]
-            current_page_id_check = (Page.query.join(Chapter).filter(Page.id == current_page_id_from_user, Chapter.book_id == book_id).first())
+            book_id_from_user = data["book_id"]
+
+            current_page_id_check = (Page.query.join(Chapter).filter(Page.id == current_page_id_from_user, Chapter.book_id == book_id_from_user).first())
 
             if current_page_id_check:
                 progress.current_page_id = current_page_id_from_user
+                progress.book_id = book_id_from_user
             else:
                 raise ValueError("Page does not exists in this chapter")
-
 
         db.session.commit()
 
