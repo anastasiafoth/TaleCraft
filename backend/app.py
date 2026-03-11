@@ -1,6 +1,6 @@
 from data_manager import UserManager, ChildManager, BookManager, ChapterManager, PageManager, BookCharacterTemplateManager, PersonalizationManager, PersonalizationCharactersManager, ReadingProgressManager
 from models import db, User
-from flask import Flask, request, url_for,jsonify
+from flask import Flask, request, jsonify
 import os
 from dotenv import load_dotenv
 import flask_praetorian
@@ -75,6 +75,12 @@ def login():
     email = req.get("email")
     password = req.get("password")
 
+    if not email:
+        raise ValueError("Please enter an email.")
+
+    if not password:
+        raise ValueError("Please enter an password.")
+
     # Email not case-sensitive
     email = email.strip().lower()
 
@@ -115,12 +121,13 @@ def create_user():
     data = request.get_json()
 
     try:
+        raw_password = data.get("password")
         new_user = user_manager.create_user(
-            first_name=data["first_name"],
-            last_name=data["last_name"],
-            email=data["email"],
-            role=data["role"],
-            password=guard.hash_password(data["password"])
+            first_name=data.get("first_name"),
+            last_name=data.get("last_name"),
+            email=data.get("email"),
+            role=data.get("role"),
+            password=guard.hash_password(raw_password)
         )
 
         return jsonify(new_user), 201
@@ -169,9 +176,9 @@ def children():
         data = request.get_json()
         new_child = child_manager.create_child(
             parent_id=user.id,
-            first_name=data["first_name"],
-            birthdate=data["birthdate"],
-            profile_img=data["profile_img"])
+            first_name=data.get("first_name"),
+            birthdate=data.get("birthdate"),
+            profile_img=data.get("profile_img"))
 
         return jsonify(new_child), 201
 
