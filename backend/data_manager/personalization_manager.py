@@ -28,6 +28,9 @@ class PersonalizationManager:
         if not book:
             raise ValueError("Book not found")
 
+        if not book.is_published:
+            raise ValueError("Book is not published yet.")
+
         personalization = Personalization(
             parent_id=parent_id,
             book_id=book.id

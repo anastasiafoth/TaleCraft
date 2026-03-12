@@ -44,11 +44,22 @@ class BookManager:
         if user.role != "Author":
             raise PermissionError("Only Authors can create books.")
 
+        title = data.get("title")
+
+        if not title:
+            raise ValueError("Please enter a title.")
+
+        # Checks if the title already exists for this author
+        existing_book = Book.query.filter_by(title=title).first()
+
+        if existing_book:
+            raise ValueError("Book title already exists, choose another title.")
+
         new_book = Book(
             author_id=user.id,
-            title=data["title"],
-            description=data["description"],
-            recommended_age=data["recommended_age"]
+            title=title,
+            description=data.get("description"),
+            recommended_age=data.get("recommended_age")
         )
         db.session.add(new_book)
         db.session.commit()
@@ -70,6 +81,9 @@ class BookManager:
     @staticmethod
     def get_book(book_id):
         book = Book.query.filter_by(id=book_id).first()
+
+        if not book:
+            raise ValueError("Book not found or not authorized")
 
         book_dict = {
             "id": book.id,
@@ -94,23 +108,34 @@ class BookManager:
         if not book:
             raise ValueError("Book not found or not authorized")
 
+        # Book needs to have a title
         if "title" in data:
-            book.title = data["title"]
+            new_title = data.get("title")
+            if not new_title:
+                raise ValueError("Please enter a title.")
+
+            # Checks if the title already exists for this author
+            existing_book = Book.query.filter_by(title=new_title).first()
+            if existing_book:
+                raise ValueError("Book title already exists, choose another title.")
+
+            book.title = new_title
+
 
         if "description" in data:
-            book.description = data["description"]
+            book.description = data.get("description")
 
         if "cover_page_id" in data:
-            book.cover_page_id = data["cover_page_id"]
+            book.cover_page_id = data.get("cover_page_id")
 
         if "recommended_age" in data:
-            book.recommended_age = data["recommended_age"]
+            book.recommended_age = data.get("recommended_age")
 
         if "cover_thumbnail_url" in data:
-            book.cover_thumbnail_url = data["cover_thumbnail_url"]
+            book.cover_thumbnail_url = data.get("cover_thumbnail_url")
 
         if "is_published" in data:
-            book.is_published = data["is_published"]
+            book.is_published = data.get("is_published")
 
 
         db.session.commit()

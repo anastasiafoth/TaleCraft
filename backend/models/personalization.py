@@ -16,6 +16,7 @@ class Personalization(db.Model):
     book = db.relationship('Book', back_populates='personalization')
     personalization_characters = db.relationship("PersonalizationCharacters", back_populates="personalization",
         cascade="all, delete-orphan")
+    reading_progresses = db.relationship("ReadingProgress", back_populates="personalization", cascade="all, delete-orphan")
 
 
 class PersonalizationCharacters(db.Model):

@@ -38,14 +38,14 @@ class PageManager:
         new_page = Page(
             chapter_id=chapter_id,
             order_index=max_index + 1,
-            layout_data=data.get("layout_data"),
+            layout_data=data.get("layout_data") or {},
             is_cover=data.get("is_cover", False)
         )
 
         db.session.add(new_page)
         db.session.commit()
 
-        chapter_dict = {
+        page_dict = {
             "id": new_page.id,
             "chapter_id": new_page.chapter_id,
             "order_index": new_page.order_index,
@@ -53,7 +53,7 @@ class PageManager:
             "is_cover": new_page.is_cover,
         }
 
-        return chapter_dict
+        return page_dict
 
     @staticmethod
     def get_page(page_id):

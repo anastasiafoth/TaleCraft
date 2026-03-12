@@ -118,22 +118,16 @@ def protected():
 
 @app.route('/api/register', methods=['POST'])
 def create_user():
-    data = request.get_json()
+    # silent=True suppresses 415 if Content-Type is not application/json
+    data = request.get_json(silent=True)
 
-    try:
-        raw_password = data.get("password")
-        new_user = user_manager.create_user(
-            first_name=data.get("first_name"),
-            last_name=data.get("last_name"),
-            email=data.get("email"),
-            role=data.get("role"),
-            password=guard.hash_password(raw_password)
-        )
+    # None means missing body, invalid JSON, or wrong Content-Type
+    if data is None:
+        return jsonify({"error": "Invalid or missing JSON body."}), 400
 
-        return jsonify(new_user), 201
+    new_user = user_manager.create_user(guard, data)
+    return jsonify(new_user), 201
 
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
 
 @app.route('/api/logout', methods=['PATCH'])
 @flask_praetorian.auth_required
@@ -153,7 +147,12 @@ def handle_user():
         return jsonify(current_user), 200
 
     elif request.method == 'PATCH':
-        data = request.get_json()
+        # silent=True suppresses 415 if Content-Type is not application/json
+        data = request.get_json(silent=True)
+
+        # None means missing body, invalid JSON, or wrong Content-Type
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
         updated_user = user_manager.update_user(user.id, data)
         return jsonify(updated_user), 200
 
@@ -173,7 +172,12 @@ def children():
         return jsonify(all_children)
 
     elif request.method == 'POST':
-        data = request.get_json()
+        # silent=True suppresses 415 if Content-Type is not application/json
+        data = request.get_json(silent=True)
+
+        # None means missing body, invalid JSON, or wrong Content-Type
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
         new_child = child_manager.create_child(
             parent_id=user.id,
             first_name=data.get("first_name"),
@@ -195,7 +199,12 @@ def children_detail(child_id):
         return jsonify(child), 200
 
     elif request.method == 'PATCH':
-        data = request.get_json()
+        # silent=True suppresses 415 if Content-Type is not application/json
+        data = request.get_json(silent=True)
+
+        # None means missing body, invalid JSON, or wrong Content-Type
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
 
         updated_child = child_manager.update_child(child_id, data, parent_id=user.id)
         return jsonify(updated_child), 200
@@ -223,7 +232,12 @@ def book_get_by_id(book_id):
 @flask_praetorian.roles_required("Author")
 def add_book():
     user = flask_praetorian.current_user()
-    data = request.get_json()
+    # silent=True suppresses 415 if Content-Type is not application/json
+    data = request.get_json(silent=True)
+
+    # None means missing body, invalid JSON, or wrong Content-Type
+    if data is None:
+        return jsonify({"error": "Invalid or missing JSON body."}), 400
 
     new_book = book_manager.create_book(user, data)
     return jsonify(new_book), 201
@@ -235,7 +249,13 @@ def book_detail(book_id):
     user = flask_praetorian.current_user()
 
     if request.method == 'PATCH':
-        data = request.get_json()
+        # silent=True suppresses 415 if Content-Type is not application/json
+        data = request.get_json(silent=True)
+
+        # None means missing body, invalid JSON, or wrong Content-Type
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
+
         updated_book = book_manager.update_book(book_id, data, author_id=user.id)
         return jsonify(updated_book), 200
 
@@ -262,7 +282,13 @@ def get_chapter_by_id(chapter_id):
 @flask_praetorian.roles_required("Author")
 def add_chapter(book_id):
     user = flask_praetorian.current_user()
-    data = request.get_json()
+    # silent=True suppresses 415 if Content-Type is not application/json
+    data = request.get_json(silent=True)
+
+    # None means missing body, invalid JSON, or wrong Content-Type
+    if data is None:
+        return jsonify({"error": "Invalid or missing JSON body."}), 400
+
     new_chapter = chapter_manager.create_chapter(book_id, data, author_id=user.id)
 
     return jsonify(new_chapter), 201
@@ -273,7 +299,13 @@ def add_chapter(book_id):
 def chapter_detail(chapter_id):
     user = flask_praetorian.current_user()
     if request.method == 'PATCH':
-        data = request.get_json()
+        # silent=True suppresses 415 if Content-Type is not application/json
+        data = request.get_json(silent=True)
+
+        # None means missing body, invalid JSON, or wrong Content-Type
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
+
         updated_chapter = chapter_manager.update_chapter(chapter_id, data, author_id=user.id)
         return jsonify(updated_chapter), 200
     elif request.method == 'DELETE':
@@ -293,7 +325,13 @@ def all_pages(chapter_id):
 @flask_praetorian.roles_required("Author")
 def add_page(chapter_id):
     user = flask_praetorian.current_user()
-    data = request.get_json()
+    # silent=True suppresses 415 if Content-Type is not application/json
+    data = request.get_json(silent=True)
+
+    # None means missing body, invalid JSON, or wrong Content-Type
+    if data is None:
+        return jsonify({"error": "Invalid or missing JSON body."}), 400
+
     new_page = page_manager.create_page(chapter_id, data, author_id=user.id)
     return jsonify(new_page), 201
 
@@ -308,7 +346,13 @@ def get_page_by_id(page_id):
 def page_detail(page_id):
     user = flask_praetorian.current_user()
     if request.method == 'PATCH':
-        data = request.get_json()
+        # silent=True suppresses 415 if Content-Type is not application/json
+        data = request.get_json(silent=True)
+
+        # None means missing body, invalid JSON, or wrong Content-Type
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
+
         updated_page = page_manager.update_page(page_id, data, author_id=user.id)
         return jsonify(updated_page), 200
     elif request.method == 'DELETE':
@@ -318,20 +362,23 @@ def page_detail(page_id):
 
 
 """ __________________ Personalization ________________________"""
-@app.route('/api/books/<int:book_id>/personalization', methods=['GET', 'POST'])
+@app.route('/api/personalization')
 @flask_praetorian.auth_required
 @flask_praetorian.roles_required("Parent")
-def personalizations(book_id):
+def personalizations():
     user = flask_praetorian.current_user()
-    if request.method == 'GET':
-        personalization = personalization_manager.get_all_personalizations(parent_id=user.id)
-        return jsonify(personalization)
 
-    elif request.method == 'POST':
-        personalization = personalization_manager.create_personalization(book_id, parent_id=user.id)
-        return jsonify(personalization)
+    all_personalizations = personalization_manager.get_all_personalizations(parent_id=user.id)
+    return jsonify(all_personalizations)
 
-    return jsonify({"error": "Method not allowed"}), 405
+@app.route('/api/books/<int:book_id>/personalization', methods=['POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Parent")
+def post_personalizations(book_id):
+    user = flask_praetorian.current_user()
+
+    personalization = personalization_manager.create_personalization(book_id, parent_id=user.id)
+    return jsonify(personalization)
 
 @app.route('/api/personalization/<personalization_id>', methods=['GET', 'DELETE'])
 @flask_praetorian.auth_required
@@ -464,7 +511,12 @@ def personalization_character_reset(character_id):
 @flask_praetorian.roles_required("Parent")
 def reading_progress():
     user = flask_praetorian.current_user()
-    data = request.get_json()
+    # silent=True suppresses 415 if Content-Type is not application/json
+    data = request.get_json(silent=True)
+
+    # None means missing body, invalid JSON, or wrong Content-Type
+    if data is None:
+        return jsonify({"error": "Invalid or missing JSON body."}), 400
 
     if request.method == 'GET':
         progress = reading_progress_manager.get_all_reading_progress(
@@ -520,7 +572,7 @@ def reading_progress_detail(progress_id):
 """ __________________ Errors ________________________"""
 @app.errorhandler(ValueError)
 def handle_value_error(e):
-    return jsonify({"error": str(e)}), 404
+    return jsonify({"error": str(e)}), 400
 
 @app.errorhandler(PermissionError)
 def handle_permission_error(e):

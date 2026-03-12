@@ -7,8 +7,10 @@ class ReadingProgress(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     child_id = db.Column(db.Integer, db.ForeignKey('children.id'), nullable=False)
     current_page_id = db.Column(db.Integer, db.ForeignKey('pages.id'), nullable=False)
+    personalization_id = db.Column(db.Integer, db.ForeignKey('personalizations.id'), )
 
     # Relationships
     book = db.relationship('Book', back_populates="reading_progresses")
     child = db.relationship('Child', back_populates="reading_progresses")
     current_page = db.relationship('Page', back_populates="reading_progresses")
+    personalization = db.relationship('Personalization', back_populates="reading_progresses")

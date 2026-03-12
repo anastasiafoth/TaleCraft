@@ -1,10 +1,13 @@
-from models import db, Child, Book, Chapter, Page, ReadingProgress
+from models import db, Child, Book, Chapter, Page, ReadingProgress, Personalization
 
 class ReadingProgressManager:
 
     @staticmethod
     def get_all_reading_progress(data, parent_id):
         child_id = data.get("child_id")
+
+        if not child_id:
+            raise ValueError("Missing child_id.")
 
         progresses = ReadingProgress.query \
             .join(Child) \
@@ -24,6 +27,7 @@ class ReadingProgressManager:
             "book_id": progress.book_id,
             "child_id": progress.child_id,
             "current_page_id": progress.current_page_id,
+            "personalization_id" : progress.personalization_id
         })
 
         return result
@@ -31,7 +35,8 @@ class ReadingProgressManager:
     @staticmethod
     def create_reading_progress(data, parent_id):
         child_id = data.get("child_id")
-        book_id = data.get("book_id")
+        #book_id = data.get("book_id")
+        personalization_id = data.get("personalization_id")
 
         # Check if child belongs to parent
         child = Child.query.filter_by(
@@ -42,32 +47,44 @@ class ReadingProgressManager:
         if not child:
             raise ValueError("Child not found or not authorized")
 
-        # Check if book exists
-        book = Book.query.filter_by(id=book_id).first()
+        # Check if personalization belongs to parent
+        if personalization_id:
+            personalization = Personalization.query.filter_by(
+                id=personalization_id,
+                parent_id=parent_id
+            ).first()
 
-        if not book:
-            raise ValueError("Book not found")
+            if not personalization:
+                raise ValueError("Personalization not found or not authorized")
+
+        # Check if book exists
+        #book = Book.query.filter_by(id=book_id).first()
+
+        #if not book:
+        #    raise ValueError("Book not found")
 
         # Check uniqueness
-        existing = ReadingProgress.query.filter_by(
-            book_id=book_id,
-            child_id=child_id
-        ).first()
+        #existing = ReadingProgress.query.filter_by(
+        #    book_id=book_id,
+        #    child_id=child_id
+        #).first()
 
-        if existing:
-            raise ValueError("Reading progress already exists")
+        #if existing:
+        #    raise ValueError("Reading progress already exists")
+        book_id = Personalization.book_id
 
         first_page = (Page.query
                       .join(Chapter, Page.chapter_id == Chapter.id)
                       .filter(Chapter.book_id==book_id).order_by(Page.order_index).first())
 
         if not first_page:
-            raise ValueError(f"Book:'{book.title}' has no pages yet")
+            raise ValueError(f"This book has no pages yet.")
 
         progress = ReadingProgress(
             book_id=book_id,
             child_id=child_id,
-            current_page_id=first_page.id
+            current_page_id=first_page.id,
+            personalization_id=personalization_id
         )
 
         db.session.add(progress)
@@ -77,7 +94,8 @@ class ReadingProgressManager:
                 "id": progress.id,
                 "book_id": progress.book_id,
                 "child_id": progress.child_id,
-                "current_page_id": progress.current_page_id
+                "current_page_id": progress.current_page_id,
+                "personalization_id": progress.personalization_id
             }
 
 
@@ -98,6 +116,7 @@ class ReadingProgressManager:
             "book_id": progress.book_id,
             "child_id": progress.child_id,
             "current_page_id": progress.current_page_id,
+            "personalization_id": progress.personalization_id
         }
 
     @staticmethod
@@ -113,8 +132,8 @@ class ReadingProgressManager:
             raise ValueError("Reading progress not found or not authorized")
 
         if "current_page_id" in data:
-            current_page_id_from_user = data["current_page_id"]
-            book_id_from_user = data["book_id"]
+            current_page_id_from_user = data.get("current_page_id")
+            book_id_from_user = data.get("book_id")
 
             current_page_id_check = (Page.query.join(Chapter).filter(Page.id == current_page_id_from_user, Chapter.book_id == book_id_from_user).first())
 
@@ -131,6 +150,7 @@ class ReadingProgressManager:
             "book_id": progress.book_id,
             "child_id": progress.child_id,
             "current_page_id": progress.current_page_id,
+            "personalization_id": progress.personalization_id
         }
 
     @staticmethod

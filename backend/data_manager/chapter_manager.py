@@ -38,7 +38,7 @@ class ChapterManager:
 
         new_chapter = Chapter(
             book_id=book_id,
-            title=data["title"],
+            title=data.get("title"),
             order_index=max_index + 1
         )
 
@@ -57,6 +57,9 @@ class ChapterManager:
     @staticmethod
     def get_chapter(chapter_id):
         chapter = Chapter.query.filter_by(id=chapter_id).first()
+
+        if not chapter:
+            raise ValueError("Book not found or not authorized")
 
         chapter_dict = {
                 "id": chapter.id,
@@ -78,7 +81,7 @@ class ChapterManager:
             raise ValueError("Chapter not found or not authorized")
 
         if "title" in data:
-            chapter.title = data["title"]
+            chapter.title = data.get("title")
 
         db.session.commit()
 

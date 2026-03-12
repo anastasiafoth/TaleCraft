@@ -12,7 +12,7 @@ class ChildManager:
             child_dict = {
                 "child_id": child.id,
                 "first_name": child.first_name,
-                "age": child.age,
+                "birthdate": child.birthdate,
                 "profile_img": child.profile_img
             }
             children_list.append(child_dict)
@@ -51,7 +51,7 @@ class ChildManager:
         return {
                 "child_id": new_child.id,
                 "first_name" : new_child.first_name,
-                "age" : new_child.age,
+                "birthdate": new_child.birthdate,
                 "profile_img" : new_child.profile_img
                 }
 
@@ -63,7 +63,7 @@ class ChildManager:
         return {
             "child_id": child.id,
             "first_name" : child.first_name,
-            "age" : child.age,
+            "birthdate": child.birthdate,
             "profile_img" : child.profile_img
         }
 
@@ -92,7 +92,7 @@ class ChildManager:
         return {
             "child_id": child.id,
             "first_name": child.first_name,
-            "age": child.age,
+            "birthdate": child.birthdate,
             "profile_img": child.profile_img
         }
 

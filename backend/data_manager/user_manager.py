@@ -8,8 +8,17 @@ class UserManager:
         return re.match(pattern, email) is not None
 
     @staticmethod
-    def create_user(first_name, last_name, email, role, password):
+    def create_user(guard, data):
         """Adds a new user to database"""
+        if not data:
+            raise ValueError("Please enter information.")
+
+        raw_password = data.get("password")
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
+        email = data.get("email")
+        role = data.get("role")
+        password = guard.hash_password(raw_password)
 
         if not first_name:
             raise ValueError("Please enter a first name.")
