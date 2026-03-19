@@ -217,14 +217,32 @@ def children_detail(child_id):
 
 
 """ __________________ Books ________________________"""
-@app.route('/api/books/')
+@app.route('/api/books')
 def books_get_all():
-    all_books = book_manager.get_all_books()
+    """ Get only published books. """
+    all_books = book_manager.get_all_books(published_only=True)
+    return jsonify(all_books), 200
+
+@app.route('/api/my-books')
+@flask_praetorian.auth_required
+def get_authors_books():
+    """ Get all books of Author, only Author can have access to unpublished books. """
+    user = flask_praetorian.current_user()
+    all_books = book_manager.get_all_books(author_id=user.id)
     return jsonify(all_books), 200
 
 @app.route('/api/books/<int:book_id>')
+@flask_praetorian.auth_required
 def book_get_by_id(book_id):
+    """ Get book by id """
+    user = flask_praetorian.current_user()
+
     book = book_manager.get_book(book_id)
+
+    # Only Authors can get their own book if book is not published
+    if not book["is_published"]:
+        if user.id != book["author_id"]:
+            return jsonify({"error": "Book not found"}), 404
     return jsonify(book), 200
 
 @app.route('/api/books', methods=['POST'])

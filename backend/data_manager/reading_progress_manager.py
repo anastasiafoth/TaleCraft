@@ -48,30 +48,15 @@ class ReadingProgressManager:
             raise ValueError("Child not found or not authorized")
 
         # Check if personalization belongs to parent
-        if personalization_id:
-            personalization = Personalization.query.filter_by(
-                id=personalization_id,
-                parent_id=parent_id
+        personalization = Personalization.query.filter_by(
+            id=personalization_id,
+            parent_id=parent_id
             ).first()
 
-            if not personalization:
+        if not personalization:
                 raise ValueError("Personalization not found or not authorized")
 
-        # Check if book exists
-        #book = Book.query.filter_by(id=book_id).first()
-
-        #if not book:
-        #    raise ValueError("Book not found")
-
-        # Check uniqueness
-        #existing = ReadingProgress.query.filter_by(
-        #    book_id=book_id,
-        #    child_id=child_id
-        #).first()
-
-        #if existing:
-        #    raise ValueError("Reading progress already exists")
-        book_id = Personalization.book_id
+        book_id = personalization.book_id
 
         first_page = (Page.query
                       .join(Chapter, Page.chapter_id == Chapter.id)
@@ -133,15 +118,24 @@ class ReadingProgressManager:
 
         if "current_page_id" in data:
             current_page_id_from_user = data.get("current_page_id")
-            book_id_from_user = data.get("book_id")
 
-            current_page_id_check = (Page.query.join(Chapter).filter(Page.id == current_page_id_from_user, Chapter.book_id == book_id_from_user).first())
+            # book_id from progress
+            book_id = progress.book_id
+
+            current_page_id_check = (
+                Page.query
+                .join(Chapter)
+                .filter(
+                    Page.id == current_page_id_from_user,
+                    Chapter.book_id == book_id
+                )
+                .first()
+            )
 
             if current_page_id_check:
                 progress.current_page_id = current_page_id_from_user
-                progress.book_id = book_id_from_user
             else:
-                raise ValueError("Page does not exists in this chapter")
+                raise ValueError("Page does not exist in this book")
 
         db.session.commit()
 

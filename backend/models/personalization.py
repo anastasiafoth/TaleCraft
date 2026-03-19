@@ -29,7 +29,7 @@ class PersonalizationCharacters(db.Model):
     gender = db.Column(db.String(200), nullable=False) # "male"/"female"
     main_color = db.Column(db.String(200), nullable=False) # skin or fur_color
     hair_color = db.Column(db.String(200))
-    clothing = db.Column(db.String(200)) # only different color options, nullable because animals
+    clothing = db.Column(JSONB) # only different color options, nullable because animals
     glasses = db.Column(db.Boolean, default=False)
     extra_attributes = db.Column(JSONB) # hair_style etc.
     customizable = db.Column(db.Boolean, nullable=False)

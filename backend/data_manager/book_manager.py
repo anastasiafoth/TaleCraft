@@ -14,8 +14,16 @@ class BookManager:
         return total or 0
 
     @staticmethod
-    def get_all_books():
-        all_books = Book.query.all()
+    def get_all_books(author_id=None, published_only=False):
+        query = Book.query
+
+        if author_id:
+            query = query.filter_by(author_id=author_id)
+
+        if published_only:
+            query = query.filter_by(is_published=True)
+
+        all_books = query.all()
 
         # serialize objects
         books_list = []
@@ -24,6 +32,7 @@ class BookManager:
                 "id" : book.id,
                 "title" : book.title,
                 "author" : book.author_name,
+                "author_id": book.author_id,
                 "description" : book.description,
                 "cover_page_id" : book.cover_page_id,
                 "cover_thumbnail_url": book.cover_thumbnail_url,
@@ -88,6 +97,7 @@ class BookManager:
         book_dict = {
             "id": book.id,
             "title": book.title,
+            "author_id": book.author_id,
             "author": book.author_name,
             "description": book.description,
             "cover_page_id": book.cover_page_id,
