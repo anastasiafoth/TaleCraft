@@ -250,6 +250,17 @@ All errors return JSON format:
 - SQL injection prevention via SQLAlchemy ORM
 - CORS configuration for frontend integration
 
+## Live API
+
+The TaleCraft API is deployed and live at:
+**https://talecraft-owts.onrender.com**
+
+### Production Endpoints
+All API endpoints are available at the base URL above. For example:
+- Authentication: `https://talecraft-owts.onrender.com/api/login`
+- Books: `https://talecraft-owts.onrender.com/api/books`
+- Users: `https://talecraft-owts.onrender.com/api/user`
+
 ## Contributing
 
 1. Fork the repository

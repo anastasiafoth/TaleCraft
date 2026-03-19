@@ -112,4 +112,4 @@ class PageManager:
         db.session.delete(page)
         db.session.commit()
 
-        return True
+        return {"message": "Page deleted successfully"}

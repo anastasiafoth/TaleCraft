@@ -210,8 +210,8 @@ def children_detail(child_id):
         return jsonify(updated_child), 200
 
     elif request.method == 'DELETE':
-        child_manager.delete_child(child_id, parent_id=user.id)
-        return "", 204
+        deleted_child = child_manager.delete_child(child_id, parent_id=user.id)
+        return jsonify(deleted_child), 200
 
     return jsonify({"error": "Method not allowed"}), 405
 
@@ -260,8 +260,8 @@ def book_detail(book_id):
         return jsonify(updated_book), 200
 
     elif request.method == 'DELETE':
-        book_manager.delete_book(book_id, author_id=user.id)
-        return "", 204
+        deleted_book = book_manager.delete_book(book_id, author_id=user.id)
+        return jsonify(deleted_book), 200
 
     return jsonify({"error": "Method not allowed"}), 405
 
@@ -309,8 +309,9 @@ def chapter_detail(chapter_id):
         updated_chapter = chapter_manager.update_chapter(chapter_id, data, author_id=user.id)
         return jsonify(updated_chapter), 200
     elif request.method == 'DELETE':
-        chapter_manager.delete_chapter(chapter_id, author_id=user.id)
-        return "", 204
+        deleted_chapter = chapter_manager.delete_chapter(chapter_id, author_id=user.id)
+        return jsonify(deleted_chapter), 200
+
     return jsonify({"error": "Method not allowed"}), 405
 
 
@@ -356,8 +357,9 @@ def page_detail(page_id):
         updated_page = page_manager.update_page(page_id, data, author_id=user.id)
         return jsonify(updated_page), 200
     elif request.method == 'DELETE':
-        page_manager.delete_page(page_id, author_id=user.id)
-        return "", 204
+        deleted_page = page_manager.delete_page(page_id, author_id=user.id)
+        return jsonify(deleted_page), 200
+
     return jsonify({"error": "Method not allowed"}), 405
 
 
@@ -386,14 +388,19 @@ def post_personalizations(book_id):
 def personalization_detail(personalization_id):
     user = flask_praetorian.current_user()
     if request.method == 'GET':
-        personalization = personalization_manager.get_personalization(personalization_id, parent_id=user.id)
+        personalization = (
+            personalization_manager.get_personalization
+            (personalization_id, parent_id=user.id))
         if not personalization:
             return {"error": "Book not found"}, 404
         return jsonify(personalization)
 
     elif request.method == 'DELETE':
-        personalization_manager.delete_personalization(personalization_id, parent_id=user.id)
-        return "", 204
+        deleted_personalization = (
+            personalization_manager.delete_personalization
+            (personalization_id, parent_id=user.id))
+
+        return jsonify(deleted_personalization), 200
 
     return jsonify({"error": "Method not allowed"}), 405
 
@@ -447,11 +454,11 @@ def book_character_template_detail(template_id):
         return jsonify(template)
 
     elif request.method == 'DELETE':
-        book_character_template_manager.delete_book_character_template(
+        deleted_template = book_character_template_manager.delete_book_character_template(
             template_id=template_id,
             author_id=user.id
         )
-        return "", 204
+        return jsonify(deleted_template), 200
 
     return jsonify({"error": "Method not allowed"}), 405
 
@@ -561,11 +568,11 @@ def reading_progress_detail(progress_id):
         return jsonify(progress)
 
     elif request.method == 'DELETE':
-        reading_progress_manager.delete_reading_progress(
+        delete_progress = reading_progress_manager.delete_reading_progress(
             progress_id=progress_id,
             parent_id=user.id
         )
-        return "", 204
+        return jsonify(delete_progress), 200
 
     return jsonify({"error": "Method not allowed"}), 405
 

@@ -106,4 +106,4 @@ class ChildManager:
         db.session.delete(child)
         db.session.commit()
 
-        return True
+        return {"message": "Child deleted successfully"}

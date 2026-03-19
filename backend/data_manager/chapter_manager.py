@@ -105,4 +105,4 @@ class ChapterManager:
         db.session.delete(chapter)
         db.session.commit()
 
-        return True
+        return {"message": "Chapter deleted successfully"}

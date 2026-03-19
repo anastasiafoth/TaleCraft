@@ -168,4 +168,4 @@ class ReadingProgressManager:
         db.session.delete(progress)
         db.session.commit()
 
-        return True
+        return {"message": "Reading Progress deleted successfully"}

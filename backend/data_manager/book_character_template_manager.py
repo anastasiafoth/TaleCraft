@@ -177,4 +177,4 @@ class BookCharacterTemplateManager:
         db.session.delete(template)
         db.session.commit()
 
-        return True
+        return {"message": "Template deleted successfully"}

@@ -13,7 +13,7 @@ class BookCharacterTemplate(db.Model):
     default_gender = db.Column(db.String(50), nullable=False) # "male"/"female"
     default_main_color = db.Column(db.String(200), nullable=False)
     default_hair_color = db.Column(db.String(200))
-    default_clothing = db.Column(db.String(200))
+    default_clothing = db.Column(JSONB)
     default_glasses = db.Column(db.Boolean, default=False)
     extra_attributes = db.Column(JSONB)
     customizable = db.Column(db.Boolean, nullable=False, default=True)

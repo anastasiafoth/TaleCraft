@@ -107,4 +107,4 @@ class PersonalizationManager:
         db.session.delete(personalization)
         db.session.commit()
 
-        return True
+        return {"message": "Personalization deleted successfully"}

@@ -164,4 +164,4 @@ class BookManager:
         db.session.delete(book)
         db.session.commit()
 
-        return True
+        return {"message": "Book deleted successfully"}
