@@ -1,7 +1,6 @@
-import BooksCards from "../components/BooksCards";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import BooksCards from "./BooksCards";
 
-export default function Books() {
+export default function AuthorBooks() {
   const books = [
     {
       id: 1,
@@ -28,10 +27,16 @@ export default function Books() {
 
   return (
     <section>
-      <h1>All published books here</h1>
-      <section>
-        <BooksCards books={books} />
-      </section>
+      <h1>All published and unpublished books here</h1>
+      <BooksCards
+        books={books}
+        actions={
+          <>
+            <button>Edit</button>
+            <button>Delete</button>
+          </>
+        }
+      />
     </section>
   );
 }
