@@ -12,8 +12,9 @@ export async function loginUser(creds) {
 
   if (!res.ok) {
     throw {
-      message: data.message || "Login was not successfull.",
+      message: data.message || "Unknown error",
       status: res.status,
+      error: data.error,
     };
   }
 

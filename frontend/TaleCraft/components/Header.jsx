@@ -10,9 +10,6 @@ export default function Header() {
         <NavLink to="/login">Login</NavLink>
         <NavLink to="/register">Register</NavLink>
         <NavLink to="/logout">Logout</NavLink>
-
-        <NavLink to="/author">(Author)</NavLink>
-        <NavLink to="/parent">(Parent)</NavLink>
       </div>
     </nav>
   );

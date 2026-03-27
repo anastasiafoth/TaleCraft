@@ -24,10 +24,16 @@ export default function Login() {
         } else if (userData.role === "Parent") {
           navigate("/parent");
         }
-        alert("Logged in successfully.");
       }
     } catch (err) {
-      setError(err.message);
+      if (err.status === 403) {
+        navigate("/login", {
+          state: { message: err.message },
+          replace: true,
+        });
+      } else {
+        setError(err.message);
+      }
     } finally {
       setStatus("idle");
     }
