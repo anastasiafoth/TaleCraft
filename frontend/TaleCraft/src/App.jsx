@@ -26,7 +26,6 @@ import Reading from "../pages/Parent/Children/Reading.jsx";
 import AuthRequired from "../components/AuthRequired.jsx";
 import NotFound from "../pages/Error/NotFound.jsx";
 
-const ThemeContext = React.createContext();
 
 function App() {
   return (
@@ -42,13 +41,15 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="logout" element={<Logout />} />
 
-          <Route element={<AuthRequired />}>
+          <Route element={<AuthRequired allowedRoles={["Author"]} />}>
             <Route path="author" element={<AuthorLayout />}>
               <Route index element={<AuthorDashboard />} />
               <Route path="books/new" element={<NewBook />} />
               <Route path="books/:id" element={<BookDetail />} />
             </Route>
+          </Route>
 
+          <Route element={<AuthRequired allowedRoles={["Parent"]} />}>
             <Route path="parent" element={<ParentLayout />}>
               <Route index element={<ParentDashboard />} />
               <Route path="children/new" element={<NewChild />} />
