@@ -81,7 +81,10 @@ export default function Register() {
           type="password"
           placeholder="Password"
         />
-        <button disabled={status === "submitting"}>
+        <button
+          disabled={status === "submitting"}
+          className="btn btn-wide mt-4"
+        >
           {status === "submitting" ? "Registering..." : "Register"}
         </button>
       </form>
