@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { loginUser, getUserData } from "./api";
+import { loginUser, getUserData, registerUser } from "./api";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
@@ -24,11 +24,22 @@ export const AuthProvider = ({ children }) => {
 
       // Get user data
       const userData = await getUserData(token);
-      console.log(userData);
+      //console.log(userData);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
 
       return userData;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
+  const register = async (creds) => {
+    try {
+      const registerData = await registerUser(creds);
+      console.log(registerData);
+      return registerData;
     } catch (err) {
       console.error(err);
       throw err;
@@ -42,11 +53,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
     setUser(null);
     setToken(null);
-    navigate("/");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
