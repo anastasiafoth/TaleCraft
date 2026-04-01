@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../src/AuthContext";
+import logo from "../src/assets/images/logo.png";
 
 export default function Header() {
   const { user } = useAuth();
@@ -7,12 +8,12 @@ export default function Header() {
   return (
     <nav className="navbar bg-base-100 shadow-sm flex p-4">
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost text-xl">
-          TaleCraft
+        <Link to="/">
+          <img src={logo} alt="TaleCraft" className="h-14 w-auto" />
         </Link>
       </div>
-      <div className="flex-none">
-        <div className="menu menu-horizontal px-1">
+      <div className="flex-none ">
+        <div className="menu menu-horizontal px-1 text-lg gap-4">
           {user?.role === "Author" && <NavLink to="/author">Dashboard</NavLink>}
           {user?.role === "Parent" && <NavLink to="/parent">Dashboard</NavLink>}
           <NavLink to="/books">All Books</NavLink>
