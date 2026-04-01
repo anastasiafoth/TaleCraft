@@ -22,11 +22,11 @@ export async function loginUser(creds) {
 }
 
 export async function getUserData(token) {
-    const res = await fetch(`${DEV_URL}/api/user`, {
+  const res = await fetch(`${DEV_URL}/api/user`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  }); 
+  });
 
   const data = await res.json();
   if (!res.ok) throw data;
@@ -41,6 +41,61 @@ export async function registerUser(creds) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(creds),
+  });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw {
+      message: data.message || "Unknown error",
+      status: res.status,
+      error: data.error,
+    };
+  }
+
+  return data;
+}
+
+export async function getChildren(token) {
+  const res = await fetch(`${DEV_URL}/api/children`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw data;
+
+  return data;
+}
+
+export async function editChild(id, creds, token) {
+  const res = await fetch(`${DEV_URL}/api/children/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(creds),
+  });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw {
+      message: data.message || "Unknown error",
+      status: res.status,
+      error: data.error,
+    };
+  }
+
+  return data;
+}
+
+export async function deleteChild(id, token) {
+  const res = await fetch(`${DEV_URL}/api/children/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   const data = await res.json();
 

@@ -1,26 +1,14 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "../src/AuthContext";
+import SidebarLayout from "../components/SidebarLayout";
+
+const links = [
+  { to: ".", end: true, label: "All Children" },
+  { to: "children/new", label: "Add new child" },
+  { to: "personalizations", end: true, label: "Browse books" },
+  { to: "personalizations/new", label: "Add new book" },
+];
 
 export default function ParentLayout() {
-  return (
-    <>
-      <main>
-        <h1>Welcome! Parent´s name</h1>
-        <nav>
-          <div className="nav-links">
-            <NavLink to="." end>
-              All Children
-            </NavLink>
-            <NavLink to="children/new">Add new child</NavLink>
-            <NavLink to="personalizations" end>
-              Browse all personalized books
-            </NavLink>
-            <NavLink to="personalizations/new">
-              Add new personalized book
-            </NavLink>
-          </div>
-        </nav>
-        <Outlet />
-      </main>
-    </>
-  );
+  const { user } = useAuth();
+  return <SidebarLayout links={links} username={user.first_name} />;
 }
