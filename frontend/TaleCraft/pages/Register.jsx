@@ -92,13 +92,19 @@ export default function Register() {
               }
             />
 
-            <select name="role" onChange={handleChange} defaultValue="">
+            <select
+              name="role"
+              onChange={handleChange}
+              defaultValue=""
+              className="select"
+            >
               <option value="" disabled>
                 Select role
               </option>
               <option value="Author">Author</option>
               <option value="Parent">Parent</option>
             </select>
+
             <PasswordInput
               input={
                 <input
