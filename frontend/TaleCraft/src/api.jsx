@@ -714,14 +714,16 @@ export async function resetPersonalizationCharacter(characterId, token) {
 
 // __________________ Reading Progress __________________________
 
-export async function getAllReadingProgress(creds, token) {
-  const res = await fetch(`${DEV_URL}/api/reading-progress`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+export async function getAllReadingProgress(childId, token) {
+  const res = await fetch(
+    `${DEV_URL}/api/reading-progress?child_id=${childId.child_id}`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     },
-    body: JSON.stringify(creds),
-  });
+  );
   const data = await res.json();
   if (!res.ok)
     throw {
@@ -742,6 +744,7 @@ export async function createReadingProgress(creds, token) {
     body: JSON.stringify(creds),
   });
   const data = await res.json();
+  console.log(data);
   if (!res.ok)
     throw {
       message: data.message || "Unknown error",
@@ -802,4 +805,3 @@ export async function deleteReadingProgress(progressId, token) {
     };
   return data;
 }
-

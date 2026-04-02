@@ -28,7 +28,10 @@ export default function ChildrenCards({ children, setChildren }) {
 
   function handleEditClick(child) {
     setEditingId(child.child_id);
-    setEditForm({ first_name: child.first_name, birthdate: child.birthdate });
+    setEditForm({
+      first_name: child.first_name,
+      birthdate: new Date(child.birthdate).toISOString().split("T")[0],
+    });
   }
 
   async function handleSave(id) {

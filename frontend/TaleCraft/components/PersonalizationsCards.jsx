@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function PersonalizationsCards({ personalizations, role }) {
+  const location = useLocation();
+  
+
   const actions =
     role === "parent" ? (
       <div className="actions">
@@ -11,16 +15,17 @@ export default function PersonalizationsCards({ personalizations, role }) {
       </div>
     ) : null;
 
-    
+    // wenn noch kein reading progress, dann anzeigen "start reading" sonst "continue reading"
+
   const PersonalizationsElements = personalizations.map((personalization) => (
     <div key={personalization.id} className="card">
       <Link
         to={
           role === "parent"
-            ? `personalizations/${personalization.id}`
-            : `reading_progress/${personalization.id}`
+            ? `${personalization.id}`
+            : `${location.pathname}/personalizations/${personalization.id}/reading`
         }
-        aria-label={`View details for Personalization for the Book:${personalization.id}`}
+        aria-label={`View details for Personalization for the Book:${personalization.book_id}`}
         className="personalization-card"
       >
         {

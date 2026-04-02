@@ -18,6 +18,7 @@ import ParentLayout from "../components/ParentLayout.jsx";
 import ParentDashboard from "../pages/Parent/ParentDashboard.jsx";
 import NewChild from "../pages/Parent/Children/NewChild.jsx";
 import Personalizations from "../pages/Parent/Personalizations/Personalizations.jsx";
+import Personalization from "../pages/Parent/Personalizations/Personalization.jsx";
 import NewPersonalization from "../pages/Parent/Personalizations/NewPersonalization.jsx";
 
 import ChildrenDashboard from "../pages/Parent/Children/ChildrenDashboard.jsx";
@@ -25,7 +26,6 @@ import Reading from "../pages/Parent/Children/Reading.jsx";
 
 import AuthRequired from "../components/AuthRequired.jsx";
 import NotFound from "../pages/Error/NotFound.jsx";
-
 
 function App() {
   return (
@@ -53,14 +53,25 @@ function App() {
             <Route path="parent" element={<ParentLayout />}>
               <Route index element={<ParentDashboard />} />
               <Route path="children/new" element={<NewChild />} />
-              <Route path="children/:id" element={<ChildrenDashboard />} />
 
-              <Route path="personalizations" element={<Personalizations />} />
-              <Route
-                path="personalizations/new"
-                element={<NewPersonalization />}
-              />
-              <Route path="personalizations/:id" element={<Reading />} />
+              {/* children with personalizations */}
+              <Route path="children/:childId">
+                <Route index element={<ChildrenDashboard />} />
+                <Route path="personalizations">
+                  <Route index element={<Personalizations />} />
+                  <Route
+                    path=":personalizationId/reading"
+                    element={<Reading />}
+                  />
+                </Route>
+              </Route>
+
+              {/* personalizations for parents */}
+              <Route path="personalizations">
+                <Route index element={<Personalizations />} />
+                <Route path="new" element={<NewPersonalization />} />
+                <Route path=":id" element={<Personalization />} />
+              </Route>
             </Route>
           </Route>
 
