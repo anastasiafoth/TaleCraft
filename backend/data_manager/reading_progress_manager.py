@@ -58,6 +58,14 @@ class ReadingProgressManager:
 
         book_id = personalization.book_id
 
+        # Checks if Reading Progress is existing already
+        existing = ReadingProgress.query.filter_by(
+            book_id=book_id,
+            child_id=child_id
+        ).first()
+        if existing:
+            raise ValueError(f"Reading progress for this book and child already exists (id={existing.id})")
+
         first_page = (Page.query
                       .join(Chapter, Page.chapter_id == Chapter.id)
                       .filter(Chapter.book_id==book_id).order_by(Page.order_index).first())

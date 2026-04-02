@@ -4,7 +4,10 @@ url: "{{dev_url}}/api/reading-progress"
 method: GET
 body:
   type: json
-  content: ""
+  content: |-
+    {
+        "child_id":4
+    }
 auth:
   type: bearer
   credentials:
