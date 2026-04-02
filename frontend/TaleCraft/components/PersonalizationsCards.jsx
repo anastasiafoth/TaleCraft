@@ -15,8 +15,12 @@ export default function PersonalizationsCards({ personalizations, role }) {
   const PersonalizationsElements = personalizations.map((personalization) => (
     <div key={personalization.id} className="card">
       <Link
-        to={`personalizations/${personalization.id}`}
-        aria-label={`View details for ${personalization.first_name}`}
+        to={
+          role === "parent"
+            ? `personalizations/${personalization.id}`
+            : `reading_progress/${personalization.id}`
+        }
+        aria-label={`View details for Personalization for the Book:${personalization.id}`}
         className="personalization-card"
       >
         {

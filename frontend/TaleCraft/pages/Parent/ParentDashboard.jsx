@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
-import { getChildren } from "../../src/api";
+import { getAllChildren } from "../../src/api";
 import ChildrenCards from "../../components/ChildrenCards";
 
 export default function ParentDashboard() {
@@ -10,7 +10,7 @@ export default function ParentDashboard() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getChildren(token)
+    getAllChildren(token)
       .then(setChildren)
       .catch(setError)
       .finally(() => setLoading(false));

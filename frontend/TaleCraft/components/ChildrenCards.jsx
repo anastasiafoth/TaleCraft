@@ -6,7 +6,11 @@ import { editChild, deleteChild } from "../src/api";
 export default function ChildrenCards({ children, setChildren }) {
   const { token } = useAuth();
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ first_name: "", birthdate: "" });
+  const [editForm, setEditForm] = useState({
+    first_name: "",
+    birthdate: "",
+    profile_img: "",
+  });
 
   function getAge(birthdate) {
     const today = new Date();
