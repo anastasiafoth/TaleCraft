@@ -382,7 +382,7 @@ def page_detail(page_id):
 
 
 """ __________________ Personalization ________________________"""
-@app.route('/api/personalization')
+@app.route('/api/personalizations')
 @flask_praetorian.auth_required
 @flask_praetorian.roles_required("Parent")
 def personalizations():
