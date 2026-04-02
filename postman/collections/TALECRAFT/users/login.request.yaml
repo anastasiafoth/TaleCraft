@@ -1,0 +1,50 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/login
+method: POST
+headers:
+  Authorization: Bearer
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA4OTMzNjAsImV4cCI6MTc3MDk3OTc2MCwianRpIjoiOGIxNzlmMjktMmJkZC00ODVmLTkwODUtNzc2MGZhODFkNGJkIiwiaWQiOjEsInJscyI6IkF1dGhvciIsInJmX2V4cCI6MTc3MzQ4NTM2MH0.u8eaeOUomgXYLmByCoA6uJdJexOsIU1tRZ4FT5ZkX3A
+queryParams:
+  - key: Authorization
+    value: Bearer
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA4OTMzNjAsImV4cCI6MTc3MDk3OTc2MCwianRpIjoiOGIxNzlmMjktMmJkZC00ODVmLTkwODUtNzc2MGZhODFkNGJkIiwiaWQiOjEsInJscyI6IkF1dGhvciIsInJmX2V4cCI6MTc3MzQ4NTM2MH0.u8eaeOUomgXYLmByCoA6uJdJexOsIU1tRZ4FT5ZkX3A
+    disabled: true
+body:
+  type: json
+  content: |-
+    {
+        "email" : "anastasia.knauer@web.de",
+        "password":"Password123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      // Basic response assertions + extract access token
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response is JSON", function () {
+          pm.response.to.be.json;
+      });
+
+      let jsonData = {};
+      try {
+          jsonData = pm.response.json();
+      } catch (e) {
+          pm.test("Response JSON parse", function () {
+              pm.expect.fail("Could not parse JSON response: " + e.message);
+          });
+      }
+
+      pm.test("access_token is present", function () {
+          pm.expect(jsonData).to.have.property("access_token");
+          pm.expect(jsonData.access_token).to.be.a("string");
+          pm.expect(jsonData.access_token.length).to.be.greaterThan(0);
+      });
+
+      if (jsonData && typeof jsonData.access_token === "string") {
+          pm.environment.set("access_token", jsonData.access_token);
+      }
+    language: text/javascript
+order: 3000

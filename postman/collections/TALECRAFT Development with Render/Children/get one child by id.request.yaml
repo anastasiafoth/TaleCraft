@@ -1,0 +1,9 @@
+$kind: http-request
+name: get one child by id
+url: "{{dev_url}}/api/children/6"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 2000

@@ -1,0 +1,16 @@
+$kind: http-request
+name: delete one child by id
+url: "{{dev_url}}/api/children/6"
+method: DELETE
+body:
+  type: json
+  content: |-
+    {
+        "first_name": "Pauline",
+        "profile_img": ""
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 5000

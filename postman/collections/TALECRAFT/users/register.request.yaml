@@ -1,0 +1,22 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/register
+method: POST
+headers:
+  Authorization: Bearer
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA4OTMzNjAsImV4cCI6MTc3MDk3OTc2MCwianRpIjoiOGIxNzlmMjktMmJkZC00ODVmLTkwODUtNzc2MGZhODFkNGJkIiwiaWQiOjEsInJscyI6IkF1dGhvciIsInJmX2V4cCI6MTc3MzQ4NTM2MH0.u8eaeOUomgXYLmByCoA6uJdJexOsIU1tRZ4FT5ZkX3A
+queryParams:
+  - key: Authorization
+    value: Bearer
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA4OTMzNjAsImV4cCI6MTc3MDk3OTc2MCwianRpIjoiOGIxNzlmMjktMmJkZC00ODVmLTkwODUtNzc2MGZhODFkNGJkIiwiaWQiOjEsInJscyI6IkF1dGhvciIsInJmX2V4cCI6MTc3MzQ4NTM2MH0.u8eaeOUomgXYLmByCoA6uJdJexOsIU1tRZ4FT5ZkX3A
+    disabled: true
+body:
+  type: json
+  content: |-
+    {
+        "first_name": "Merle",
+        "last_name": "Kranz",
+        "email" : "kranz@gmail.com",
+        "role":"Parent",
+        "password":"Password123"
+    }
+order: 2000

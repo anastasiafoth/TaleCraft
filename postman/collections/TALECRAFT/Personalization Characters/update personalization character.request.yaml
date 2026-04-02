@@ -1,0 +1,30 @@
+$kind: http-request
+name: update personalization character
+url: http://127.0.0.1:5000/api/characters/2
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "role": "blah",
+        "name": "Hase",
+        "gender": "female",
+        "main_color": "white",
+        "hair_color": "black",
+        "clothing": {
+             "hat": "baseball_cap",
+             "shirt": "striped_tshirt",
+             "pants": "jeans",
+             "shoes": "sneakers"
+            },
+        "glasses": true,
+        "extra_attributes": {
+             "hand_left": "cake_1",
+             "hand_right": "teacup_1"},
+        "customizable": true
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

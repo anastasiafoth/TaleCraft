@@ -1,0 +1,5 @@
+name: Globals
+values:
+  - key: dev_url
+    value: ''
+    enabled: true

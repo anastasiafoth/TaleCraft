@@ -1,0 +1,18 @@
+$kind: http-request
+name: register
+url: "{{dev_url}}/api/register"
+method: POST
+headers:
+  Authorization: Bearer
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA4OTMzNjAsImV4cCI6MTc3MDk3OTc2MCwianRpIjoiOGIxNzlmMjktMmJkZC00ODVmLTkwODUtNzc2MGZhODFkNGJkIiwiaWQiOjEsInJscyI6IkF1dGhvciIsInJmX2V4cCI6MTc3MzQ4NTM2MH0.u8eaeOUomgXYLmByCoA6uJdJexOsIU1tRZ4FT5ZkX3A
+body:
+  type: json
+  content: |-
+    {
+        "first_name": "Johanna",
+        "last_name": "Weiß",
+        "email" : "johanna@gmail.com",
+        "role":"Parent",
+        "password":"Password123"
+    }
+order: 2000

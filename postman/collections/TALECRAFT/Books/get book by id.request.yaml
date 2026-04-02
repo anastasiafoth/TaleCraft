@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/books/50
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "title":"New Book2",
+        "description":"Test Text",
+        "recommended_age":0
+    }
+auth:
+  type: noauth
+order: 1000

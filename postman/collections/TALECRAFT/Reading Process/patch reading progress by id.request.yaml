@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/reading-progress/7
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+         "current_page_id": 8,
+         "book_id": 3
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

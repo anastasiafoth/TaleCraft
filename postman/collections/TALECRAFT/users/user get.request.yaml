@@ -1,0 +1,11 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/user
+method: GET
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

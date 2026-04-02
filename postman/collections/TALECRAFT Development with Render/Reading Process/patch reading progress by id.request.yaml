@@ -1,0 +1,16 @@
+$kind: http-request
+name: patch reading progress by id
+url: "{{dev_url}}/api/reading-progress/7"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+         "current_page_id": 13,
+         "book_id": 3
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

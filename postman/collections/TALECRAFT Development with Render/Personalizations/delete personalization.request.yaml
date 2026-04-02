@@ -1,0 +1,12 @@
+$kind: http-request
+name: delete personalization
+url: "{{dev_url}}/api/personalization/4"
+method: DELETE
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

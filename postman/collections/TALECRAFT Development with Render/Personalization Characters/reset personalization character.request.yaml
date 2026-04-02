@@ -1,0 +1,12 @@
+$kind: http-request
+name: reset personalization character
+url: "{{dev_url}}/api/characters/3/reset"
+method: POST
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

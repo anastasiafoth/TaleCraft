@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/chapters/17
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "title":"Hase geht spazieren",
+        "order_index": 5
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

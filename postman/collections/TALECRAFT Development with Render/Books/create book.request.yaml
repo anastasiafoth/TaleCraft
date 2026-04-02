@@ -1,0 +1,17 @@
+$kind: http-request
+name: create book
+url: "{{dev_url}}/api/books"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "title":"Herr Igel nur Mut es wird alles gut",
+        "description":"Test Text",
+        "recommended_age":0
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

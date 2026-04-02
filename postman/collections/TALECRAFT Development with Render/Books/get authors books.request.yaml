@@ -1,0 +1,17 @@
+$kind: http-request
+name: get authors books
+url: "{{dev_url}}/api/my-books"
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "title":"Herr Igel nur Mut es wird alles gut",
+        "description":"Test Text",
+        "recommended_age":0
+    }
+auth:
+  credentials:
+    token: "{{access_token}}"
+  type: bearer
+order: 3988

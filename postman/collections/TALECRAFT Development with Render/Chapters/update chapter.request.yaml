@@ -1,0 +1,15 @@
+$kind: http-request
+name: update chapter
+url: "{{dev_url}}/api/chapters/3"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "title":"ttrstin update title"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

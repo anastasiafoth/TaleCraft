@@ -1,0 +1,16 @@
+$kind: http-request
+name: create reading progress
+url: "{{dev_url}}/api/reading-progress"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "child_id" : 2,
+        "book_id" : 3
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

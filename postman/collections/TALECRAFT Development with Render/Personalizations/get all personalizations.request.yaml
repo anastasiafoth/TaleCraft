@@ -1,0 +1,9 @@
+$kind: http-request
+name: get all personalizations
+url: "{{dev_url}}/api/personalization"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 2000

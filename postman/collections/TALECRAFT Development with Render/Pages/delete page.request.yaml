@@ -1,0 +1,17 @@
+$kind: http-request
+name: delete page
+url: "{{dev_url}}/api/pages/3"
+method: DELETE
+body:
+  type: json
+  content: |-
+    {
+        "is_cover": false,
+        "layout_data": {},
+        "order_index":10
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 5000

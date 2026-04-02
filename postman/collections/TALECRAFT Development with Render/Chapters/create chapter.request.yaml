@@ -1,0 +1,15 @@
+$kind: http-request
+name: create chapter
+url: "{{dev_url}}/api/books/4/chapters"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "title":"testi tesii vtesii"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

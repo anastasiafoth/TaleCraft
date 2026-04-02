@@ -1,0 +1,15 @@
+$kind: http-request
+name: user patch
+url: "{{dev_url}}/api/user"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {   
+        "last_name": "Weiss"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

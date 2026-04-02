@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/books/5/character-templates
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "role": "main",
+        "default_name": "cat",
+        "default_gender": "female",
+        "default_main_color": "white"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 2000

@@ -1,0 +1,18 @@
+$kind: http-request
+name: get chara template by id
+url: "{{dev_url}}/api/character-templates/17"
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "role": "pet",
+        "default_name": "mouse",
+        "default_gender": "female",
+        "default_main_color": "white"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

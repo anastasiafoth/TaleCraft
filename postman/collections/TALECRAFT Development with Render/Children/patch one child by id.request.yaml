@@ -1,0 +1,16 @@
+$kind: http-request
+name: patch one child by id
+url: "{{dev_url}}/api/children/6"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "first_name": "Lisa",
+        "profile_img": ""
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

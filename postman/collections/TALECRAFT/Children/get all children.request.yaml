@@ -1,0 +1,23 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/children
+method: GET
+headers:
+  Authorization: Bearer {{access_token}}
+queryParams:
+  - key: Authorization
+    value: Bearer
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NzA4OTMzNjAsImV4cCI6MTc3MDk3OTc2MCwianRpIjoiOGIxNzlmMjktMmJkZC00ODVmLTkwODUtNzc2MGZhODFkNGJkIiwiaWQiOjEsInJscyI6IkF1dGhvciIsInJmX2V4cCI6MTc3MzQ4NTM2MH0.u8eaeOUomgXYLmByCoA6uJdJexOsIU1tRZ4FT5ZkX3A
+    disabled: true
+body:
+  type: json
+  content: |-
+    {
+        "first_name": "Paul",
+        "birthdate": "2024-01-09",
+        "profile_img": ""
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

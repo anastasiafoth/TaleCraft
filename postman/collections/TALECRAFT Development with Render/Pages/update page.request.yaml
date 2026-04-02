@@ -1,0 +1,15 @@
+$kind: http-request
+name: update page
+url: "{{dev_url}}/api/pages/6"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "is_cover": false
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

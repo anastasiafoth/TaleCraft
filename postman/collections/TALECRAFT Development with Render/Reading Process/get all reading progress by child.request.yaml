@@ -1,0 +1,12 @@
+$kind: http-request
+name: get all reading progress by child
+url: "{{dev_url}}/api/reading-progress"
+method: GET
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

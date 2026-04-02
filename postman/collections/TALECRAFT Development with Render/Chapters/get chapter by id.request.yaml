@@ -1,0 +1,15 @@
+$kind: http-request
+name: get chapter by id
+url: "{{dev_url}}/api/chapters/10"
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "title":"test2"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 2000

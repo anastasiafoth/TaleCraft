@@ -1,0 +1,30 @@
+$kind: http-request
+name: create chara template
+url: "{{dev_url}}/api/books/5/character-templates"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "role": "main",
+        "default_name": "Bär",
+        "default_gender": "div",
+        "default_main_color": "black",
+        "default_hair_color": "black",
+        "default_clothing": {
+             "hat": "baseball_cap",
+             "shirt": "striped_tshirt",
+             "pants": "jeans",
+             "shoes": "sneakers"
+            },
+        "default_glasses": true,
+        "extra_attributes": {
+             "hand_left": "cake_1",
+             "hand_right": "teacup_1"},
+        "customizable": false
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 2000

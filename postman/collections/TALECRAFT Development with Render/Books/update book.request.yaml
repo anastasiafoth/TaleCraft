@@ -1,0 +1,15 @@
+$kind: http-request
+name: update book
+url: "{{dev_url}}/api/books/4"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "is_published": true
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

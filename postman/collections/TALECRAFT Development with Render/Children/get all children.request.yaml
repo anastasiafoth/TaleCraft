@@ -1,0 +1,19 @@
+$kind: http-request
+name: get all children
+url: "{{dev_url}}/api/children"
+method: GET
+headers:
+  Authorization: Bearer {{access_token}}
+body:
+  type: json
+  content: |-
+    {
+        "first_name": "Paul",
+        "birthdate": "2024-01-09",
+        "profile_img": ""
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

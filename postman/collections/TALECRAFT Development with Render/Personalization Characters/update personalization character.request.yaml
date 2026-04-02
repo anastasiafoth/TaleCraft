@@ -1,0 +1,20 @@
+$kind: http-request
+name: update personalization character
+url: "{{dev_url}}/api/characters/3"
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "role": "main",
+        "name": "Alice",
+        "gender": "female",
+        "main_color": "black",
+        "glasses": true,
+        "hair_color": "brown"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

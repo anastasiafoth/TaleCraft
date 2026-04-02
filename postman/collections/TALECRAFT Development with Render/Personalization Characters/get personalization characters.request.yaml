@@ -1,0 +1,18 @@
+$kind: http-request
+name: get personalization characters
+url: "{{dev_url}}/api/personalizations/4/characters"
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "role": "pet",
+        "default_name": "mouse",
+        "default_gender": "female",
+        "default_main_color": "white"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

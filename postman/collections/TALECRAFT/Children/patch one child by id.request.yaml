@@ -1,0 +1,15 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/children/7
+method: PATCH
+body:
+  type: json
+  content: |-
+    {
+        "first_name": "Hans",
+        "birthdate": "2020-01-09"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

@@ -1,0 +1,9 @@
+$kind: http-request
+name: create personalization
+url: "{{dev_url}}/api/books/5/personalization"
+method: POST
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/books/6/chapters
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "title":"test2"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

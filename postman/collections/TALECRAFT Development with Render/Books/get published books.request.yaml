@@ -1,0 +1,15 @@
+$kind: http-request
+name: get published books
+url: "{{dev_url}}/api/books"
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "title":"New Book2",
+        "description":"Test Text",
+        "recommended_age":0
+    }
+auth:
+  type: noauth
+order: 2000

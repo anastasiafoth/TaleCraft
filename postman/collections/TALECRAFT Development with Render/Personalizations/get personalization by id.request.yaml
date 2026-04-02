@@ -1,0 +1,9 @@
+$kind: http-request
+name: get personalization by id
+url: "{{dev_url}}/api/personalization/3"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

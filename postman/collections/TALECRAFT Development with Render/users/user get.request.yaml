@@ -1,0 +1,12 @@
+$kind: http-request
+name: user get
+url: "{{dev_url}}/api/user"
+method: GET
+body:
+  type: json
+  content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

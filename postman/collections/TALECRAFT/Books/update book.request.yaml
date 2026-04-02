@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/books/10
+method: PATCH
+body:
+  type: json
+  content: >-
+    {
+        "description" : "Der Hase findet einen Freund, wer ist das wohl diesmal?"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 4000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/books/3/character-templates
+method: GET
+body:
+  type: json
+  content: |-
+    {
+        "role": "pet",
+        "default_name": "mouse",
+        "default_gender": "female",
+        "default_main_color": "white"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 1000

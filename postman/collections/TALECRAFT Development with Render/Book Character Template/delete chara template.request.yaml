@@ -1,0 +1,15 @@
+$kind: http-request
+name: delete chara template
+url: "{{dev_url}}/api/character-templates/17"
+method: DELETE
+body:
+  type: json
+  content: |-
+    {
+        "role": "pet"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 5000

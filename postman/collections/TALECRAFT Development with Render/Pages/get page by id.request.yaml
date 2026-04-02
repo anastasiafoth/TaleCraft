@@ -1,0 +1,9 @@
+$kind: http-request
+name: get page by id
+url: "{{dev_url}}/api/pages/6"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000

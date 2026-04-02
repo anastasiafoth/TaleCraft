@@ -1,0 +1,16 @@
+$kind: http-request
+url: http://127.0.0.1:5000/api/books
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "title":"Ein Herz für Hasen 3",
+        hdfh,
+        "recommended_age":0
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{access_token}}"
+order: 3000
