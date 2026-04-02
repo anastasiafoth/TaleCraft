@@ -550,17 +550,21 @@ def reading_progress():
 
         return jsonify(progress), 200
 
+
     elif request.method == 'POST':
         data = request.get_json()
-
         if not data:
             return jsonify({"error": "Missing JSON body"}), 400
 
-        progress = reading_progress_manager.create_reading_progress(
-            data, parent_id=user.id
-        )
+        try:
+            progress = reading_progress_manager.create_reading_progress(
+                data, parent_id=user.id
+            )
 
-        return jsonify(progress), 201
+            return jsonify(progress), 200  # 200 für beide Fälle, Frontend muss nicht unterscheiden
+
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
 
     return jsonify({"error": "Method not allowed"}), 405
 

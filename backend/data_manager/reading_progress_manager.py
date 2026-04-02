@@ -60,7 +60,13 @@ class ReadingProgressManager:
             child_id=child_id
         ).first()
         if existing:
-            raise ValueError(f"Reading progress for this book and child already exists (id={existing.id})")
+            return {
+                "id": existing.id,
+                "book_id": existing.book_id,
+                "child_id": existing.child_id,
+                "current_page_id": existing.current_page_id,
+                "personalization_id": existing.personalization_id
+            }
 
         first_page = (Page.query
                       .join(Chapter, Page.chapter_id == Chapter.id)
