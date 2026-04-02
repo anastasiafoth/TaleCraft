@@ -536,26 +536,30 @@ def personalization_character_reset(character_id):
 @flask_praetorian.roles_required("Parent")
 def reading_progress():
     user = flask_praetorian.current_user()
-    # silent=True suppresses 415 if Content-Type is not application/json
-    data = request.get_json(silent=True)
-
-    # None means missing body, invalid JSON, or wrong Content-Type
-    if data is None:
-        return jsonify({"error": "Invalid or missing JSON body."}), 400
 
     if request.method == 'GET':
-        progress = reading_progress_manager.get_all_reading_progress(
-            data, parent_id=user.id
-        )
-        if not progress:
-            return jsonify({"error": "Reading progress not found"}), 404
+        # Query Param instead of JSON Body, since GET is forbidding bodies
+        child_id = request.args.get("child_id", type=int)
 
-        return jsonify(progress)
+        if not child_id:
+            return jsonify({"error": "Missing child_id"}), 400
+
+        progress = reading_progress_manager.get_all_reading_progress(
+            child_id, parent_id=user.id
+        )
+
+        return jsonify(progress), 200
 
     elif request.method == 'POST':
-        data = request.json
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Missing JSON body"}), 400
+
         progress = reading_progress_manager.create_reading_progress(
-            data, parent_id=user.id)
+            data, parent_id=user.id
+        )
+
         return jsonify(progress), 201
 
     return jsonify({"error": "Method not allowed"}), 405

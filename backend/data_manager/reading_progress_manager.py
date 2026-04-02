@@ -3,9 +3,7 @@ from models import db, Child, Book, Chapter, Page, ReadingProgress, Personalizat
 class ReadingProgressManager:
 
     @staticmethod
-    def get_all_reading_progress(data, parent_id):
-        child_id = data.get("child_id")
-
+    def get_all_reading_progress(child_id, parent_id):
         if not child_id:
             raise ValueError("Missing child_id.")
 
@@ -17,20 +15,18 @@ class ReadingProgressManager:
         ).all()
 
         if not progresses:
-            raise ValueError("Reading progress not found or not authorized")
+            return []
 
-        result = []
-
-        for progress in progresses:
-            result.append({
-            "id": progress.id,
-            "book_id": progress.book_id,
-            "child_id": progress.child_id,
-            "current_page_id": progress.current_page_id,
-            "personalization_id" : progress.personalization_id
-        })
-
-        return result
+        return [
+            {
+                "id": progress.id,
+                "book_id": progress.book_id,
+                "child_id": progress.child_id,
+                "current_page_id": progress.current_page_id,
+                "personalization_id": progress.personalization_id
+            }
+            for progress in progresses
+        ]
 
     @staticmethod
     def create_reading_progress(data, parent_id):
