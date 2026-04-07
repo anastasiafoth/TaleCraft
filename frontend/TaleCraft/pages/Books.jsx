@@ -1,30 +1,21 @@
 import BooksCards from "../components/BooksCards";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getPublishedBooks } from "../src/api";
 
 export default function Books() {
-  const books = [
-    {
-      id: 1,
-      title: "Title",
-      discription: "Text test",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHpPhN599nGIV0VLhsAtqHIxY7Z12eSLCwPQ&s",
-    },
-    {
-      id: 2,
-      title: "Title2",
-      discription: "2Text test",
-      cover_url:
-        "https://marcuwekling.reimkultur-shop.de/cdn/shop/files/NEINhorn_Geburtstag_Cover.jpg?v=1728393210",
-    },
-    {
-      id: 3,
-      title: "Title3",
-      discription: "3Text test",
-      cover_url:
-        "https://knopf-im-bauch.com/wp-content/uploads/2019/10/Alle_m%C3%BCssen_mal_aufs_klo_Bild-250x300.jpg",
-    },
-  ];
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getPublishedBooks()
+      .then(setBooks)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <span className="loading loading-dots loading-md" />;
+  if (error) return <p className="text-error">{error.message}</p>;
 
   return (
     <section>

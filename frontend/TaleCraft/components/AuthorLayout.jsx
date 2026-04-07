@@ -1,19 +1,20 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { useAuth } from "../src/AuthContext";
+import SidebarLayout from "../components/SidebarLayout";
+
+const links = [
+  { to: ".", end: true, label: "All Books" },
+  { to: "books/new", label: "Add new books" },
+];
 
 export default function AuthorLayout() {
+  const { user } = useAuth();
+
   return (
     <>
       <main>
-        <h1>Welcome! Authors Name</h1>
-        <nav>
-          <div className="nav-links">
-            <NavLink to="." end>
-              All Books
-            </NavLink>
-            <NavLink to="new">Add new Book</NavLink>
-          </div>
-        </nav>
-        <Outlet />
+        
+        <SidebarLayout links={links} username={user.first_name} />
       </main>
     </>
   );

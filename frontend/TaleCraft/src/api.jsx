@@ -205,7 +205,7 @@ export async function addNewChild(token, creds) {
 
 // __________________ Books __________________________
 
-export async function getAllBooks() {
+export async function getPublishedBooks() {
   const res = await fetch(`${DEV_URL}/api/books`);
   const data = await res.json();
   if (!res.ok)
