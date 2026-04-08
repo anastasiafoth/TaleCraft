@@ -1,9 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { deleteBook, updateBook } from "../src/api";
-import { useState, useEffect } from "react";
+import { useAuth } from "../src/AuthContext";
 
-export default function BooksCards({ books, role = null, setBooks, token }) {
-  const [published, setPublished] = useState(false);
+export default function BooksCards({ books, role = null, setBooks }) {
+  const { token } = useAuth();
+  async function handlePublish(book, token) {
+    try {
+      const patch = { is_published: !book.is_published };
+      await updateBook(book.id, patch, token);
+
+      setBooks((prev) =>
+        prev.map((b) => (b.id === book.id ? { ...b, ...patch } : b)),
+      );
+    } catch (err) {
+      console.error("Failed to publish:", err);
+    }
+  }
+
   async function handleDelete(book, token) {
     try {
       await deleteBook(book.id, token);
@@ -41,16 +54,35 @@ export default function BooksCards({ books, role = null, setBooks, token }) {
               </h2>
             </Link>
             <p className="text-sm text-base-content/60 line-clamp-3">
-              {book.discription}
+              {book.description}
             </p>
             <p className="text-sm text-base-content/60">
               Recommended Age: {book.recommended_age}
             </p>
             {role === "Author" && (
               <div className="card-actions justify-end mt-3 gap-2">
-                <button>{book.is_published ? "Unpublish" : "Publish"}</button>
-                <button>Edit</button>
-                <button onClick={() => handleDelete(book, token)}>
+                <button
+                  onClick={() => handlePublish(book, token)}
+                  className={
+                    book.is_published === false
+                      ? "btn btn-sm btn-primary"
+                      : "btn btn-sm btn-ghost"
+                  }
+                >
+                  {book.is_published ? "Unpublish" : "Publish"}
+                </button>
+                <NavLink
+                  to={`books/${book.id}/edit`}
+                  aria-label={`Edit ${book.title}`}
+                  state={{ book }}
+                  className="btn btn-sm btn-secondary"
+                >
+                  Edit
+                </NavLink>
+                <button
+                  onClick={() => handleDelete(book, token)}
+                  className="btn btn-sm btn-warning"
+                >
                   Delete
                 </button>
               </div>

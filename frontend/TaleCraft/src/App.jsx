@@ -12,7 +12,11 @@ import BookDetail from "../pages/BookDetail.jsx";
 import Layout from "../components/Layout.jsx";
 import AuthorLayout from "../components/AuthorLayout.jsx";
 import AuthorDashboard from "../pages/Author/AuthorDashboard.jsx";
-import NewBook from "../pages/Author/NewBook.jsx";
+
+import BookEdit from "../pages/Author/BookEdit.jsx";
+import ChapterEdit from "../components/ChapterEdit";
+import PageEdit from "../components/PageEdit";
+import CharacterTemplateEdit from "../components/CharacterTemplateEdit";
 
 import ParentLayout from "../components/ParentLayout.jsx";
 import ParentDashboard from "../pages/Parent/ParentDashboard.jsx";
@@ -44,8 +48,18 @@ function App() {
           <Route element={<AuthRequired allowedRoles={["Author"]} />}>
             <Route path="author" element={<AuthorLayout />}>
               <Route index element={<AuthorDashboard />} />
-              <Route path="books/new" element={<NewBook />} />
-              <Route path="books/:id" element={<BookDetail />} />
+              <Route path="books/new" element={<BookEdit />} />
+
+              <Route path="books/:id">
+                <Route index element={<BookDetail />} />
+                <Route path="edit" element={<BookEdit />} />
+                <Route path="chapters/new" element={<ChapterEdit />} />
+                <Route path="pages/new" element={<PageEdit />} />
+                <Route
+                  path="character_templates/new"
+                  element={<CharacterTemplateEdit />}
+                />
+              </Route>
             </Route>
           </Route>
 

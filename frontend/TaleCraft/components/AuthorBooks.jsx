@@ -26,7 +26,6 @@ export default function AuthorBooks() {
         books={books}
         role="Author"
         setBooks={setBooks}
-        token={token}
       />
     </section>
   );

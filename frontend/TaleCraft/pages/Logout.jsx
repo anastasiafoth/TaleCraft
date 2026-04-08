@@ -4,7 +4,9 @@ import { useAuth } from "../src/AuthContext";
 export default function Logout() {
   const { logout } = useAuth();
 
-  logout();
+  useEffect(() => {
+    logout();
+  }, []);
 
   return (
     <div className="logout">
