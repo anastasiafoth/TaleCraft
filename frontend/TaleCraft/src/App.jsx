@@ -14,6 +14,7 @@ import AuthorLayout from "../components/AuthorLayout.jsx";
 import AuthorDashboard from "../pages/Author/AuthorDashboard.jsx";
 
 import BookEdit from "../pages/Author/BookEdit.jsx";
+import BookEditLayout from "../components/BookEditLayout";
 import ChapterEdit from "../components/ChapterEdit";
 import PageEdit from "../components/PageEdit";
 import CharacterTemplateEdit from "../components/CharacterTemplateEdit";
@@ -48,10 +49,11 @@ function App() {
           <Route element={<AuthRequired allowedRoles={["Author"]} />}>
             <Route path="author" element={<AuthorLayout />}>
               <Route index element={<AuthorDashboard />} />
-              <Route path="books/new" element={<BookEdit />} />
-
-              <Route path="books/:id">
-                <Route index element={<BookDetail />} />
+              <Route element={<BookEditLayout />}>
+                <Route path="books/new" element={<BookEdit />} />
+              </Route>
+              <Route path="books/:id" element={<BookDetail />} />
+              <Route path="books/:id" element={<BookEditLayout />}>
                 <Route path="edit" element={<BookEdit />} />
                 <Route path="chapters/new" element={<ChapterEdit />} />
                 <Route path="pages/new" element={<PageEdit />} />

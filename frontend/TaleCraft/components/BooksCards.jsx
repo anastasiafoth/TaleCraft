@@ -74,7 +74,6 @@ export default function BooksCards({ books, role = null, setBooks }) {
                 <NavLink
                   to={`books/${book.id}/edit`}
                   aria-label={`Edit ${book.title}`}
-                  state={{ book }}
                   className="btn btn-sm btn-secondary"
                 >
                   Edit
