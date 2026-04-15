@@ -1,12 +1,11 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../src/AuthContext";
+import { useEffect } from "react";
 
 export default function Logout() {
   const { logout } = useAuth();
 
-  useEffect(() => {
-    logout();
-  }, []);
+  logout();
 
   return (
     <div className="logout">

@@ -9,9 +9,9 @@ export default function SidebarLayout({ links, username }) {
     <div className="min-h-screen flex">
       {/* Sidebar - desktop */}
       <aside className="hidden lg:flex flex-col w-64 bg-base-100 border-r border-base-200 p-6 gap-8">
-        <h1 className="text-xl font-bold">
+        {username && <h1 className="text-xl font-bold">
           Welcome, <span className="text-primary capitalize">{username}!</span>
-        </h1>
+        </h1>}
         <NavLinks links={links} />
       </aside>
 

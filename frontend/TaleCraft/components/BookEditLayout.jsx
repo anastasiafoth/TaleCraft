@@ -22,9 +22,15 @@ export default function BookEditLayout() {
           <NavLink
             to={id ? `/author/books/${id}/chapters/new` : "#"}
             aria-disabled={!id}
-            className={({ isActive }) => (isActive ? activeStyle : null)}
+            onClick={(e) => {
+              if (!id) e.preventDefault();
+            }}
+            className={({ isActive }) =>
+              `${isActive && id ? activeStyle : ""} 
+            ${!id ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`
+            }
           >
-            <h2 className="hover:text-primary transition-colors">Chapters</h2>
+            <h2 className="transition-colors">Chapters</h2>
           </NavLink>
         </li>
         <li>

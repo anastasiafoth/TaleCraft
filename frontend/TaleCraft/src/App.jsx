@@ -15,7 +15,7 @@ import AuthorDashboard from "../pages/Author/AuthorDashboard.jsx";
 
 import BookEdit from "../pages/Author/BookEdit.jsx";
 import BookEditLayout from "../components/BookEditLayout";
-import ChapterEdit from "../components/ChapterEdit";
+import ChapterEdit from "../pages/Author/ChapterEdit.jsx";
 import PageEdit from "../components/PageEdit";
 import CharacterTemplateEdit from "../components/CharacterTemplateEdit";
 
@@ -56,9 +56,15 @@ function App() {
               <Route path="books/:id" element={<BookEditLayout />}>
                 <Route path="edit" element={<BookEdit />} />
                 <Route path="chapters/new" element={<ChapterEdit />} />
+                <Route path="chapters/:chapterId" element={<ChapterEdit />} />
                 <Route path="pages/new" element={<PageEdit />} />
+                <Route path="pages/:pageId" element={<PageEdit />} />
                 <Route
                   path="character_templates/new"
+                  element={<CharacterTemplateEdit />}
+                />
+                <Route
+                  path="character_templates/:templateId"
                   element={<CharacterTemplateEdit />}
                 />
               </Route>
