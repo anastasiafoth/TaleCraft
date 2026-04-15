@@ -24,7 +24,13 @@ guard = flask_praetorian.Praetorian()
 guard.init_app(app, User)
 
 cors = flask_cors.CORS()
-
+flask_cors.CORS(
+    app,
+    resources={r"/api/*": {"origins": "http://localhost:5173"}},
+    allow_headers=["Content-Type", "Authorization"],
+    expose_headers=["Authorization"],
+    methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = NEON_KEY
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
