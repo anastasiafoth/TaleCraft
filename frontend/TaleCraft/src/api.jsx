@@ -218,11 +218,13 @@ export async function getPublishedBooks() {
 }
 
 export async function getMyBooks(token) {
+  
   const res = await fetch(`${DEV_URL}/api/my-books`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+  
   const data = await res.json();
   if (!res.ok)
     throw {
@@ -308,6 +310,7 @@ export async function deleteBook(id, token) {
 
 export async function getChaptersByBook(bookId) {
   const res = await fetch(`${DEV_URL}/api/books/${bookId}/chapters`);
+  console.log(bookId);
   const data = await res.json();
   if (!res.ok)
     throw {

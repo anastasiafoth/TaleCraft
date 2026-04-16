@@ -6,7 +6,13 @@
 :root {
   --color-primary: hsl(120, 20%, 51%);
   --color-primary-hover: #5d8a5d;
-  --color-secondary: #6FA9B3;
+  --color-secondary: #6fa9b3;
   --color-danger: #ef4444;
   --color-text-on-primary: #ffffff;
+}
+
+.parallax {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
 }
