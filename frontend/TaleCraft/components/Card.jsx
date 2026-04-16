@@ -8,7 +8,7 @@ export default function Card({
   // Empty/placeholder card
   if (!obj) {
     return (
-      <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-64">
+      <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-76">
         <figure className="w-full h-48 bg-base-200 flex items-center justify-center">
           <span className="text-6xl text-base-content/40">+</span>
         </figure>
@@ -19,7 +19,7 @@ export default function Card({
   }
 
   return (
-    <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-64">
+    <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-76">
       {img && (
         <figure>
           <img

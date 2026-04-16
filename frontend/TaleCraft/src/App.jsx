@@ -19,7 +19,8 @@ import ChapterCards from "../components/ChapterCards.jsx";
 import ChapterEdit from "../pages/Author/ChapterEdit.jsx";
 import PageCards from "../components/PageCards.jsx";
 import PageEdit from "../pages/Author/PageEdit";
-import CharacterTemplateEdit from "../components/CharacterTemplateEdit";
+import CharacterTemplateEdit from "../pages/Author/CharacterTemplateEdit";
+import CharactersCards from "../components/CharactersCards.jsx";
 
 import ParentLayout from "../components/ParentLayout.jsx";
 import ParentDashboard from "../pages/Parent/ParentDashboard.jsx";
@@ -68,14 +69,12 @@ function App() {
                 </Route>
               </Route>
 
-              <Route
-                path="character_templates/new"
-                element={<CharacterTemplateEdit />}
-              />
-              <Route
-                path="character_templates/:templateId"
-                element={<CharacterTemplateEdit />}
-              />
+              <Route path="character_templates">
+                <Route index element={<CharactersCards />} />
+                <Route path="new" element={<CharacterTemplateEdit />} />
+                <Route path=":templateId" element={<CharacterTemplateEdit />} />
+              </Route>
+              
             </Route>
           </Route>
         </Route>

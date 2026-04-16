@@ -45,3 +45,15 @@ export default function PersonalizationsCards({ personalizations, role }) {
     </div>
   );
 }
+
+// <CharacterCards
+//  characters={characters}
+//   setCharacters={setCharacters}
+//   mode="personalization"
+//   onSave={(char) =>
+//     updatePersonalizationCharacter(char.id, char, token)
+//   }
+//   onReset={(char) =>
+//     resetPersonalizationCharacter(char.id, token)
+//   }
+// />
