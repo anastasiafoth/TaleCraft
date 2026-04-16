@@ -53,8 +53,12 @@ export default function ChapterCards() {
           actions={
             user.role === "Author"
               ? {
-                  Edit: {
+                  "Edit Chapter": {
                     fn: (obj) => navigate(`${obj.id}/edit`),
+                    className: "btn-secondary",
+                  },
+                  "Edit Pages": {
+                    fn: (obj) => navigate(`${obj.id}/pages`),
                     className: "btn-secondary",
                   },
                   Delete: {

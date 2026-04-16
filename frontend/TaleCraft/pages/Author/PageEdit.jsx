@@ -1,29 +1,37 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
-import { getChapterById, addChapter, updateChapter } from "../../src/api";
+import {
+  getPagesByChapter,
+  getPageById,
+  addPage,
+  updatePage,
+  deletePage,
+} from "../../src/api";
 
-export default function ChapterEdit() {
+export default function PageEdit() {
   const { token } = useAuth();
   const [success, setSuccess] = useState(false);
   const [status, setStatus] = useState("idle");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [chapter, setChapter] = useState(null);
+  const [page, setPage] = useState(null);
+  const [layoutForm, setLayoutForm] = useState({});
   const navigate = useNavigate();
 
-  const { id, chapterId } = useParams();
+  const { id, chapterId, pageId } = useParams();
 
   useEffect(() => {
-    if (!chapterId) return;
+    if (!pageId) return;
 
-    async function fetchChapter() {
+    async function fetchPage() {
       try {
         setLoading(true);
-        const fetchedChapter = await getChapterById(chapterId);
-        setChapter(fetchedChapter);
+        const fetchedPage = await getPageById(pageId);
+        setPage(fetchedPage);
         setEditForm({
-          title: fetchedChapter?.title ?? "",
+          layout_data: fetchedPage?.layout_data ?? "",
+          is_cover: fetchedPage?.is_cover ?? false,
         });
       } catch (err) {
         setError(err.message);
@@ -31,11 +39,12 @@ export default function ChapterEdit() {
         setLoading(false);
       }
     }
-    fetchChapter();
-  }, [chapterId, token]);
+    fetchPage();
+  }, [pageId, token]);
 
   const [editForm, setEditForm] = useState({
-    title: "",
+    layout_data: "",
+    cover_page: false,
   });
 
   const handleSubmit = async (e) => {
@@ -44,18 +53,21 @@ export default function ChapterEdit() {
     setError(null);
     setStatus("submitting");
     try {
-      if (chapter) {
-        // chapter patched
+      if (page) {
+        // page patched
         const patch = {};
-        if (editForm.title !== chapter.title) patch.title = editForm.title;
+        if (editForm.layout_data !== page.layout_data)
+          patch.layout_data = editForm.layout_data;
+        if (editForm.is_cover !== page.is_cover)
+          patch.is_cover = editForm.is_cover;
 
-        await updateChapter(chapter.id, patch, token);
+        await updatePage(page.id, patch, token);
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
-        navigate(`/author/books/${id}/chapters`);
+        navigate(`/author/books/${id}/chapters/${chapterId}/pages`);
       } else {
-        // create new chapter
-        const newChapter = await addChapter(id, editForm, token);
+        // create new page
+        const newPage = await addPage(chapterId, editForm, token);
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
       }
@@ -67,10 +79,10 @@ export default function ChapterEdit() {
   };
 
   function handleChange(e) {
-    const { name, value } = e.target;
+    const { name, value, checked, type } = e.target;
     setEditForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   }
 
@@ -83,7 +95,7 @@ export default function ChapterEdit() {
       )}
       {loading && (
         <div className="flex flex-col items-center gap-4 text-center">
-          <h2 className="text-xl">Loading chapter info...</h2>
+          <h2 className="text-xl">Loading page info...</h2>
         </div>
       )}
       <Link
@@ -93,15 +105,25 @@ export default function ChapterEdit() {
         {" "}
         Go back to all Chapters
       </Link>
-      <form className="card-body p-4 gap-2" onSubmit={handleSubmit}>
-        <h1>Title:</h1>
+      <form
+        className="card-body p-4 gap-2 flex flex-col items-start"
+        onSubmit={handleSubmit}
+      >
+        <h1>Page </h1>
         <input
           type="text"
-          value={editForm.title || ""}
+          value={editForm.layout_data || ""}
           onChange={handleChange}
           className="input input-bordered input-sm w-full"
-          placeholder="Title"
-          name="title"
+          placeholder="Layout data"
+          name="layout_data"
+        />
+        <h1>Cover Page</h1>
+        <input
+          type="checkbox"
+          checked={editForm.is_cover || false}
+          onChange={handleChange}
+          name="is_cover"
         />
 
         <button disabled={status === "submitting"} className="btn btn-primary">

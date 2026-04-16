@@ -36,22 +36,6 @@ export default function BookEditLayout() {
         </li>
         <li>
           <NavLink
-            to={id ? `/author/books/${id}/pages` : "#"}
-            aria-disabled={!id}
-            aria-label={`show pages for the book with id:${id}`}
-            onClick={(e) => {
-              if (!id) e.preventDefault();
-            }}
-            className={({ isActive }) =>
-              `${isActive && id ? activeStyle : ""} 
-            ${!id ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`
-            }
-          >
-            <h2 className="hover:text-primary transition-colors">Pages</h2>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
             to={id ? `/author/books/${id}/character_templates` : "#"}
             aria-disabled={!id}
             aria-label={`show character templates for the book with id:${id}`}

@@ -15,7 +15,7 @@ export default function PageCards() {
   const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { chapterId } = useParams();
+  const { id, chapterId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function PageCards() {
           title={
             <Link to={`/pages/${page.id}`}>
               <h2 className="card-title text-lg font-bold hover:text-primary line-clamp-2">
-                {`${i + 1}. ${page.title}`}
+                {`Page ${i + 1}`}
               </h2>
             </Link>
           }
@@ -71,7 +71,7 @@ export default function PageCards() {
       ))
     ) : (
       <>
-        <h1 className="text-lg font-bold">No Pagess found.</h1>
+        <h1 className="text-lg font-bold">No Pages found.</h1>
         <Card
           title={
             <Link to="new" aria-label="Add new page">
@@ -86,15 +86,13 @@ export default function PageCards() {
 
   return (
     <section className="flex flex-col gap-4">
-      <Card
-        title={
-          <Link to="new" aria-label="Add new page">
-            <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
-              Add new Page
-            </h2>
-          </Link>
-        }
-      />
+      <Link
+        to={`/author/books/${id}/chapters`}
+        className="text-sm mt-2 underline cursor-pointer"
+      >
+        {" "}
+        Go back to all Chapters
+      </Link>
       <section className="flex flex-col gap-4">{PagesElements}</section>
     </section>
   );
