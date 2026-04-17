@@ -250,6 +250,45 @@ All errors return JSON format:
 - SQL injection prevention via SQLAlchemy ORM
 - CORS configuration for frontend integration
 
+## Postman Collection
+
+A comprehensive Postman collection is available to test and explore all API endpoints. The collection is organized by feature and includes all authenticated endpoints.
+
+### Importing the Collection
+
+1. **Open Postman** and click on "Import"
+2. **Select "Folder"** and navigate to the project's `postman/collections/` directory
+3. **Choose the desired collection**:
+   - `TALECRAFT` - Main collection for production API testing
+   - `TALECRAFT Development with Render` - Collection configured for development environment
+
+### Collection Structure
+
+The Postman collection is organized into the following folders:
+
+- **Authentication**: User login, registration, and logout
+- **Books**: CRUD operations for storybooks
+- **Chapters**: Chapter management within books
+- **Pages**: Page management within chapters
+- **Book Character Template**: Character template definitions
+- **Children**: Child profile management (Parent role)
+- **Personalizations**: Book personalization management (Parent role)
+- **Personalization Characters**: Custom character management
+- **Reading Process**: Reading progress tracking
+
+### Environment Setup
+
+The collection uses global variables for easy environment configuration:
+
+- `dev_url`: Base URL for the API (set to `https://talecraft-owts.onrender.com` for production)
+
+### Authentication
+
+Most endpoints require JWT authentication. The collection includes:
+- Login request that stores the JWT token
+- Automatic token injection in authenticated requests
+- Proper authorization headers setup
+
 ## Live API
 
 The TaleCraft API is deployed and live at:
