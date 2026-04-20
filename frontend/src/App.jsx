@@ -22,12 +22,11 @@ import PageEdit from "../pages/Author/PageEdit";
 import CharacterTemplateEdit from "../pages/Author/CharacterTemplateEdit";
 import CharactersCards from "../components/CharactersCards.jsx";
 
-import ParentLayout from "../components/ParentLayout.jsx";
+import ParentLayout from "../components/Parents/ParentLayout.jsx";
 import ParentDashboard from "../pages/Parent/ParentDashboard.jsx";
 import NewChild from "../pages/Parent/Children/NewChild.jsx";
-import Personalizations from "../pages/Parent/Personalizations/Personalizations.jsx";
-import Personalization from "../pages/Parent/Personalizations/Personalization.jsx";
-import NewPersonalization from "../pages/Parent/Personalizations/NewPersonalization.jsx";
+import PersonalizationsCards from "../components/Parents/PersonalizationsCards.jsx";
+import PersonalizationEdit from "../pages/Parent/PersonalizationEdit.jsx";
 
 import ChildrenDashboard from "../pages/Parent/Children/ChildrenDashboard.jsx";
 import Reading from "../pages/Parent/Children/Reading.jsx";
@@ -74,7 +73,6 @@ function App() {
                 <Route path="new" element={<CharacterTemplateEdit />} />
                 <Route path=":templateId" element={<CharacterTemplateEdit />} />
               </Route>
-              
             </Route>
           </Route>
         </Route>
@@ -84,29 +82,26 @@ function App() {
             <Route index element={<ParentDashboard />} />
             <Route path="children/new" element={<NewChild />} />
 
-            {/* children with personalizations */}
             <Route path="children/:childId">
               <Route index element={<ChildrenDashboard />} />
-              <Route path="personalizations">
-                <Route index element={<Personalizations />} />
-                <Route
-                  path=":personalizationId/reading"
-                  element={<Reading />}
-                />
-              </Route>
             </Route>
 
             {/* personalizations for parents */}
             <Route path="personalizations">
-              <Route index element={<Personalizations />} />
-              <Route path="new" element={<NewPersonalization />} />
-              <Route path=":id" element={<Personalization />} />
+              <Route index element={<PersonalizationsCards />} />
+              <Route path="new" element={<PersonalizationEdit />} />
+              <Route
+                path=":personalizationId"
+                element={<PersonalizationEdit />}
+              />
+              {/* children with personalizations */}
+              <Route path=":personalizationId/reading" element={<Reading />} />
             </Route>
           </Route>
         </Route>
-
-        <Route path="*" element={<NotFound />} />
       </Route>
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

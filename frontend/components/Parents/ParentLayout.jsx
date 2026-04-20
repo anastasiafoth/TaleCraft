@@ -1,5 +1,5 @@
-import { useAuth } from "../src/AuthContext";
-import SidebarLayout from "../components/SidebarLayout";
+import { useAuth } from "../../src/AuthContext";
+import SidebarLayout from "../../components/SidebarLayout";
 
 const links = [
   { to: ".", end: true, label: "All children" },

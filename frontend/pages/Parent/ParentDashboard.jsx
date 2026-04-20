@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
 import { getAllChildren } from "../../src/api";
-import ChildrenCards from "../../components/ChildrenCards";
+import ChildrenCards from "../../components/Parents/ChildrenCards";
 
 export default function ParentDashboard() {
   const { token } = useAuth();

@@ -11,6 +11,9 @@ export default function ChapterEdit() {
   const [error, setError] = useState(null);
   const [chapter, setChapter] = useState(null);
   const navigate = useNavigate();
+  const [editForm, setEditForm] = useState({
+    title: "",
+  });
 
   const { id, chapterId } = useParams();
 
@@ -34,9 +37,7 @@ export default function ChapterEdit() {
     fetchChapter();
   }, [chapterId, token]);
 
-  const [editForm, setEditForm] = useState({
-    title: "",
-  });
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

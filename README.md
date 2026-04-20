@@ -1,83 +1,13 @@
 # TaleCraft
+**Backend-focused full-stack application for a personalized children's story platform.**  
+TaleCraft provides a fully implemented REST API that allows authors to create interactive books and parents to personalize them for their children.
 
-A personalized children's storybook platform that allows authors to create interactive books and parents to personalize them for their children.
+---
 
-## Overview
+## Live API
 
-TaleCraft is a full-stack web application that enables:
-- **Authors** to create, manage, and publish interactive storybooks with chapters and pages
-- **Parents** to create personalized versions of books for their children with customizable characters
-- **Children** to read personalized stories with reading progress tracking
-
-## Architecture
-
-The project follows a modular architecture with separate backend and frontend components.
-
-### Backend (Flask API)
-
-- **Framework**: Flask with SQLAlchemy ORM
-- **Database**: PostgreSQL (Neon)
-- **Authentication**: JWT tokens via Flask-Praetorian
-- **API Style**: RESTful endpoints
-
-### Frontend
-- Located in `/frontend` directory
-- (Details to be added based on frontend implementation)
-
-## Project Structure
-
-```
-TaleCraft/
-├── backend/
-│   ├── app.py                 # Main Flask application
-│   ├── requirements.txt       # Python dependencies
-│   ├── models/               # Database models
-│   │   ├── __init__.py
-│   │   ├── user.py
-│   │   ├── book.py
-│   │   ├── chapter.py
-│   │   ├── page.py
-│   │   ├── child.py
-│   │   ├── personalization.py
-│   │   ├── book_character_template.py
-│   │   └── reading_progress.py
-│   ├── data_manager/         # Business logic managers
-│   │   ├── user_manager.py
-│   │   ├── child_manager.py
-│   │   ├── book_manager.py
-│   │   ├── chapter_manager.py
-│   │   ├── page_manager.py
-│   │   ├── book_character_template_manager.py
-│   │   ├── personalization_manager.py
-│   │   ├── personalization_characters_manager.py
-│   │   └── reading_progress_manager.py
-│   └── migrations/           # Database migration files
-└── frontend/
-    └── README.md
-```
-
-## Features
-
-### User Management
-- User registration and authentication
-- Role-based access control (Author, Parent)
-- JWT-based authentication with refresh tokens
-
-### Author Features
-- Create and manage storybooks
-- Add chapters and pages with layout data
-- Define character templates with customizable attributes
-- Publish/unpublish books
-
-### Parent Features
-- Create child profiles
-- Personalize existing books with custom character attributes
-- Track reading progress for each child
-
-### Reading Experience
-- Progressive page-by-page reading
-- Reading progress tracking per child per book
-- Personalized character rendering
+The TaleCraft API is deployed and live at:
+**https://talecraft-owts.onrender.com**
 
 ## API Endpoints
 
@@ -145,6 +75,12 @@ TaleCraft/
 - `PATCH /api/reading-progress/<progress_id>` - Update reading progress
 - `DELETE /api/reading-progress/<progress_id>` - Delete reading progress
 
+### Production Endpoints
+All API endpoints are available at the base URL above. For example:
+- Authentication: `https://talecraft-owts.onrender.com/api/login`
+- Books: `https://talecraft-owts.onrender.com/api/books`
+- Users: `https://talecraft-owts.onrender.com/api/user`
+
 ## Database Schema
 
 ### Core Entities
@@ -166,6 +102,85 @@ TaleCraft/
 - Books → Personalizations (Personalized versions)
 - Personalizations → PersonalizationCharacters (Custom characters)
 - Children → ReadingProgress (Progress tracking)
+- 
+## Overview
+
+TaleCraft is a full-stack web application that enables:
+- **Authors** to create, manage, and publish interactive storybooks with chapters and pages
+- **Parents** to create personalized versions of books for their children with customizable characters
+- **Children** to read personalized stories with reading progress tracking
+
+## Architecture
+
+The project follows a modular architecture with separate backend and frontend components.
+
+### Backend (Flask API)
+
+- **Framework**: Flask with SQLAlchemy ORM
+- **Database**: PostgreSQL (Neon)
+- **Authentication**: JWT tokens via Flask-Praetorian
+- **API Style**: RESTful endpoints
+
+### Frontend
+- A frontend client is included in /frontend and currently in development.
+The backend API is fully functional and can be used independently.
+
+## Project Structure
+
+```
+TaleCraft/
+├── backend/
+│   ├── app.py                 # Main Flask application
+│   ├── requirements.txt       # Python dependencies
+│   ├── models/               # Database models
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── book.py
+│   │   ├── chapter.py
+│   │   ├── page.py
+│   │   ├── child.py
+│   │   ├── personalization.py
+│   │   ├── book_character_template.py
+│   │   └── reading_progress.py
+│   ├── data_manager/         # Business logic managers
+│   │   ├── user_manager.py
+│   │   ├── child_manager.py
+│   │   ├── book_manager.py
+│   │   ├── chapter_manager.py
+│   │   ├── page_manager.py
+│   │   ├── book_character_template_manager.py
+│   │   ├── personalization_manager.py
+│   │   ├── personalization_characters_manager.py
+│   │   └── reading_progress_manager.py
+│   └── migrations/           # Database migration files
+└── frontend/
+    └── README.md
+```
+
+## Features
+
+### User Management
+- User registration and authentication
+- Role-based access control (Author, Parent)
+- JWT-based authentication with refresh tokens
+
+### Author Features
+- Create and manage storybooks
+- Add chapters and pages with layout data
+- Define character templates with customizable attributes
+- Publish/unpublish books
+
+### Parent Features
+- Create child profiles
+- Personalize existing books with custom character attributes
+- Track reading progress for each child
+
+### Reading Experience
+- Progressive page-by-page reading
+- Reading progress tracking per child per book
+- Personalized character rendering
+
+
 
 ## Setup and Installation
 
@@ -288,17 +303,6 @@ Most endpoints require JWT authentication. The collection includes:
 - Login request that stores the JWT token
 - Automatic token injection in authenticated requests
 - Proper authorization headers setup
-
-## Live API
-
-The TaleCraft API is deployed and live at:
-**https://talecraft-owts.onrender.com**
-
-### Production Endpoints
-All API endpoints are available at the base URL above. For example:
-- Authentication: `https://talecraft-owts.onrender.com/api/login`
-- Books: `https://talecraft-owts.onrender.com/api/books`
-- Users: `https://talecraft-owts.onrender.com/api/user`
 
 ## Contributing
 

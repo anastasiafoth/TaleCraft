@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../src/AuthContext";
-import { editChild, deleteChild } from "../src/api";
+import { useAuth } from "../../src/AuthContext";
+import { editChild, deleteChild } from "../../src/api";
 
 export default function ChildrenCards({ children, setChildren }) {
   const { token } = useAuth();
@@ -74,7 +74,7 @@ export default function ChildrenCards({ children, setChildren }) {
           >
             <figure className="relative">
               <img
-                src={child.profile_img}
+                src={child.profile_img || null}
                 alt={`Profile picture of ${child.first_name}`}
                 className="w-full h-48 object-cover"
               />
