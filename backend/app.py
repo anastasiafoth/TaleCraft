@@ -416,7 +416,7 @@ def personalization_detail(personalization_id):
             personalization_manager.get_personalization
             (personalization_id, parent_id=user.id))
         if not personalization:
-            return {"error": "Book not found"}, 404
+            return {"error": "Personalization not found"}, 404
         return jsonify(personalization)
 
     elif request.method == 'DELETE':

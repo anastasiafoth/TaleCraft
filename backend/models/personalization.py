@@ -18,6 +18,28 @@ class Personalization(db.Model):
         cascade="all, delete-orphan")
     reading_progresses = db.relationship("ReadingProgress", back_populates="personalization", cascade="all, delete-orphan")
 
+    def to_dict(self, include_book=False, include_characters=False):
+        data = {
+            "id": self.id,
+            "parent_id": self.parent_id,
+            "book_id": self.book_id,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+        if include_book:
+            data["book"] = {
+                "id": self.book.id,
+                "title": self.book.title,
+                "cover_thumbnail_url": self.book.cover_thumbnail_url,
+                "recommended_age": self.book.recommended_age,
+            }
+
+        if include_characters:
+            data["characters"] = [c.to_dict() for c in self.personalization_characters]
+
+        return data
+
 
 class PersonalizationCharacters(db.Model):
     __tablename__ = 'personalization_characters'
@@ -37,3 +59,19 @@ class PersonalizationCharacters(db.Model):
     # Relationship
     template = db.relationship('BookCharacterTemplate', back_populates="personalization_characters")
     personalization = db.relationship( "Personalization", back_populates="personalization_characters")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "personalization_id": self.personalization_id,
+            "template_id": self.template_id,
+            "role": self.role,
+            "name": self.name,
+            "gender": self.gender,
+            "main_color": self.main_color,
+            "hair_color": self.hair_color,
+            "clothing": self.clothing,
+            "glasses": self.glasses,
+            "extra_attributes": self.extra_attributes,
+            "customizable": self.customizable,
+        }

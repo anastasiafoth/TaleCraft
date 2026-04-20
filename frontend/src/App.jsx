@@ -84,6 +84,11 @@ function App() {
 
             <Route path="children/:childId">
               <Route index element={<ChildrenDashboard />} />
+              {/* children with personalizations */}
+              <Route
+                path="personalizations/:personalizationId/reading"
+                element={<Reading />}
+              />
             </Route>
 
             {/* personalizations for parents */}
@@ -94,8 +99,6 @@ function App() {
                 path=":personalizationId"
                 element={<PersonalizationEdit />}
               />
-              {/* children with personalizations */}
-              <Route path=":personalizationId/reading" element={<Reading />} />
             </Route>
           </Route>
         </Route>

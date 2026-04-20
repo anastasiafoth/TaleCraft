@@ -7,16 +7,7 @@ class PersonalizationManager:
             parent_id=parent_id
         ).all()
 
-        all_personalizations = []
-
-        for p in personalizations:
-            all_personalizations.append({
-                "id": p.id,
-                "parent_id": p.parent_id,
-                "book_id": p.book_id,
-                "created_at": p.created_at,
-                "updated_at": p.updated_at,
-            })
+        all_personalizations = [p.to_dict(include_book=True) for p in personalizations]
 
         return all_personalizations
 
@@ -63,13 +54,7 @@ class PersonalizationManager:
 
         db.session.commit()
 
-        return {
-            "id": personalization.id,
-            "parent_id": personalization.parent_id,
-            "book_id": personalization.book_id,
-            "created_at": personalization.created_at,
-            "updated_at": personalization.updated_at,
-        }
+        return personalization.to_dict()
 
     @staticmethod
     def get_personalization(personalization_id, parent_id):
@@ -81,13 +66,7 @@ class PersonalizationManager:
         if not personalization:
             raise ValueError("Personalization not found or not authorized")
 
-        return {
-            "id": personalization.id,
-            "parent_id": personalization.parent_id,
-            "book_id": personalization.book_id,
-            "created_at": personalization.created_at,
-            "updated_at": personalization.updated_at,
-        }
+        return personalization.to_dict(include_book=True, include_characters=True)
 
     @staticmethod
     def delete_personalization(personalization_id, parent_id):

@@ -29,7 +29,6 @@ export default function PersonalizationsCards({ role = "parent" }) {
 
   return (
     <section>
-      <h1>All personalization from this parent here</h1>
       <section>
         {personalizations.map((p, i) => {
           const actions =
@@ -44,7 +43,12 @@ export default function PersonalizationsCards({ role = "parent" }) {
                     className: "btn-error",
                   },
                 }
-              : null;
+              : {
+                  Read: {
+                    fn: () => navigate(`personalizations/${p.id}/reading`),
+                    className: "btn-primary",
+                  },
+                };
 
           return (
             <Card

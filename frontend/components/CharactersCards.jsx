@@ -2,22 +2,29 @@ import Card from "./Card";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../src/AuthContext";
-import { getCharacterTemplates, deleteCharacterTemplate } from "../src/api";
+import {
+  getCharacterTemplates,
+  deleteCharacterTemplate,
+  getPersonalizationCharacters,
+  resetPersonalizationCharacter,
+} from "../src/api";
 
 export default function CharactersCards() {
   const { user, token } = useAuth();
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { id: bookId } = useParams();
+  const { id: bookId, personalizationId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    getCharacterTemplates(bookId, token)
-      .then(setCharacters)
-      .catch(setError)
-      .finally(() => setLoading(false));
-  }, [bookId, token]);
+    user.role === "Parent"
+      ? getPersonalizationCharacters(personalizationId, token)
+      : getCharacterTemplates(bookId, token)
+          .then(setCharacters)
+          .catch(setError)
+          .finally(() => setLoading(false));
+  }, [bookId, personalizationId, token]);
 
   if (loading) return <span className="loading loading-dots loading-md" />;
   if (error) return <p className="text-error">{error.message}</p>;
@@ -28,6 +35,15 @@ export default function CharactersCards() {
       setCharacters((prev) => prev.filter((c) => c.id !== character.id));
     } catch (err) {
       console.error("Failed to delete:", err);
+    }
+  }
+
+  async function handleReset(character) {
+    try {
+      await resetPersonalizationCharacter(character.id, token);
+      setCharacters((prev) => prev.filter((c) => c.id !== character.id));
+    } catch (err) {
+      console.error("Failed to reset:", err);
     }
   }
 
@@ -54,13 +70,23 @@ export default function CharactersCards() {
                   className: "btn-warning",
                 },
               }
-            : null
+            : {
+                Edit: {
+                  fn: (obj) => navigate(`${obj.id}`),
+                  className: "btn-secondary",
+                },
+                Reset: {
+                  fn: (obj) => handleReset(obj),
+                  className: "btn-warning",
+                },
+              }
         }
       />
     ));
 
   return (
     <section className="flex flex-col gap-4">
+      {user.role === "Author" &&
       <Card
         title={
           <Link to="new" aria-label="Add new character template">
@@ -69,7 +95,7 @@ export default function CharactersCards() {
             </h2>
           </Link>
         }
-      />
+      />}
       <section className="flex flex-col gap-4">{CharacterElements}</section>
     </section>
   );
