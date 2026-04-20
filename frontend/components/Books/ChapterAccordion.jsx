@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { getPagesByChapter } from "../src/api";
+import { useNavigate } from "react-router-dom";
+import { getPagesByChapter } from "../../src/api";
 
 export default function ChapterAccordion({ chapter, index, bookId }) {
   const [open, setOpen] = useState(false);

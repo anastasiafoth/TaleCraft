@@ -1,6 +1,6 @@
-import BooksCards from "./BooksCards";
-import { getMyBooks } from "../src/api";
-import { useAuth } from "../src/AuthContext";
+import BooksCards from "../Books/BooksCards";
+import { getMyBooks } from "../../src/api";
+import { useAuth } from "../../src/AuthContext";
 import { useState, useEffect } from "react";
 
 export default function AuthorBooks() {

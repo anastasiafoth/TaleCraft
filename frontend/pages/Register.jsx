@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../src/AuthContext";
 import { useNavigate } from "react-router-dom";
-import EmailInput from "../components/EmailInput";
-import PasswordInput from "../components/PasswordInput";
+import EmailInput from "../components/User/EmailInput";
+import PasswordInput from "../components/User/PasswordInput";
 
 export default function Register() {
   const { register } = useAuth();

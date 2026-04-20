@@ -1,14 +1,11 @@
-import Card from "./Card";
+import Card from "../Card";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useAuth } from "../src/AuthContext";
+import { useAuth } from "../../src/AuthContext";
 import {
   getPagesByChapter,
-  getPageById,
-  addPage,
-  updatePage,
   deletePage,
-} from "../src/api";
+} from "../../src/api";
 
 export default function PageCards() {
   const { user, token } = useAuth();

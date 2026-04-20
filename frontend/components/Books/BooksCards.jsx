@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { deleteBook, updateBook } from "../src/api";
-import { useAuth } from "../src/AuthContext";
-import Card from "./Card";
+import { deleteBook, updateBook } from "../../src/api";
+import { useAuth } from "../../src/AuthContext";
+import Card from "../Card";
 
 export default function BooksCards({ books, role = null, setBooks }) {
   const { token } = useAuth();

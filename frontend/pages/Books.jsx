@@ -1,4 +1,4 @@
-import BooksCards from "../components/BooksCards";
+import BooksCards from "../components/Books/BooksCards";
 import { useState, useEffect } from "react";
 import { getPublishedBooks } from "../src/api";
 

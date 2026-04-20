@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../src/AuthContext";
-import SidebarLayout from "../components/SidebarLayout";
+import { useAuth } from "../../src/AuthContext";
+import SidebarLayout from "../SidebarLayout";
 
 const links = [
   { to: ".", end: true, label: "All Books" },

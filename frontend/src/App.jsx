@@ -10,14 +10,14 @@ import Contact from "../pages/Contact.jsx";
 import BookDetail from "../pages/BookDetail.jsx";
 
 import Layout from "../components/Layout.jsx";
-import AuthorLayout from "../components/AuthorLayout.jsx";
+import AuthorLayout from "../components/Author/AuthorLayout.jsx";
 import AuthorDashboard from "../pages/Author/AuthorDashboard.jsx";
 
 import BookEdit from "../pages/Author/BookEdit.jsx";
-import BookEditLayout from "../components/BookEditLayout";
-import ChapterCards from "../components/ChapterCards.jsx";
+import BookEditLayout from "../components/Books/BookEditLayout";
+import ChapterCards from "../components/Books/ChapterCards.jsx";
 import ChapterEdit from "../pages/Author/ChapterEdit.jsx";
-import PageCards from "../components/PageCards.jsx";
+import PageCards from "../components/Books/PageCards.jsx";
 import PageEdit from "../pages/Author/PageEdit";
 import CharacterTemplateEdit from "../pages/Author/CharacterTemplateEdit";
 import CharactersCards from "../components/CharactersCards.jsx";
@@ -31,7 +31,7 @@ import PersonalizationEdit from "../pages/Parent/PersonalizationEdit.jsx";
 import ChildrenDashboard from "../pages/Parent/Children/ChildrenDashboard.jsx";
 import Reading from "../pages/Parent/Children/Reading.jsx";
 
-import AuthRequired from "../components/AuthRequired.jsx";
+import AuthRequired from "../components/User/AuthRequired.jsx";
 import NotFound from "../pages/Error/NotFound.jsx";
 
 function App() {

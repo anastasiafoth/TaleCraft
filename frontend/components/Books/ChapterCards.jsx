@@ -1,9 +1,9 @@
-import Card from "./Card";
+import Card from "../Card";
 import ChapterAccordion from "./ChapterAccordion";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { useAuth } from "../src/AuthContext";
-import { getChaptersByBook, deleteChapter } from "../src/api";
+import { useAuth } from "../../src/AuthContext";
+import { getChaptersByBook, deleteChapter } from "../../src/api";
 
 export default function ChapterCards() {
   const { user, token } = useAuth();
@@ -36,40 +36,39 @@ export default function ChapterCards() {
   }
 
   const ChaptersElements =
-    chapters?.length > 0 && (
-      chapters.map((chapter, i) => (
-        <Card
-          key={chapter.id}
-          obj={chapter}
-          title={
-            <ChapterAccordion
-              key={chapter.id}
-              chapter={chapter}
-              index={i}
-              bookId={bookId}
-            />
-          }
-          actions={
-            user.role === "Author"
-              ? {
-                  "Edit Chapter": {
-                    fn: (obj) => navigate(`${obj.id}/edit`),
-                    className: "btn-secondary",
-                  },
-                  "Edit Pages": {
-                    fn: (obj) => navigate(`${obj.id}/pages`),
-                    className: "btn-secondary",
-                  },
-                  Delete: {
-                    fn: (obj) => handleDelete(obj, token),
-                    className: "btn-warning",
-                  },
-                }
-              : null
-          }
-        />
-      )) 
-    );
+    chapters?.length > 0 &&
+    chapters.map((chapter, i) => (
+      <Card
+        key={chapter.id}
+        obj={chapter}
+        title={
+          <ChapterAccordion
+            key={chapter.id}
+            chapter={chapter}
+            index={i}
+            bookId={bookId}
+          />
+        }
+        actions={
+          user.role === "Author"
+            ? {
+                "Edit Chapter": {
+                  fn: (obj) => navigate(`${obj.id}/edit`),
+                  className: "btn-secondary",
+                },
+                "Edit Pages": {
+                  fn: (obj) => navigate(`${obj.id}/pages`),
+                  className: "btn-secondary",
+                },
+                Delete: {
+                  fn: (obj) => handleDelete(obj, token),
+                  className: "btn-warning",
+                },
+              }
+            : null
+        }
+      />
+    ));
 
   return (
     <section className="flex flex-col gap-4">
