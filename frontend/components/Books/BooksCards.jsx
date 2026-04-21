@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { deleteBook, updateBook } from "../../src/api";
 import { useAuth } from "../../src/AuthContext";
 import Card from "../Card";
@@ -32,6 +32,8 @@ export default function BooksCards({ books, role = null, setBooks }) {
     }
   }
 
+  console.log(role)
+
   const BooksElements =
     books?.length > 0 ? (
       books.map((book) => (
@@ -63,7 +65,14 @@ export default function BooksCards({ books, role = null, setBooks }) {
                     className: "btn-warning",
                   },
                 }
-              : null
+              : role === "Parent"
+                ? {
+                    "Personalize this book ": {
+                      fn: (obj) => navigate(`books/${obj.id}/edit`),
+                      className: "btn-secondary",
+                    },
+                  }
+                : null
           }
         />
       ))
