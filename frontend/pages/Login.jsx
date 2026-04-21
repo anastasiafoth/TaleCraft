@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useAuth } from "../src/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import EmailInput from "../components/User/EmailInput";
 import PasswordInput from "../components/User/PasswordInput";
 
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from;
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [status, setStatus] = useState("idle");
@@ -21,7 +23,9 @@ export default function Login() {
       const userData = await login(form);
       if (userData != null) {
         // Checks for role and navigates to dashboard
-        if (userData.role === "Author") {
+        if (from) {
+          navigate(from);
+        } else if (userData.role === "Author") {
           navigate("/author");
         } else if (userData.role === "Parent") {
           navigate("/parent");
