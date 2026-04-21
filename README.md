@@ -4,6 +4,9 @@ TaleCraft provides a fully implemented REST API that allows authors to create in
 
 ---
 
+## UI/UX Design
+Figma Prototype Wireframe: **https://www.figma.com/proto/3Cw9fF3ghzzTsbQy4NOGt6/TaleCraft---Wireframe?node-id=0-1&t=W6hqUzyR7QKuspKS-1**
+
 ## Live API
 
 The TaleCraft API is deployed and live at:
