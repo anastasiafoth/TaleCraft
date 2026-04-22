@@ -37,7 +37,7 @@ export default function Register() {
           replace: true,
         });
       } else {
-        setError(err.message);
+        setError(err.error);
       }
     } finally {
       setStatus("idle");

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../../../src/AuthContext";
 import { addNewChild } from "../../../src/api";
@@ -8,6 +8,7 @@ export default function NewChild() {
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     first_name: "",
@@ -43,9 +44,7 @@ export default function NewChild() {
   return (
     <div className="flex flex-col items-center min-h-screen m-20">
       <>
-        <h1 className="text-xl font-bold">
-          Add new child
-        </h1>
+        <h1 className="text-xl font-bold">Add new child</h1>
         {error && <h3 className="error">{error}</h3>}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
@@ -74,8 +73,8 @@ export default function NewChild() {
       </>
       {success && (
         <div className="flex flex-col items-center gap-4 text-center pt-10">
-          <div className="text-success text-2xl">✓</div>
-          <h2 >Added new child!</h2>
+          <div className="text-success">Added new child!</div>
+          {navigate("/parent")}
         </div>
       )}
     </div>
