@@ -18,12 +18,15 @@ export default function CharactersCards() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    user.role === "Parent"
-      ? getPersonalizationCharacters(personalizationId, token)
-      : getCharacterTemplates(bookId, token)
-          .then(setCharacters)
-          .catch(setError)
-          .finally(() => setLoading(false));
+    const fetchFn =
+      user.role === "Parent"
+        ? getPersonalizationCharacters(personalizationId, token)
+        : getCharacterTemplates(bookId, token);
+
+    fetchFn
+      .then(setCharacters)
+      .catch(setError)
+      .finally(() => setLoading(false));
   }, [bookId, personalizationId, token]);
 
   if (loading) return <span className="loading loading-dots loading-md" />;
@@ -55,7 +58,7 @@ export default function CharactersCards() {
         obj={character}
         title={
           <h2 className="card-title text-lg font-bold line-clamp-2">
-            {character.default_name || `Character ${i + 1}`}
+            {character.default_name || character.name || `Character ${i + 1}`}
           </h2>
         }
         actions={
@@ -70,32 +73,35 @@ export default function CharactersCards() {
                   className: "btn-warning",
                 },
               }
-            : {
-                Edit: {
-                  fn: (obj) => navigate(`${obj.id}`),
-                  className: "btn-secondary",
-                },
-                Reset: {
-                  fn: (obj) => handleReset(obj),
-                  className: "btn-warning",
-                },
-              }
+            : character.customizable
+              ? {
+                  Edit: {
+                    fn: (obj) => navigate(`characters/${obj.id}`),
+                    className: "btn-secondary",
+                  },
+                  Reset: {
+                    fn: (obj) => handleReset(obj),
+                    className: "btn-warning",
+                  },
+                }
+              : null
         }
       />
     ));
 
   return (
     <section className="flex flex-col gap-4">
-      {user.role === "Author" &&
-      <Card
-        title={
-          <Link to="new" aria-label="Add new character template">
-            <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
-              Add new character template
-            </h2>
-          </Link>
-        }
-      />}
+      {user.role === "Author" && (
+        <Card
+          title={
+            <Link to="new" aria-label="Add new character template">
+              <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
+                Add new character template
+              </h2>
+            </Link>
+          }
+        />
+      )}
       <section className="flex flex-col gap-4">{CharacterElements}</section>
     </section>
   );

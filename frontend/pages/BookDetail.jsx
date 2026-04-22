@@ -2,6 +2,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getBookById } from "../src/api";
 import { useAuth } from "../src/AuthContext";
+import BookPreview from "../components/Books/BookPreview";
 
 export default function BookDetail() {
   const { user, token } = useAuth();
@@ -27,27 +28,43 @@ export default function BookDetail() {
   if (error) return <p className="text-error">{error.message}</p>;
 
   return (
-    <section>
-      <h1>Book PREVIEW</h1>
-      {/* only cover picture for now, later a few pages of the book  */}
-      <img src={book.cover_page_thumbnail} alt={`Cover of ${book.title}`} />
+    <>
+      <BookPreview book={book} />
+
+      {/* Personalize button */}
+      <div className="flex justify-center py-6 bg-base-100">
+        <button
+          className="btn btn-outline btn-wide"
+          onClick={() =>
+            navigate(`/parent/personalizations/new`, { state: { bookId: id } })
+          }
+        >
+          Personalize this book
+        </button>
+      </div>
       <section>
-        <h2>Book Details:</h2>
-        <h1>{book.title}</h1>
-        <h4>
-          <span>Author: </span>
-          {book.author}
-        </h4>
-        <h3>
-          <span>Description:</span> {book.description}
-        </h3>
-        <h3>
-          <span>Recommended age:</span> {book.recommended_age}
-        </h3>
-        <h3>
-          <span>Total pages:</span> {book.total_pages}
-        </h3>
+        <div className="bg-base-100 px-8 pb-10 max-w-2xl mx-auto w-full">
+          <div className="divider" />
+          <h2 className="text-2xl font-bold mb-4">{book.title}</h2>
+          <div className="space-y-2 text-base-content/80">
+            <p>
+              <span className="font-semibold">Author:</span> {book.author}
+            </p>
+            <p>
+              <span className="font-semibold">Description:</span>{" "}
+              {book.description}
+            </p>
+            <p>
+              <span className="font-semibold">Recommended age:</span>{" "}
+              {book.recommended_age}
+            </p>
+            <p>
+              <span className="font-semibold">Total pages:</span>{" "}
+              {book.total_pages}
+            </p>
+          </div>
+        </div>
       </section>
-    </section>
+    </>
   );
 }

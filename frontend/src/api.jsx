@@ -488,7 +488,7 @@ export async function getAllPersonalizations(token) {
 }
 
 export async function createPersonalization(bookId, token) {
-  const res = await fetch(`${DEV_URL}/api/books/${bookId}/personalizations`, {
+  const res = await fetch(`${DEV_URL}/api/books/${bookId}/personalization`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

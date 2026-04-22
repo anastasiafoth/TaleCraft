@@ -32,8 +32,6 @@ export default function BooksCards({ books, role = null, setBooks }) {
     }
   }
 
-  console.log(role)
-
   const BooksElements =
     books?.length > 0 ? (
       books.map((book) => (

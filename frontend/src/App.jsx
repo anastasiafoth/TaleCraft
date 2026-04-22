@@ -27,6 +27,7 @@ import ParentDashboard from "../pages/Parent/ParentDashboard.jsx";
 import NewChild from "../pages/Parent/Children/NewChild.jsx";
 import PersonalizationsCards from "../components/Parents/PersonalizationsCards.jsx";
 import PersonalizationEdit from "../pages/Parent/PersonalizationEdit.jsx";
+import CharacterEdit from "../pages/Parent/CharacterEdit.jsx";
 
 import ChildrenDashboard from "../pages/Parent/Children/ChildrenDashboard.jsx";
 import Reading from "../pages/Parent/Children/Reading.jsx";
@@ -95,10 +96,10 @@ function App() {
             <Route path="personalizations">
               <Route index element={<PersonalizationsCards />} />
               <Route path="new" element={<PersonalizationEdit />} />
-              <Route
-                path=":personalizationId"
-                element={<PersonalizationEdit />}
-              />
+              <Route path=":personalizationId">
+                <Route index element={<PersonalizationEdit />} />
+                <Route path="characters/:characterId" element={<CharacterEdit/>}/>
+              </Route>
             </Route>
           </Route>
         </Route>

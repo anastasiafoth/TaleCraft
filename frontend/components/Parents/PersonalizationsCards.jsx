@@ -20,7 +20,7 @@ export default function PersonalizationsCards({ role = "parent" }) {
   }, [token]);
 
   const handleDelete = async (id) => {
-    await deletePersonalization(token, id);
+    await deletePersonalization(id, token);
     setPersonalizations((prev) => prev.filter((p) => p.id !== id));
   };
 
@@ -60,21 +60,7 @@ export default function PersonalizationsCards({ role = "parent" }) {
         />
       ))
     ) : (
-      <>
-        <h1 className="text-lg font-bold">No Personalization found.</h1>
-        <Card
-          title={
-            <Link
-              to="/books"
-              aria-label="Add new personalization"
-            >
-              <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
-                Add new Personalization
-              </h2>
-            </Link>
-          }
-        />
-      </>
+      <h1 className="text-lg font-bold">No Personalization found.</h1>
     );
 
   return (
@@ -82,10 +68,7 @@ export default function PersonalizationsCards({ role = "parent" }) {
       <section className="flex flex-col gap-4">
         <Card
           title={
-            <Link
-              to="/books"
-              aria-label="Add new personalization"
-            >
+            <Link to="/books" aria-label="Add new personalization">
               <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
                 Add new Personalization
               </h2>

@@ -181,8 +181,8 @@ export default function CharacterTemplateEdit() {
         <h1>Main Color:</h1>
         <input
           type="color"
-          name="main_color"
-          value={editForm.main_color || "#000000"}
+          name="default_main_color"
+          value={editForm.default_main_color || "#000000"}
           onChange={handleChange}
           className="input input-bordered input-sm"
         />
@@ -190,8 +190,8 @@ export default function CharacterTemplateEdit() {
         <h1>Hair Color:</h1>
         <input
           type="color"
-          name="hair_color"
-          value={editForm.hair_color || "#000000"}
+          name="default_hair_color"
+          value={editForm.default_hair_color || "#000000"}
           onChange={handleChange}
           className="input input-bordered input-sm"
         />
