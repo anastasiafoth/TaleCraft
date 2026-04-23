@@ -340,6 +340,12 @@ def chapter_detail(chapter_id):
 
 
 """ __________________ Pages ________________________"""
+
+@app.route('/api/books/<int:book_id>/pages')
+def all_pages_by_book(book_id):
+    pages = page_manager.get_all_pages_by_book(book_id)
+    return jsonify(pages), 200
+
 @app.route('/api/chapters/<int:chapter_id>/pages')
 def all_pages(chapter_id):
     all_pages = page_manager.get_all_pages(chapter_id)

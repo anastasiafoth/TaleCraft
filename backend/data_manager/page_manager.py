@@ -1,6 +1,9 @@
 from models import db, Book, Chapter, Page
 from sqlalchemy import func
 
+from backend.app import chapters
+
+
 class PageManager:
     @staticmethod
     def get_all_pages(chapter_id):
@@ -19,6 +22,18 @@ class PageManager:
             pages_list.append(page_dict)
 
         return pages_list
+
+    @staticmethod
+    def get_all_pages_by_book(book_id):
+        chapters = Chapter.query.filter_by(book_id=book_id).order_by(Chapter.order_index).all()
+
+        all_pages = []
+        for chapter in chapters:
+            pages = PageManager.get_all_pages(chapter.id)
+            all_pages.extend(pages)
+
+        return all_pages
+
 
     @staticmethod
     def create_page(chapter_id, data, author_id):
