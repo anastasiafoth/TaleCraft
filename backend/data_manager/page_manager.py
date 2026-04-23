@@ -1,8 +1,6 @@
 from models import db, Book, Chapter, Page
 from sqlalchemy import func
 
-from backend.app import chapters
-
 
 class PageManager:
     @staticmethod
