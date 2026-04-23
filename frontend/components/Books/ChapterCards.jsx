@@ -5,12 +5,13 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
 import { getChaptersByBook, deleteChapter } from "../../src/api";
 
-export default function ChapterCards() {
+export default function ChapterCards({id}) {
   const { user, token } = useAuth();
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { id: bookId } = useParams();
+  const { id: paramBookId } = useParams();
+  const bookId = id ?? paramBookId;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,15 +73,17 @@ export default function ChapterCards() {
 
   return (
     <section className="flex flex-col gap-4">
-      <Card
-        title={
-          <Link to="new" aria-label="Add new chapter">
-            <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
-              Add new chapter
-            </h2>
-          </Link>
-        }
-      />
+      {user.role === "Author" && (
+        <Card
+          title={
+            <Link to="new" aria-label="Add new chapter">
+              <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
+                Add new chapter
+              </h2>
+            </Link>
+          }
+        />
+      )}
       <section className="flex flex-col gap-4">{ChaptersElements}</section>
     </section>
   );

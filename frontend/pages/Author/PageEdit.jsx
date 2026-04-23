@@ -2,12 +2,11 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
 import {
-  getPagesByChapter,
   getPageById,
   addPage,
   updatePage,
-  deletePage,
 } from "../../src/api";
+import EditorCanvas from "../../components/Books/PageEditor/EditorCanvas";
 
 export default function PageEdit() {
   const { token } = useAuth();
@@ -110,14 +109,16 @@ export default function PageEdit() {
         onSubmit={handleSubmit}
       >
         <h1>Page </h1>
-        <input
-          type="text"
-          value={editForm.layout_data || ""}
-          onChange={handleChange}
-          className="input input-bordered input-sm w-full"
-          placeholder="Layout data"
-          name="layout_data"
+        <EditorCanvas
+          page={{
+            ...page,
+            layout_data: editForm.layout_data || page?.layout_data,
+          }}
+          onLayoutChange={(newLayout) => {
+            setEditForm((prev) => ({ ...prev, layout_data: newLayout }));
+          }}
         />
+
         <h1>Cover Page</h1>
         <input
           type="checkbox"
@@ -130,6 +131,7 @@ export default function PageEdit() {
           {status === "submitting" ? "Saving..." : "Save"}
         </button>
       </form>
+
       {success && (
         <div className="flex flex-col items-center gap-4 text-center">
           <h2 className="text-xl">Saved successfully!</h2>

@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../src/AuthContext";
 import { getPagesByChapter } from "../../src/api";
 
 export default function ChapterAccordion({ chapter, index, bookId }) {
   const [open, setOpen] = useState(false);
   const [pages, setPages] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const { childId, personalizationId } = useParams();
   const navigate = useNavigate();
 
   async function handleToggle() {
@@ -50,10 +53,17 @@ export default function ChapterAccordion({ chapter, index, bookId }) {
             <div
               key={page.id}
               className="flex items-center justify-between pl-9 pr-4 py-2 border-b border-base-300 last:border-0 hover:bg-base-200 cursor-pointer"
-              onClick={() =>
-                navigate(
-                  `/author/books/${bookId}/chapters/${chapter.id}/pages/${page.id}/edit`,
-                )
+              onClick={
+                user.role === "Author"
+                  ? () =>
+                      navigate(
+                        `/author/books/${bookId}/chapters/${chapter.id}/pages/${page.id}/edit`,
+                      )
+                  : () =>
+                      navigate(
+                        `/parent/children/${childId}/personalizations/${personalizationId}/reading`,
+                        { state: { pageId: page.id } },
+                      )
               }
             >
               <div className="flex items-center gap-2">
@@ -73,7 +83,7 @@ export default function ChapterAccordion({ chapter, index, bookId }) {
             </div>
           ))}
 
-          {pages && (
+          {pages & (user.role === "Author") ? (
             <div
               className="flex items-center gap-2 pl-9 py-2 cursor-pointer hover:bg-base-200 text-base-content/50 text-sm"
               onClick={() =>
@@ -85,7 +95,7 @@ export default function ChapterAccordion({ chapter, index, bookId }) {
               <span>+</span>
               <span>Add page</span>
             </div>
-          )}
+          ) : null}
         </div>
       )}
     </div>
