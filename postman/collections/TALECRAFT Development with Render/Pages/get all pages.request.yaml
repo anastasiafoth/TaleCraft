@@ -1,9 +1,0 @@
-$kind: http-request
-name: get all pages
-url: "{{dev_url}}/api/chapters/13/pages"
-method: GET
-auth:
-  type: bearer
-  credentials:
-    token: "{{access_token}}"
-order: 1000
