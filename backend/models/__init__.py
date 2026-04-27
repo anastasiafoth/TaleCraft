@@ -10,3 +10,4 @@ from .child import Child
 from .personalization import Personalization, PersonalizationCharacters
 from .reading_progress import ReadingProgress
 from .book_character_template import BookCharacterTemplate
+from .R2File import R2File

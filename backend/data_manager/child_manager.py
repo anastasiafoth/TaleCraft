@@ -4,7 +4,7 @@ from datetime import datetime
 class ChildManager:
     @staticmethod
     def get_all_children(parent_id):
-        all_children = Child.query.filter_by(parent_id=parent_id).all()
+        all_children = Child.query.filter_by(parent_id=parent_id).order_by(Child.id).all()
 
         # serialize objects
         children_list = []

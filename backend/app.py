@@ -1,16 +1,33 @@
 from data_manager import UserManager, ChildManager, BookManager, ChapterManager, PageManager, BookCharacterTemplateManager, PersonalizationManager, PersonalizationCharactersManager, ReadingProgressManager
-from models import db, User
+from models import db, User, R2File
 from flask import Flask, request, jsonify
 import os
 from dotenv import load_dotenv
 import flask_praetorian
 import flask_cors
-
+# Migrations
 from flask_migrate import Migrate
+
+# for S3 Storage config
+import uuid
+import boto3
+from botocore.exceptions import ClientError
 
 load_dotenv()
 
 NEON_KEY = os.getenv("NEON_KEY")
+# S3 Storage config with Cloudflare R2 + Neon
+R2_ACCOUNT_ID = os.getenv("R2_ACCOUNT_ID")
+R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME")
+R2_PUBLIC_BASE_URL = os.getenv("R2_PUBLIC_BASE_URL")
+R2_ENDPOINT_URL = f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+s3_client = boto3.client(
+    service_name='s3',
+    endpoint_url=R2_ENDPOINT_URL,
+    aws_access_key_id=os.getenv("R2_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("R2_SECRET_ACCESS_KEY"),
+    region_name='auto'
+)
 app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = 'a_very_long_random_secret_key_at_least_32_chars'
@@ -65,6 +82,55 @@ personalization_manager = PersonalizationManager()
 book_character_template_manager = BookCharacterTemplateManager()
 personalization_characters_manager = PersonalizationCharactersManager()
 reading_progress_manager = ReadingProgressManager()
+
+# S3 Storage config
+# 1. Generate Presigned URL for Upload
+@app.route("/presign-upload", methods=["POST"])
+@flask_praetorian.auth_required
+def presign_upload_route():
+    try:
+        user = flask_praetorian.current_user()
+        user_id = user.id
+        if not user_id:
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
+        data = request.get_json()
+        file_name = data.get('fileName')
+        content_type = data.get('contentType')
+        if not file_name or not content_type:
+             raise ValueError("fileName and contentType required")
+        object_key = f"{uuid.uuid4()}-{file_name}"
+        public_file_url = f"{R2_PUBLIC_BASE_URL}/{object_key}" if R2_PUBLIC_BASE_URL else None
+        presigned_url = s3_client.generate_presigned_url(
+            'put_object',
+            Params={'Bucket': R2_BUCKET_NAME, 'Key': object_key, 'ContentType': content_type},
+            ExpiresIn=300
+        )
+        return jsonify({ "success": True, "presignedUrl": presigned_url, "objectKey": object_key, "publicFileUrl": public_file_url }), 200
+    except (ClientError, ValueError) as e:
+        print(f"Presign Error: {e}")
+        return jsonify({"success": False, "error": f"Failed to prepare upload: {e}"}), 500
+    except Exception as e:
+        print(f"Unexpected Presign Error: {e}")
+        return jsonify({"success": False, "error": "Server error"}), 500
+# 2. Save Metadata after Client Upload Confirmation
+@app.route("/save-metadata", methods=["POST"])
+@flask_praetorian.auth_required
+def save_metadata_route():
+    user = flask_praetorian.current_user()
+    user_id = user.id
+    if not user_id:
+        return jsonify({"success": False, "error": "Unauthorized"}), 401
+    data = request.get_json()
+    object_key = data.get('objectKey')
+    public_file_url = data.get('publicFileUrl')
+    if not object_key: raise ValueError("objectKey required")
+    final_file_url = public_file_url or (f"{R2_PUBLIC_BASE_URL}/{object_key}" if R2_PUBLIC_BASE_URL else 'URL not available')
+
+    new_file = R2File(object_key=object_key, file_url=final_file_url, user_id=user_id)
+    db.session.add(new_file)
+    db.session.commit()
+
+    return jsonify({"success": True}), 201
 
 
 """ __________________ User ________________________"""

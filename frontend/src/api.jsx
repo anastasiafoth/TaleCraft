@@ -218,13 +218,12 @@ export async function getPublishedBooks() {
 }
 
 export async function getMyBooks(token) {
-  
   const res = await fetch(`${DEV_URL}/api/my-books`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  
+
   const data = await res.json();
   if (!res.ok)
     throw {
@@ -389,6 +388,19 @@ export async function deleteChapter(chapterId, token) {
 }
 
 // __________________ Pages __________________________
+
+export async function getPagesByBook(bookId) {
+  const res = await fetch(`${DEV_URL}/api/books/${bookId}/pages`);
+  const data = await res.json();
+
+  if (!res.ok)
+    throw {
+      message: data.message || "Unknown error",
+      status: res.status,
+      error: data.error,
+    };
+  return data;
+}
 
 export async function getPagesByChapter(chapterId) {
   const res = await fetch(`${DEV_URL}/api/chapters/${chapterId}/pages`);

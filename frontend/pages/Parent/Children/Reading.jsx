@@ -4,6 +4,7 @@ import {
   createReadingProgress,
   updateReadingProgress,
   getPageById,
+  getPagesByBook,
 } from "../../../src/api";
 import { useAuth } from "../../../src/AuthContext";
 import PageObject from "../../../components/Books/PageObject";
@@ -14,6 +15,7 @@ export default function Reading() {
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(null);
   const [currentPage, setCurrentPage] = useState(null);
+  const [pages, setPages] = useState([]);
   const bookId = progress?.book_id;
   const location = useLocation();
   const pageId = location.state?.pageId;
@@ -46,6 +48,9 @@ export default function Reading() {
           token,
         );
         setCurrentPage(fetchedPage);
+
+        const fetchedPages = await getPagesByBook(fetchedProgress.book_id);
+        setPages(fetchedPages);
       } catch (err) {
         setError(err);
       } finally {
@@ -55,44 +60,49 @@ export default function Reading() {
     load();
   }, [token, childId, personalizationId, pageId]);
 
-  async function handleNextPage() {
-
-    await updateReadingProgress(
-      progress.id,
-      { current_page_id: nextPage.id },
-      token,
-    );
-    const fetchedPage = await getPageById(nextPageId, token);
-    setCurrentPage(fetchedPage);
-    setProgress((prev) => ({ ...prev, current_page_id: nextPageId }));
-  }
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   const layout = currentPage?.layout_data;
 
+  const currentIndex = pages.findIndex((p) => p.id === currentPage?.id);
+
+  const handleNavigate = async (page) => {
+    console.log(pages[currentIndex]);
+    await updateReadingProgress(
+      progress.id,
+      { current_page_id: page.id },
+      token,
+    );
+    setCurrentPage(page);
+    setProgress((prev) => ({ ...prev, current_page_id: page.id }));
+  };
+
   return (
     <>
-      <ChapterCards id={bookId} />
-      <div className="relative w-[800px] h-[600px]">
-        {["background", "middle", "foreground"].map((layerName) =>
-          layout?.[layerName]?.map((obj) => (
-            <PageObject key={obj.id} obj={obj} />
-          )),
-        )}
-      </div>
+      <section className="flex">
+        <ChapterCards id={bookId} />
+        <div className="relative w-[800px] h-[600px] overflow-hidden bg-white">
+          {["background", "middle", "foreground"].map((layerName) =>
+            layout?.[layerName]?.map((obj) => (
+              <PageObject key={obj.id} obj={obj} />
+            )),
+          )}
+        </div>
+      </section>
 
       <div className="flex gap-4 mt-4">
         <button
           className="btn"
-          disabled={!currentPage?.is_first_page}
+          disabled={currentIndex <= 0}
+          onClick={() => handleNavigate(pages[currentIndex - 1])}
         >
           ← Prev
         </button>
         <button
           className="btn btn-primary"
-          onClick={() => handleNextPage()}
+          disabled={currentIndex >= pages.length - 1}
+          onClick={() => handleNavigate(pages[currentIndex + 1])}
         >
           Next →
         </button>
