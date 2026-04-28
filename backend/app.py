@@ -40,10 +40,9 @@ guard = flask_praetorian.Praetorian()
 # Initialize the flask-praetorian instance for the app
 guard.init_app(app, User)
 
-cors = flask_cors.CORS()
 flask_cors.CORS(
     app,
-    resources={r"/api/*": {"origins": "http://localhost:5173"}},
+    resources={r"/api/*": {"origins": ["http://localhost:5173", "https://talecraft-owts.onrender.com"]}},
     allow_headers=["Content-Type", "Authorization"],
     expose_headers=["Authorization"],
     methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
@@ -62,7 +61,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 db.init_app(app)
 
 # Initializes CORS so that the api_tool can talk to the app
-cors.init_app(app)
+flask_cors.CORS().init_app(app)
 
 # Initializes Flask Migrate, for updating db
 migrate = Migrate(app, db)
@@ -131,6 +130,45 @@ def save_metadata_route():
     db.session.commit()
 
     return jsonify({"success": True}), 201
+
+@app.route('/api/assets', methods=['GET'])
+@flask_praetorian.auth_required
+def get_assets():
+    assets = R2File.query.all()
+    return jsonify([{
+        "id": a.id,
+        "object_key": a.object_key,
+        "file_url": a.file_url
+    } for a in assets]), 200
+
+
+@app.route('/api/assets/sync', methods=['POST'])
+@flask_praetorian.auth_required
+@flask_praetorian.roles_required("Author")
+def sync_assets():
+    """ Syncs images from R2 bucket to DB"""
+    # Gets all objects from R2 bucket
+    response = s3_client.list_objects_v2(Bucket=R2_BUCKET_NAME)
+    objects = response.get('Contents', [])
+
+    added = 0
+    for obj in objects:
+        object_key = obj['Key']
+
+        # check if object already exists in DB
+        exists = R2File.query.filter_by(object_key=object_key).first()
+        if not exists:
+            file_url = f"{R2_PUBLIC_BASE_URL}/{object_key}"
+            new_file = R2File(
+                object_key=object_key,
+                file_url=file_url,
+                user_id=flask_praetorian.current_user().id
+            )
+            db.session.add(new_file)
+            added += 1
+
+    db.session.commit()
+    return jsonify({"success": True, "added": added}), 200
 
 
 """ __________________ User ________________________"""
