@@ -820,3 +820,20 @@ export async function deleteReadingProgress(progressId, token) {
     };
   return data;
 }
+
+export async function getAssets(token) {
+  const res = await fetch(`${DEV_URL}/api/assets`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const data = await res.json();
+  if (!res.ok)
+    throw {
+      message: data.message || "Unknown error",
+      status: res.status,
+      error: data.error,
+    };
+  return data;
+}

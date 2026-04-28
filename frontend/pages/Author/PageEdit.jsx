@@ -1,12 +1,9 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
-import {
-  getPageById,
-  addPage,
-  updatePage,
-} from "../../src/api";
+import { getPageById, addPage, updatePage } from "../../src/api";
 import EditorCanvas from "../../components/Books/PageEditor/EditorCanvas";
+import PageEditorSidebar from "../../components/Books/PageEditor/PageEditorSidebar";
 
 export default function PageEdit() {
   const { token } = useAuth();
@@ -15,7 +12,6 @@ export default function PageEdit() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(null);
-  const [layoutForm, setLayoutForm] = useState({});
   const navigate = useNavigate();
 
   const { id, chapterId, pageId } = useParams();
@@ -29,7 +25,11 @@ export default function PageEdit() {
         const fetchedPage = await getPageById(pageId);
         setPage(fetchedPage);
         setEditForm({
-          layout_data: fetchedPage?.layout_data ?? "",
+          layout_data: fetchedPage?.layout_data ?? {
+            background: [],
+            middle: [],
+            foreground: [],
+          },
           is_cover: fetchedPage?.is_cover ?? false,
         });
       } catch (err) {
@@ -42,8 +42,12 @@ export default function PageEdit() {
   }, [pageId, token]);
 
   const [editForm, setEditForm] = useState({
-    layout_data: "",
-    cover_page: false,
+    layout_data: {
+      background: [],
+      middle: [],
+      foreground: [],
+    },
+    is_cover: false,
   });
 
   const handleSubmit = async (e) => {
@@ -63,7 +67,6 @@ export default function PageEdit() {
         await updatePage(page.id, patch, token);
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
-        navigate(`/author/books/${id}/chapters/${chapterId}/pages`);
       } else {
         // create new page
         const newPage = await addPage(chapterId, editForm, token);
@@ -85,6 +88,26 @@ export default function PageEdit() {
     }));
   }
 
+  console.log(page);
+  function onAddText(text) {
+    setEditForm((prev) => ({
+      ...prev,
+      layout_data: {
+        ...prev.layout_data,
+        foreground: [
+          ...(prev.layout_data?.foreground || []),
+          { type: "text", content: text, x: 100, y: 100 },
+        ],
+      },
+    }));
+  }
+
+  function onDragAsset(e, asset) {
+    console.log("Dragging asset:", asset);
+  }
+
+  function onDragCharacter(e, char) {}
+
   return (
     <>
       {error && (
@@ -98,26 +121,35 @@ export default function PageEdit() {
         </div>
       )}
       <Link
-        to={`/author/books/${id}/chapters`}
+        to={`/author/books/${id}/chapters/${chapterId}`}
         className="text-sm mt-2 underline cursor-pointer"
       >
         {" "}
-        Go back to all Chapters
+        Go back to all Pages of this Chapter
       </Link>
       <form
         className="card-body p-4 gap-2 flex flex-col items-start"
         onSubmit={handleSubmit}
       >
-        <h1>Page </h1>
-        <EditorCanvas
-          page={{
-            ...page,
-            layout_data: editForm.layout_data || page?.layout_data,
-          }}
-          onLayoutChange={(newLayout) => {
-            setEditForm((prev) => ({ ...prev, layout_data: newLayout }));
-          }}
-        />
+        <h1>Page Editor:</h1>
+        <section class="flex w-full h-150">
+          <EditorCanvas
+            page={{
+              ...page,
+              layout_data: editForm.layout_data || page?.layout_data,
+            }}
+            onLayoutChange={(newLayout) => {
+              setEditForm((prev) => ({ ...prev, layout_data: newLayout }));
+            }}
+          />
+          <PageEditorSidebar
+            token={token}
+            id={id}
+            onAddText={onAddText}
+            onDragAsset={onDragAsset}
+            onDragCharacter={onDragCharacter}
+          />
+        </section>
 
         <h1>Cover Page</h1>
         <input

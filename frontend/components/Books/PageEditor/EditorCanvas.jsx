@@ -18,14 +18,39 @@ export default function EditorCanvas({ page, onLayoutChange }) {
     onLayoutChange(updatedLayout);
   }
 
+  function handleDrop(e) {
+    e.preventDefault();
+
+    const data = JSON.parse(e.dataTransfer.getData("application/json"));
+
+    if (data.type === "asset") {
+      const newAsset = {
+        type: "image",
+        src: data.file_url,
+        x: e.clientX,
+        y: e.clientY,
+      };
+
+      setEditForm((prev) => ({
+        ...prev,
+        layout_data: {
+          ...prev.layout_data,
+          foreground: [...(prev.layout_data.foreground || []), newAsset],
+        },
+      }));
+    }
+  }
+
   return (
-    <div className="bg-primary rounded-lg">
+    <div className="bg-primary rounded-l-lg">
       <Stage
         width={800}
         height={600}
         onMouseDown={(e) => {
           if (e.target === e.target.getStage()) setSelectedId(null);
         }}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
       >
         {["background", "middle", "foreground"].map((layerName) => (
           <Layer key={layerName} name={layerName}>
