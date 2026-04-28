@@ -53,4 +53,5 @@ tzdata==2025.3
 urllib3==2.6.2
 Werkzeug==3.1.5
 gunicorn
+boto3
 
