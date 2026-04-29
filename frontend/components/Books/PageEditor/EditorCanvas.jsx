@@ -47,28 +47,14 @@ export default function EditorCanvas({ page, onLayoutChange }) {
     }
   }
 
-  useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.key === "Delete" || e.key === "Backspace") {
-        if (!selectedId) return;
+  function handleDelete(layerName, id) {
+    onLayoutChange({
+      ...layout,
+      [layerName]: layout[layerName].filter((obj) => obj.id !== id),
+    });
+    setSelectedId(null);
+  }
 
-        const newLayout = {};
-        for (const layer of ["background", "middle", "foreground"]) {
-          newLayout[layer] = (layout[layer] || []).filter(
-            (obj) => obj.id !== selectedId,
-          );
-        }
-
-        onLayoutChange(newLayout);
-        setSelectedId(null);
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedId, layout]);
-
-  function handleDeleteObject(e) {}
   return (
     <div
       className="bg-white rounded-l-lg"
@@ -93,7 +79,7 @@ export default function EditorCanvas({ page, onLayoutChange }) {
                 isSelected={selectedId === obj.id}
                 onSelect={() => setSelectedId(obj.id)}
                 onChange={(updated) => handleChange(layerName, updated)}
-                onDelete={handleDeleteObject}
+                onDelete={() => handleDelete(layerName, obj.id)}
               />
             ))}
           </Layer>

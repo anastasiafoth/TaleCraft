@@ -20,6 +20,30 @@ export default function KonvaObjectEdit({
     }
   }, [isSelected]);
 
+  useEffect(() => {
+    if (!isSelected) return;
+
+    function handleKeyDown(e) {
+        console.log(document)
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      const isEditable = document.activeElement?.isContentEditable;
+      if (
+        tag === "input" ||
+        tag === "textarea" ||
+        tag === "select" ||
+        isEditable
+      )
+        return;
+
+      if (e.key === "Delete" || e.key === "Backspace") {
+        onDelete?.(); // neues Prop
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isSelected]);
+
   const commonProps = {
     ref: shapeRef,
     x: obj.x,
