@@ -22,35 +22,67 @@ export default function EditorCanvas({ page, onLayoutChange }) {
     e.preventDefault();
 
     const data = JSON.parse(e.dataTransfer.getData("application/json"));
-
     if (data.type === "asset") {
-      const newAsset = {
-        type: "image",
-        src: data.file_url,
-        x: e.clientX,
-        y: e.clientY,
+      const img = new window.Image();
+      img.onload = () => {
+        const newAsset = {
+          id: data.object_key,
+          type: "image",
+          src: data.file_url,
+          x: 100,
+          y: 100,
+          width: img.width * 0.1,
+          height: img.height * 0.1,
+        };
+
+        const targetLayer = data.layer || "foreground";
+
+        onLayoutChange({
+          ...layout,
+          [targetLayer]: [...(layout?.[targetLayer] || []), newAsset],
+        });
       };
 
-      setEditForm((prev) => ({
-        ...prev,
-        layout_data: {
-          ...prev.layout_data,
-          foreground: [...(prev.layout_data.foreground || []), newAsset],
-        },
-      }));
+      img.src = data.file_url;
     }
   }
 
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        if (!selectedId) return;
+
+        const newLayout = {};
+        for (const layer of ["background", "middle", "foreground"]) {
+          newLayout[layer] = (layout[layer] || []).filter(
+            (obj) => obj.id !== selectedId,
+          );
+        }
+
+        onLayoutChange(newLayout);
+        setSelectedId(null);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedId, layout]);
+
+  function handleDeleteObject(e) {}
   return (
-    <div className="bg-primary rounded-l-lg">
+    <div
+      className="bg-white rounded-l-lg"
+      onDragOver={(e) => {
+        e.preventDefault();
+      }}
+      onDrop={handleDrop}
+    >
       <Stage
         width={800}
         height={600}
         onMouseDown={(e) => {
           if (e.target === e.target.getStage()) setSelectedId(null);
         }}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
       >
         {["background", "middle", "foreground"].map((layerName) => (
           <Layer key={layerName} name={layerName}>
@@ -61,6 +93,7 @@ export default function EditorCanvas({ page, onLayoutChange }) {
                 isSelected={selectedId === obj.id}
                 onSelect={() => setSelectedId(obj.id)}
                 onChange={(updated) => handleChange(layerName, updated)}
+                onDelete={handleDeleteObject}
               />
             ))}
           </Layer>

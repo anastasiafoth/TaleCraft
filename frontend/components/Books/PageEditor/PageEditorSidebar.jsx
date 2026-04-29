@@ -25,6 +25,7 @@ function Section({ label, dotClass, defaultOpen = false, children }) {
   return (
     <div className="border-b border-base-300">
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-base-200 transition-colors text-left"
       >
@@ -65,7 +66,7 @@ function AssetGrid({ assets, loading, onDragStart }) {
   if (!assets.length) {
     return (
       <p className="text-xs text-base-content/40 text-center py-3">
-        Keine Assets gefunden
+        No assets found
       </p>
     );
   }
@@ -151,7 +152,7 @@ function CharacterList({ characters, loading, onDragStart }) {
               )}
             </div>
             <span className="badge badge-sm badge-outline flex-shrink-0">
-              Figur
+              Character
             </span>
           </div>
         );
@@ -173,18 +174,9 @@ function TextSection({ onAddText }) {
         placeholder="text..."
       />
       <button
-        className="btn btn-sm btn-outline w-full gap-1.5"
+        className="btn btn-sm btn-primary w-full gap-1.5"
         onClick={() => onAddText?.(value)}
       >
-        <svg
-          className="w-3 h-3"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M8 3v10M3 8h10" />
-        </svg>
         Add text to page
       </button>
     </div>
@@ -217,7 +209,7 @@ export default function PageEditorSidebar({
   useEffect(() => {
     getAssets(token)
       .then((data) => setAssets(Array.isArray(data) ? data : []))
-      .catch(() => setAssetsError("Assets konnten nicht geladen werden"))
+      .catch(() => setAssetsError("Assets could not load"))
       .finally(() => setAssetsLoading(false));
   }, [token]);
 
@@ -228,7 +220,7 @@ export default function PageEditorSidebar({
     }
     getCharacterTemplates(id, token)
       .then((data) => setCharacters(Array.isArray(data) ? data : []))
-      .catch(() => setCharsError("Figuren konnten nicht geladen werden"))
+      .catch(() => setCharsError("Characters could not load"))
       .finally(() => setCharsLoading(false));
   }, [id, token]);
 
@@ -243,10 +235,10 @@ export default function PageEditorSidebar({
   );
 
   const handleDragAsset = useCallback(
-    (e, asset) => {
+    (e, asset, layer) => {
       e.dataTransfer.setData(
         "application/json",
-        JSON.stringify({ type: "asset", ...asset }),
+        JSON.stringify({ type: "asset", layer, ...asset }),
       );
       onDragAsset?.(e, asset);
     },
@@ -272,7 +264,7 @@ export default function PageEditorSidebar({
     <div className="w-64 h-full flex flex-col bg-base-100 border-r border-base-300 rounded-r-lg">
       {/* Header */}
       <div className="px-4 py-3 border-b border-base-300 flex-shrink-0">
-        <p className="text-[11px] font-medium text-base-content/50 uppercase tracking-widest">
+        <p className="font-medium text-base-content/50 uppercase tracking-widest">
           Page Editor
         </p>
       </div>
@@ -290,7 +282,9 @@ export default function PageEditorSidebar({
             <AssetGrid
               assets={bgAssets}
               loading={assetsLoading}
-              onDragStart={handleDragAsset}
+              onDragStart={(e, asset) =>
+                handleDragAsset(e, asset, "background")
+              }
             />
           )}
         </Section>
@@ -302,7 +296,9 @@ export default function PageEditorSidebar({
             <AssetGrid
               assets={midAssets}
               loading={assetsLoading}
-              onDragStart={handleDragAsset}
+              onDragStart={(e, asset) =>
+                handleDragAsset(e, asset, "middleground")
+              }
             />
           )}
         </Section>
@@ -314,7 +310,9 @@ export default function PageEditorSidebar({
             <AssetGrid
               assets={fgAssets}
               loading={assetsLoading}
-              onDragStart={handleDragAsset}
+              onDragStart={(e, asset) =>
+                handleDragAsset(e, asset, "foreground")
+              }
             />
           )}
         </Section>

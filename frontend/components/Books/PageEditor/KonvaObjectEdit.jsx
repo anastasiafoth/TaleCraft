@@ -7,6 +7,7 @@ export default function KonvaObjectEdit({
   isSelected,
   onSelect,
   onChange,
+  onDelete
 }) {
   const [image] = useImage(obj.src);
   const shapeRef = useRef();

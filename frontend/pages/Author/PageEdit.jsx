@@ -88,7 +88,6 @@ export default function PageEdit() {
     }));
   }
 
-  console.log(page);
   function onAddText(text) {
     setEditForm((prev) => ({
       ...prev,
@@ -121,7 +120,7 @@ export default function PageEdit() {
         </div>
       )}
       <Link
-        to={`/author/books/${id}/chapters/${chapterId}`}
+        to={`/author/books/${id}/chapters/${chapterId}/pages`}
         className="text-sm mt-2 underline cursor-pointer"
       >
         {" "}
@@ -132,7 +131,7 @@ export default function PageEdit() {
         onSubmit={handleSubmit}
       >
         <h1>Page Editor:</h1>
-        <section class="flex w-full h-150">
+        <section className="flex w-full h-150">
           <EditorCanvas
             page={{
               ...page,

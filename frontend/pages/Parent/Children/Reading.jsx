@@ -82,7 +82,7 @@ export default function Reading() {
     <>
       <section className="flex">
         <ChapterCards id={bookId} />
-        <div className="relative w-[800px] h-[600px] overflow-hidden bg-white">
+        <div className="relative w-200 h-150 overflow-hidden bg-white">
           {["background", "middle", "foreground"].map((layerName) =>
             layout?.[layerName]?.map((obj) => (
               <PageObject key={obj.id} obj={obj} />
