@@ -45,7 +45,7 @@ class PersonalizationManager:
                 gender=template.default_gender,
                 main_color=template.default_main_color,
                 hair_color=template.default_hair_color,
-                clothing=template.default_clothing,
+                parts=template.default_parts,
                 glasses=template.default_glasses,
                 extra_attributes=template.extra_attributes,
                 customizable=template.customizable

@@ -1,6 +1,7 @@
 from . import db
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import JSONB
+from .book_character_template import BookCharacterTemplate
 
 class Personalization(db.Model):
     __tablename__ = 'personalizations'
@@ -43,24 +44,59 @@ class Personalization(db.Model):
 
 class PersonalizationCharacters(db.Model):
     __tablename__ = 'personalization_characters'
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     personalization_id = db.Column(db.Integer, db.ForeignKey('personalizations.id'), nullable=False)
     template_id = db.Column(db.Integer, db.ForeignKey('book_character_templates.id'), nullable=False)
-    role = db.Column(db.String(200), nullable=False) # example: "main", "friend", "pet"
+    role = db.Column(db.String(200), nullable=False)  # example: "main", "friend", "pet"
     name = db.Column(db.String(200), nullable=False)
-    gender = db.Column(db.String(200), nullable=False) # "male"/"female"
-    main_color = db.Column(db.String(200), nullable=False) # skin or fur_color
-    hair_color = db.Column(db.String(200))
-    clothing = db.Column(JSONB) # only different color options, nullable because animals
-    glasses = db.Column(db.Boolean, default=False)
-    extra_attributes = db.Column(JSONB) # hair_style etc.
+    gender = db.Column(db.String(50), nullable=False)  # "male"/"female"
+    colors = db.Column(JSONB, nullable=False)  # {"main": "#f2c6a0", "hair": "#3b2f2f"}
+    parts = db.Column(JSONB, nullable=False)
     customizable = db.Column(db.Boolean, nullable=False)
 
-    # Relationship
+    # Relationships
     template = db.relationship('BookCharacterTemplate', back_populates="personalization_characters")
-    personalization = db.relationship( "Personalization", back_populates="personalization_characters")
+    personalization = db.relationship("Personalization", back_populates="personalization_characters")
+
+    @classmethod
+    def from_template(cls, template: BookCharacterTemplate, personalization_id: int):
+        """Copies the Character from a BookCharacterTemplate based on book_id."""
+        return cls(
+            personalization_id=personalization_id,
+            template_id=template.id,
+            role=template.role,
+            name=template.name,
+            gender=template.gender,
+            colors=template.colors.copy(),
+            parts=template.parts.copy() if template.parts else None,
+            customizable=template.customizable,
+        )
 
     def to_dict(self):
+        """
+        Example return:
+        {
+            "id": 1,
+            "personalization_id": 5,
+            "template_id": 2,
+            "role": "main",
+            "name": "Lena",
+            "gender": "female",
+            "colors": {
+                "main": "#f2c6a0",
+                "hair": "#3b2f2f"
+            },
+            "parts": {
+                "head": "head_1",
+                "hair": "hair_long",
+                "torso": "shirt_basic",
+                "legs": "pants_blue",
+                "glasses": null
+            },
+            "customizable": true
+        }
+        """
         return {
             "id": self.id,
             "personalization_id": self.personalization_id,
@@ -68,10 +104,7 @@ class PersonalizationCharacters(db.Model):
             "role": self.role,
             "name": self.name,
             "gender": self.gender,
-            "main_color": self.main_color,
-            "hair_color": self.hair_color,
-            "clothing": self.clothing,
-            "glasses": self.glasses,
-            "extra_attributes": self.extra_attributes,
+            "colors": self.colors,
+            "parts": self.parts,
             "customizable": self.customizable,
         }

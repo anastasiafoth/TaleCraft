@@ -1,6 +1,20 @@
 from . import db
 from sqlalchemy.dialects.postgresql import JSONB
 
+def default_parts():
+    return {
+        "head": "head_1",
+        "hair": "hair_long",
+        "torso": "shirt_basic",
+        "legs": "pants_blue",
+        "glasses": None}
+
+def default_colors():
+    return {
+        "main": "#f2c6a0",
+        "hair": "#3b2f2f"
+    }
+
 class BookCharacterTemplate(db.Model):
     __tablename__ = "book_character_templates"
     __table_args__ = (
@@ -9,13 +23,10 @@ class BookCharacterTemplate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     book_id = db.Column(db.Integer, db.ForeignKey("books.id"), nullable=False)
     role = db.Column(db.String(200), nullable=False)  # example: "main", "friend", "pet"
-    default_name = db.Column(db.String(200), nullable=False)
-    default_gender = db.Column(db.String(50), nullable=False) # "male"/"female"
-    default_main_color = db.Column(db.String(200), nullable=False)
-    default_hair_color = db.Column(db.String(200))
-    default_clothing = db.Column(JSONB)
-    default_glasses = db.Column(db.Boolean, default=False)
-    extra_attributes = db.Column(JSONB)
+    name = db.Column(db.String(200), nullable=False)
+    gender = db.Column(db.String(50), nullable=False) # "male"/"female"
+    parts = db.Column(JSONB, nullable=False, default=default_parts)
+    colors = db.Column(JSONB, nullable=False, default=default_colors)
     customizable = db.Column(db.Boolean, nullable=False, default=True)
 
     #Relationship
@@ -23,3 +34,36 @@ class BookCharacterTemplate(db.Model):
     personalization_characters = db.relationship(
         "PersonalizationCharacters", back_populates="template"
     )
+
+    def to_dict(self):
+        """ Example return:
+            {
+            id: 1,
+            book_id: 1,
+            role: "main",
+            name: "Lena",
+            gender: "Girl",
+            parts: {
+                head: "head_1",
+                hair: "hair_long",
+                torso: "shirt_basic",
+                legs: "pants_blue",
+                glasses: "round"
+            },
+            colors: {
+                main: "#f2c6a0",
+                hair: "#3b2f2f",
+            },
+            customizable: true,
+            }"""
+        return {
+            "id": self.id,
+            "book_id": self.book_id,
+            "role": self.role,
+            "name": self.name,
+            "gender": self.gender,
+            "parts": self.parts,
+            "colors": self.colors,
+            "customizable": self.customizable,
+            }
+
