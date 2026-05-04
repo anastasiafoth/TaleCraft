@@ -32,16 +32,21 @@ export default function BookDetail() {
       <BookPreview book={book} />
 
       {/* Personalize button */}
-      <div className="flex justify-center py-6 bg-base-100">
-        <button
-          className="btn btn-outline btn-wide"
-          onClick={() =>
-            navigate(`/parent/personalizations/new`, { state: { bookId: id } })
-          }
-        >
-          Personalize this book
-        </button>
-      </div>
+      {user.role === "Parent" && (
+        <div className="flex justify-center py-6 bg-base-100">
+          <button
+            className="btn btn-outline btn-wide"
+            onClick={() =>
+              navigate(`/parent/personalizations/new`, {
+                state: { bookId: id },
+              })
+            }
+          >
+            Personalize this book
+          </button>
+        </div>
+      )}
+
       <section>
         <div className="bg-base-100 px-8 pb-10 max-w-2xl mx-auto w-full">
           <div className="divider" />

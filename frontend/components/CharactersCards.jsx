@@ -27,7 +27,7 @@ export default function CharactersCards() {
       .then(setCharacters)
       .catch(setError)
       .finally(() => setLoading(false));
-  }, [bookId, personalizationId, token]);
+  }, [bookId, personalizationId, token, handleReset]);
 
   if (loading) return <span className="loading loading-dots loading-md" />;
   if (error) return <p className="text-error">{error.message}</p>;

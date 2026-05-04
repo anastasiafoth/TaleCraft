@@ -19,7 +19,6 @@ import ChapterCards from "../components/Books/ChapterCards.jsx";
 import ChapterEdit from "../pages/Author/ChapterEdit.jsx";
 import PageCards from "../components/Books/PageCards.jsx";
 import PageEdit from "../pages/Author/PageEdit";
-import CharacterTemplateEdit from "../pages/Author/CharacterTemplateEdit";
 import CharactersCards from "../components/CharactersCards.jsx";
 
 import ParentLayout from "../components/Parents/ParentLayout.jsx";
@@ -27,7 +26,7 @@ import ParentDashboard from "../pages/Parent/ParentDashboard.jsx";
 import NewChild from "../pages/Parent/Children/NewChild.jsx";
 import PersonalizationsCards from "../components/Parents/PersonalizationsCards.jsx";
 import PersonalizationEdit from "../pages/Parent/PersonalizationEdit.jsx";
-import CharacterEdit from "../pages/Parent/CharacterEdit.jsx";
+import CharacterEdit from "../pages/CharacterEdit.jsx";
 
 import ChildrenDashboard from "../pages/Parent/Children/ChildrenDashboard.jsx";
 import Reading from "../pages/Parent/Children/Reading.jsx";
@@ -71,8 +70,8 @@ function App() {
 
               <Route path="character_templates">
                 <Route index element={<CharactersCards />} />
-                <Route path="new" element={<CharacterTemplateEdit />} />
-                <Route path=":templateId" element={<CharacterTemplateEdit />} />
+                <Route path="new" element={<CharacterEdit />} />
+                <Route path=":templateId" element={<CharacterEdit />} />
               </Route>
             </Route>
           </Route>
@@ -98,7 +97,10 @@ function App() {
               <Route path="new" element={<PersonalizationEdit />} />
               <Route path=":personalizationId">
                 <Route index element={<PersonalizationEdit />} />
-                <Route path="characters/:characterId" element={<CharacterEdit/>}/>
+                <Route
+                  path="characters/:characterId"
+                  element={<CharacterEdit />}
+                />
               </Route>
             </Route>
           </Route>

@@ -7,7 +7,7 @@ export default function KonvaObjectEdit({
   isSelected,
   onSelect,
   onChange,
-  onDelete
+  onDelete,
 }) {
   const [image] = useImage(obj.src);
   const shapeRef = useRef();
@@ -24,7 +24,7 @@ export default function KonvaObjectEdit({
     if (!isSelected) return;
 
     function handleKeyDown(e) {
-        console.log(document)
+      console.log(document);
       const tag = document.activeElement?.tagName?.toLowerCase();
       const isEditable = document.activeElement?.isContentEditable;
       if (
@@ -80,6 +80,7 @@ export default function KonvaObjectEdit({
       {obj.type === "text" ? (
         <Text
           {...commonProps}
+          id={obj.id}
           text={obj.content}
           fontSize={obj.font_size}
           fill={obj.color}

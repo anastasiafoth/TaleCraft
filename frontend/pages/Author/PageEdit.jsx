@@ -1,4 +1,4 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
 import { getPageById, addPage, updatePage } from "../../src/api";
@@ -12,7 +12,14 @@ export default function PageEdit() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(null);
-  const navigate = useNavigate();
+  const [editForm, setEditForm] = useState({
+    layout_data: {
+      background: [],
+      middle: [],
+      foreground: [],
+    },
+    is_cover: false,
+  });
 
   const { id, chapterId, pageId } = useParams();
 
@@ -40,15 +47,6 @@ export default function PageEdit() {
     }
     fetchPage();
   }, [pageId, token]);
-
-  const [editForm, setEditForm] = useState({
-    layout_data: {
-      background: [],
-      middle: [],
-      foreground: [],
-    },
-    is_cover: false,
-  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,7 +93,14 @@ export default function PageEdit() {
         ...prev.layout_data,
         foreground: [
           ...(prev.layout_data?.foreground || []),
-          { type: "text", content: text, x: 100, y: 100 },
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            key: Math.random().toString(36).substring(2, 9),
+            type: "text",
+            content: text,
+            x: 100,
+            y: 100,
+          },
         ],
       },
     }));

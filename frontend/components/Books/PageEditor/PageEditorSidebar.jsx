@@ -167,7 +167,7 @@ const FONT_SIZES = [10, 12, 14, 16, 18, 24, 32, 48];
 function TextSection({ onAddText }) {
   const [value, setValue] = useState("");
   const [fontSize, setFontSize] = useState(16);
-  
+
   return (
     <div className="flex flex-col gap-2">
       <textarea
@@ -178,6 +178,7 @@ function TextSection({ onAddText }) {
         placeholder="text..."
       />
       <button
+        type="button"
         className="btn btn-sm btn-primary w-full gap-1.5"
         onClick={() => onAddText?.(value)}
       >
