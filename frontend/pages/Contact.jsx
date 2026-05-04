@@ -1,4 +1,110 @@
+import { useState, useEffect } from "react";
 
 export default function Contact() {
-  return <h1>Contact Form</h1>;
+  const [success, setSuccess] = useState(false);
+  const [status, setStatus] = useState("idle");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {};
+  return (
+    <section className="grid min-h-screen w-full grid-cols-1 items-center md:grid-cols-2">
+      <div className="p-6 sm:p-12 lg:p-16">
+        <div className="mb-10">
+          <h2 className="my-4 text-3xl font-bold">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              className="lucide lucide-message-square-icon lucide-message-square mb-4"
+            >
+              <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z" />
+            </svg>
+            Contact us
+          </h2>
+          <p className="text-muted-foreground max-w-lg text-lg">
+            Whether you have questions or you would just like to say hello,
+            contact us.
+          </p>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 gap-x-4 gap-y-6 lg:grid-cols-2">
+            <div className="space-y-2">
+              <h1>First Name</h1>
+              <input
+                type="text"
+                name="first-name"
+                placeholder="John"
+                className="input input-bordered input-sm w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <h1>Last Name</h1>
+              <input
+                type="text"
+                name="last-name"
+                placeholder="Doe"
+                className="input input-bordered input-sm w-full"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h1>Email Address</h1>
+            <input
+              type="email"
+              name="email"
+              placeholder="someone@example.com"
+              className="input input-bordered input-sm w-full"
+            />
+          </div>
+          <div className="space-y-2">
+            <h1>Phone Number</h1>
+            <inout
+              name="phone"
+              type="tel"
+              maxLength={16}
+              placeholder="e.g., +1 123-456-7890"
+              pattern="^\+\d{1,3}\s\d{1,4}-\d{1,4}-\d{4}$"
+              className="input input-bordered input-sm w-full"
+            />
+          </div>
+          <div className="space-y-2">
+            <h1>Message</h1>
+            <textarea
+              className="w-full h-20 input input-bordered input-sm "
+              type="text"
+              id="message"
+              placeholder="Something about your request."
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="radio" id="privacy-policy" />
+            <h1 className="cursor-pointer text-sm font-normal">
+              You agree to your friendly{" "}
+              <a href="#" className="text-primary hover:underline">
+                Privacy Policy
+              </a>
+            </h1>
+          </div>
+          <button
+            disabled={status !== "idle"}
+            className="btn btn-primary flex-1 w-full"
+          >
+            {status == "submitting" ? "Sending..." : "Send Message"}
+          </button>
+        </form>
+      </div>
+      <img
+        src="https://pub-5c6211fe5e5e407fa14819f4ac3be544.r2.dev/main%20page/bg-contact-2.png"
+        alt="contact"
+        className="hidden h-full w-full object-cover object-center md:block"
+      />
+    </section>
+  );
 }

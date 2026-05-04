@@ -1,8 +1,11 @@
-import heroBg from "../src/assets/images/background.jpg";
-import heroImage from "../src/assets/images/hero_image.png";
-import sectionImage from "../src/assets/images/section_img.png";
+
+import ThreeDCard from "../components/ThreeDCard";
 import { Link } from "react-router-dom";
 import { useAuth } from "../src/AuthContext";
+
+const heroBg = "https://pub-5c6211fe5e5e407fa14819f4ac3be544.r2.dev/main%20page/background.jpg";
+const heroImage = "https://pub-5c6211fe5e5e407fa14819f4ac3be544.r2.dev/main%20page/hero_image.png";
+const sectionImage = "https://pub-5c6211fe5e5e407fa14819f4ac3be544.r2.dev/main%20page/section_img.png";
 
 export default function Home() {
   const { user } = useAuth();
@@ -68,7 +71,21 @@ export default function Home() {
         className="h-screen flex items-center justify-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
-        <h1 className="text-4xl font-bold">Get started!</h1>
+        <ThreeDCard
+          getStartedPath={getStartedPath}
+          title="For Authors"
+          info="You can easily create, manage, and publish interactive storybooks through an intuitive platform designed for creativity and flexibility. You can structure the stories into chapters and pages, enrich them with characters, and continuously refine your content. The system supports a smooth publishing workflow, allowing you to share your stories with a wider audience and update them whenever needed."
+        />
+        <ThreeDCard
+          getStartedPath={getStartedPath}
+          title="For Parents"
+          info="You have the ability to create personalized versions of storybooks tailored specifically to your children. You can customize characters, names, and certain story elements to make each story feel unique and meaningful. This personalization helps create a deeper emotional connection, making reading time more engaging and special for both you and your child."
+        />
+        <ThreeDCard
+          getStartedPath={getStartedPath}
+          title="For Children"
+          info="You can explore and enjoy personalized stories that are tailored just for you, making reading more fun and immersive. The platform also includes reading progress tracking, allowing you to see how far you’ve come and stay motivated. By combining storytelling with interactivity, it encourages regular reading habits and supports early the love for reading in an enjoyable way."
+        />
       </section>
     </div>
   );
