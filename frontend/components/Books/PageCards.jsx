@@ -56,7 +56,7 @@ export default function PageCards() {
                 },
                 Delete: {
                   fn: (obj) => handleDelete(obj, token),
-                  className: "btn-warning",
+                  className: "btn-error",
                 },
               }
             : null

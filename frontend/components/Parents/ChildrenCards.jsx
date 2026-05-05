@@ -143,13 +143,13 @@ export default function ChildrenCards({ children, setChildren }) {
                 <>
                   <button
                     onClick={() => handleEditClick(child)}
-                    className="btn btn-sm btn-outline btn-primary"
+                    className="btn btn-sm btn-primary"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(child)}
-                    className="btn btn-sm btn-outline btn-error"
+                    className="btn btn-sm btn-error"
                   >
                     Delete
                   </button>

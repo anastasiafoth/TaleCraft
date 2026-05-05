@@ -30,7 +30,7 @@ function Section({ label, dotClass, defaultOpen = false, children }) {
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-base-200 transition-colors text-left"
       >
         <span className="flex items-center gap-2 text-sm font-medium">
-          <span className={`w-2 h-2 rounded-full flex-shrink-0 ${dotClass}`} />
+          <span className={`w-2 h-2 rounded-full shrink-0 ${dotClass}`} />
           {label}
         </span>
         <svg
@@ -136,11 +136,11 @@ function CharacterList({ characters, loading, onDragStart }) {
               <img
                 src={char.profile_img}
                 alt={name}
-                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                className="w-8 h-8 rounded-full object-cover shrink-0"
               />
             ) : (
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-medium flex-shrink-0 ${AVATAR_COLORS[i % AVATAR_COLORS.length]}`}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 ${AVATAR_COLORS[i % AVATAR_COLORS.length]}`}
               >
                 {getInitials(name)}
               </div>
@@ -151,7 +151,7 @@ function CharacterList({ characters, loading, onDragStart }) {
                 <p className="text-xs text-base-content/50">{char.role}</p>
               )}
             </div>
-            <span className="badge badge-sm badge-outline flex-shrink-0">
+            <span className="badge badge-sm badge-outline shrink-0">
               Character
             </span>
           </div>
@@ -268,7 +268,7 @@ export default function PageEditorSidebar({
   return (
     <div className="w-64 h-full flex flex-col bg-base-100 border-r border-base-300 rounded-r-lg">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-base-300 flex-shrink-0">
+      <div className="px-4 py-3 border-b border-base-300 shrink-0">
         <p className="font-medium text-base-content/50 uppercase tracking-widest">
           Page Editor
         </p>

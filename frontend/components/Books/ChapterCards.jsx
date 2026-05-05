@@ -55,7 +55,7 @@ export default function ChapterCards({ id }) {
             ? {
                 "Edit Chapter": {
                   fn: (obj) => navigate(`${obj.id}/edit`),
-                  className: "btn-secondary",
+                  className: "btn-primary",
                 },
                 "Edit Pages": {
                   fn: (obj) => navigate(`${obj.id}/pages`),
@@ -63,7 +63,7 @@ export default function ChapterCards({ id }) {
                 },
                 Delete: {
                   fn: (obj) => handleDelete(obj, token),
-                  className: "btn-warning",
+                  className: "btn-error",
                 },
               }
             : null

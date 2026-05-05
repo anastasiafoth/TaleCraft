@@ -52,15 +52,15 @@ export default function BooksCards({ books, role = null, setBooks }) {
               ? {
                   [book.is_published ? "Unpublish" : "Publish"]: {
                     fn: (obj) => handlePublish(obj, token),
-                    className: book.is_published ? "btn-ghost" : "btn-primary",
+                    className: book.is_published ? "btn-ghost btn-outline btn-secondary" : "btn-secondary",
                   },
                   Edit: {
                     fn: (obj) => navigate(`books/${obj.id}/edit`),
-                    className: "btn-secondary",
+                    className: "btn-primary",
                   },
                   Delete: {
                     fn: (obj) => handleDelete(obj, token),
-                    className: "btn-warning",
+                    className: "btn-error",
                   },
                 }
               : role === "Parent"
