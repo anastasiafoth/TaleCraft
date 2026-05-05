@@ -230,13 +230,13 @@ export default function PageEditorSidebar({
   }, [id, token]);
 
   // Assets nach Dateiname auf Layer aufteilen
-  const bgAssets = assets.filter((a) => /background|bg_/i.test(a.object_key));
+  const bgAssets = assets.filter((a) => /background|weather|house|cloud|field|garden|bg_/i.test(a.object_key));
   const midAssets = assets.filter((a) =>
-    /middle|mid_|tree|bush|rock|cloud/i.test(a.object_key),
+    /middle|mid_|tree|bush|rock|house|cloud/i.test(a.object_key),
   );
   const fgAssets = assets.filter(
     (a) =>
-      !/(background|bg_|middle|mid_|tree|bush|rock|cloud)/i.test(a.object_key),
+      !/(background|bg_|tree|bush|rock|cloud)/i.test(a.object_key),
   );
 
   const handleDragAsset = useCallback(

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../../src/AuthContext";
 import { addNewChild } from "../../../src/api";
 
@@ -15,6 +15,12 @@ export default function NewChild() {
     birthdate: "",
     profile_img: "",
   });
+
+  useEffect(() => {
+    if (success) {
+      navigate("/parent");
+    }
+  }, [success]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,6 +65,7 @@ export default function NewChild() {
             name="birthdate"
             onChange={handleChange}
             type="date"
+            max={new Date().toISOString().split("T")[0]}
             placeholder="last name"
             className="input"
           />
@@ -74,7 +81,6 @@ export default function NewChild() {
       {success && (
         <div className="flex flex-col items-center gap-4 text-center pt-10">
           <div className="text-success">Added new child!</div>
-          {navigate("/parent")}
         </div>
       )}
     </div>

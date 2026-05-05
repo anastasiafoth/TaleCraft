@@ -1,4 +1,4 @@
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { createPersonalization, getPersonalizationById } from "../../src/api";
 import { useAuth } from "../../src/AuthContext";
@@ -45,7 +45,13 @@ export default function PersonalizationEdit() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h1>Personalization #{personalizationId}</h1>
+      <Link
+        to="/parent/personalizations"
+        className="text-sm mt-2 underline cursor-pointer"
+      >
+        {" "}
+        Go back to all Personalizations
+      </Link>
       <CharactersCards personalizationId={personalizationId} />
     </section>
   );

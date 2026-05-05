@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
 import { getChaptersByBook, deleteChapter } from "../../src/api";
 
-export default function ChapterCards({id}) {
+export default function ChapterCards({ id }) {
   const { user, token } = useAuth();
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,7 @@ export default function ChapterCards({id}) {
     ));
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
       {user.role === "Author" && (
         <Card
           title={
@@ -84,7 +84,7 @@ export default function ChapterCards({id}) {
           }
         />
       )}
-      <section className="flex flex-col gap-4">{ChaptersElements}</section>
+      {ChaptersElements}
     </section>
   );
 }

@@ -8,8 +8,8 @@ export default function Card({
   // Empty/placeholder card
   if (!obj) {
     return (
-      <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-76">
-        <figure className="w-full h-48 bg-base-200 flex items-center justify-center">
+      <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-full">
+        <figure className="w-full h-full bg-base-200 flex items-center justify-center">
           <span className="text-6xl text-base-content/40">+</span>
         </figure>
 
@@ -19,7 +19,7 @@ export default function Card({
   }
 
   return (
-    <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-76">
+    <div className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-full">
       {img && (
         <figure>
           <img
@@ -40,7 +40,7 @@ export default function Card({
         ))}
 
         {actions && (
-          <div className="card-actions justify-end mt-3 gap-2">
+          <div className="card-actions justify-end mt-auto gap-2">
             {Object.entries(actions).map(
               ([label, { fn, className = "btn-ghost" }]) => (
                 <button

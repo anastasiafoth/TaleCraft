@@ -64,19 +64,17 @@ export default function PersonalizationsCards({ role = "parent" }) {
     );
 
   return (
-    <section>
-      <section className="flex flex-col gap-4">
-        <Card
-          title={
-            <Link to="/books" aria-label="Add new personalization">
-              <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
-                Add new Personalization
-              </h2>
-            </Link>
-          }
-        />
-        {PersonalizationsElements}
-      </section>
+    <section className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+      <Card
+        title={
+          <Link to="/books" aria-label="Add new personalization">
+            <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
+              Add new Personalization
+            </h2>
+          </Link>
+        }
+      />
+      {PersonalizationsElements}
     </section>
   );
 }

@@ -90,7 +90,7 @@ export default function CharactersCards() {
     ));
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3 mt-4">
       {user.role === "Author" && (
         <Card
           title={
@@ -102,7 +102,7 @@ export default function CharactersCards() {
           }
         />
       )}
-      <section className="flex flex-col gap-4">{CharacterElements}</section>
+      {CharacterElements}
     </section>
   );
 }

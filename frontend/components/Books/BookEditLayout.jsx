@@ -31,7 +31,7 @@ export default function BookEditLayout() {
             ${!id ? "opacity-50 pointer-events-none cursor-not-allowed" : ""}`
             }
           >
-            <h2 className="transition-colors">Chapters</h2>
+            <h2 className="transition-colors">Chapters & Pages</h2>
           </NavLink>
         </li>
         <li>

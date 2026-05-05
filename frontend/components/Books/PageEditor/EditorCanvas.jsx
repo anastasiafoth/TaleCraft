@@ -6,7 +6,8 @@ import KonvaObjectEdit from "./KonvaObjectEdit";
 
 export default function EditorCanvas({ page, onLayoutChange }) {
   const [selectedId, setSelectedId] = useState(null);
-  const layout = page?.layout_data;
+  const EMPTY_LAYOUT = { background: [], middleground: [], foreground: [] };
+  const layout = page?.layout_data ?? EMPTY_LAYOUT;
 
   function handleChange(layerName, updatedObj) {
     const updatedLayout = {
@@ -22,29 +23,34 @@ export default function EditorCanvas({ page, onLayoutChange }) {
     e.preventDefault();
 
     const data = JSON.parse(e.dataTransfer.getData("application/json"));
-    if (data.type === "asset") {
-      const img = new window.Image();
-      img.onload = () => {
-        const newAsset = {
-          id: data.object_key,
-          type: "image",
-          src: data.file_url,
-          x: 100,
-          y: 100,
-          width: img.width * 0.1,
-          height: img.height * 0.1,
-        };
 
-        const targetLayer = data.layer || "foreground";
+    if (data.type !== "asset") return;
 
-        onLayoutChange({
-          ...layout,
-          [targetLayer]: [...(layout?.[targetLayer] || []), newAsset],
-        });
+    const targetLayerRaw = data.layer ?? "foreground";
+
+    const targetLayer = String(targetLayerRaw).trim().toLowerCase();
+
+    const img = new window.Image();
+    img.onload = () => {
+      const newAsset = {
+        id: crypto.randomUUID(),
+        type: "image",
+        src: data.file_url,
+        x: 100,
+        y: 100,
+        width: img.width * 0.1,
+        height: img.height * 0.1,
       };
 
-      img.src = data.file_url;
-    }
+      onLayoutChange({
+        background: [...(layout.background ?? [])],
+        middleground: [...(layout.middleground ?? [])],
+        foreground: [...(layout.foreground ?? [])],
+        [targetLayer]: [...(layout[targetLayer] ?? []), newAsset],
+      });
+    };
+
+    img.src = data.file_url;
   }
 
   function handleDelete(layerName, id) {
@@ -70,7 +76,7 @@ export default function EditorCanvas({ page, onLayoutChange }) {
           if (e.target === e.target.getStage()) setSelectedId(null);
         }}
       >
-        {["background", "middle", "foreground"].map((layerName) => (
+        {["background", "middleground", "foreground"].map((layerName) => (
           <Layer key={layerName} name={layerName}>
             {layout?.[layerName]?.map((obj) => (
               <KonvaObjectEdit

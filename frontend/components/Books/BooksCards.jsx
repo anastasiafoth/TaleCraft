@@ -80,7 +80,7 @@ export default function BooksCards({ books, role = null, setBooks }) {
 
   return (
     <div className="p-6">
-      <section className="flex flex-wrap gap-6 justify-start">
+      <section className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
         {role !== null && (
           <Card
             title={

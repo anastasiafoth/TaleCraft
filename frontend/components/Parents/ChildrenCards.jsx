@@ -24,6 +24,10 @@ export default function ChildrenCards({ children, setChildren }) {
     ) {
       age--;
     }
+
+    if (age < 0) {
+      return null;
+    }
     return age;
   }
 
@@ -71,7 +75,7 @@ export default function ChildrenCards({ children, setChildren }) {
       return (
         <div
           key={child.child_id}
-          className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-76"
+          className="card bg-base-100 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl overflow-hidden w-full"
         >
           <figure className="relative">
             <img
@@ -96,6 +100,7 @@ export default function ChildrenCards({ children, setChildren }) {
                 <input
                   type="date"
                   value={editForm.birthdate}
+                  max={new Date().toISOString().split("T")[0]}
                   onChange={(e) =>
                     setEditForm({ ...editForm, birthdate: e.target.value })
                   }
@@ -157,19 +162,17 @@ export default function ChildrenCards({ children, setChildren }) {
     });
 
   return (
-    <div className="p-6">
-      <section className="flex flex-wrap gap-6 justify-start">
-        <Card
-          title={
-            <Link to="children/new" aria-label="Add new book">
-              <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
-                Add new child profile
-              </h2>
-            </Link>
-          }
-        />
-        {ChildrenElements}
-      </section>
-    </div>
+    <section className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+      <Card
+        title={
+          <Link to="children/new" aria-label="Add new book">
+            <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
+              Add new child profile
+            </h2>
+          </Link>
+        }
+      />
+      {ChildrenElements}
+    </section>
   );
 }
