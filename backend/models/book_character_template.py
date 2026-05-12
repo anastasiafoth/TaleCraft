@@ -4,9 +4,9 @@ from sqlalchemy.dialects.postgresql import JSONB
 def default_parts():
     return {
         "head": "head_1",
-        "hair": "hair_long",
-        "torso": "shirt_basic",
-        "legs": "pants_blue",
+        "hair": "hair_long_1",
+        "outfits": "dress_long_1",
+        "body": "body_standing_1",
         "glasses": None}
 
 def default_colors():
@@ -28,6 +28,7 @@ class BookCharacterTemplate(db.Model):
     parts = db.Column(JSONB, nullable=False, default=default_parts)
     colors = db.Column(JSONB, nullable=False, default=default_colors)
     customizable = db.Column(db.Boolean, nullable=False, default=True)
+    rendered_url = db.Column(db.String(200), nullable=True)
 
     #Relationship
     book = db.relationship('Book', back_populates='character_templates')
@@ -36,26 +37,7 @@ class BookCharacterTemplate(db.Model):
     )
 
     def to_dict(self):
-        """ Example return:
-            {
-            id: 1,
-            book_id: 1,
-            role: "main",
-            name: "Lena",
-            gender: "Girl",
-            parts: {
-                head: "head_1",
-                hair: "hair_long",
-                torso: "shirt_basic",
-                legs: "pants_blue",
-                glasses: "round"
-            },
-            colors: {
-                main: "#f2c6a0",
-                hair: "#3b2f2f",
-            },
-            customizable: true,
-            }"""
+
         return {
             "id": self.id,
             "book_id": self.book_id,
@@ -65,5 +47,6 @@ class BookCharacterTemplate(db.Model):
             "parts": self.parts,
             "colors": self.colors,
             "customizable": self.customizable,
+            "rendered_url": self.rendered_url
             }
 
