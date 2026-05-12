@@ -40,7 +40,12 @@ export default function PersonalizationEdit() {
     fetchOrCreatePersonalization();
   }, [bookId, personalizationId, token]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-dots loading-5xl" />
+      </div>
+    );
   if (error) return <p>Error: {error}</p>;
 
   return (

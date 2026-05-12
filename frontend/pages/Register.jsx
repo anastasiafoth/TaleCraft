@@ -51,6 +51,7 @@ export default function Register() {
       [name]: value,
     }));
   }
+  
 
   return (
     <div className="flex flex-col items-center min-h-screen m-20">
@@ -59,7 +60,7 @@ export default function Register() {
           <div className="text-success text-5xl">✓</div>
           <h2 className="text-xl font-bold">Registration successful!</h2>
           <p className="text-sm opacity-70">Redirecting to login page...</p>
-          <span className="loading loading-dots loading-md"></span>
+          <span className="loading loading-dots loading-5xl"></span>
         </div>
       ) : (
         <>

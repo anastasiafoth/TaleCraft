@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAssets } from "../../../src/api";
 
-const CATEGORIES = ["head", "hair", "torso", "legs", "glasses"];
+const CATEGORIES = ["head", "hair", "outfits", "body", "glasses"];
 
 function PartButton({ asset, isActive, onClick, toProxyUrl }) {
   return (

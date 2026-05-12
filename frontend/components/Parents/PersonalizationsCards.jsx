@@ -24,7 +24,12 @@ export default function PersonalizationsCards({ role = "parent" }) {
     setPersonalizations((prev) => prev.filter((p) => p.id !== id));
   };
 
-  if (loading) return <span className="loading loading-dots loading-md" />;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-dots loading-5xl" />
+      </div>
+    );
   if (error) return <p className="text-error">{error.message}</p>;
 
   const PersonalizationsElements =
@@ -65,15 +70,18 @@ export default function PersonalizationsCards({ role = "parent" }) {
 
   return (
     <section className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-      <Card
-        title={
-          <Link to="/books" aria-label="Add new personalization">
-            <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
-              Add new Personalization
-            </h2>
-          </Link>
-        }
-      />
+      {role === "parent" && (
+        <Card
+          title={
+            <Link to="/books" aria-label="Add new personalization">
+              <h2 className="card-title text-lg font-bold hover:text-primary transition-colors line-clamp-2">
+                Add new Personalization
+              </h2>
+            </Link>
+          }
+        />
+      )}
+
       {PersonalizationsElements}
     </section>
   );

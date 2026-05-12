@@ -309,7 +309,6 @@ export async function deleteBook(id, token) {
 
 export async function getChaptersByBook(bookId) {
   const res = await fetch(`${DEV_URL}/api/books/${bookId}/chapters`);
-  console.log(bookId);
   const data = await res.json();
   if (!res.ok)
     throw {
@@ -759,7 +758,6 @@ export async function createReadingProgress(creds, token) {
     body: JSON.stringify(creds),
   });
   const data = await res.json();
-  console.log(data);
   if (!res.ok)
     throw {
       message: data.message || "Unknown error",

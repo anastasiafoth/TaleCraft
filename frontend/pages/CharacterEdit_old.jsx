@@ -17,7 +17,7 @@ const DEFAULT_COLORS = {
 
 const DEFAULT_PARTS = {
   head: "head_1",
-  hair: "hair_long",
+  hair: "hair_long_1",
   torso: "shirt_basic",
   legs: "pants_blue",
   glasses: null,

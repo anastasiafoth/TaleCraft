@@ -21,8 +21,8 @@ const DEFAULT_COLORS = {
 const DEFAULT_PARTS = {
   hair: "/characters/hair/hair_long_1.png",
   head: "/characters/head/head_1.png",
-  legs: "/characters/legs/legs_1.png",
-  torso: "/characters/torso/dress_long_1.png",
+  body: "/characters/body/body_standing_1.png",
+  outfits: "/characters/outfits/outfit_dress_1.png",
   glasses: "/characters/glasses/glasses_1.png",
 };
 
@@ -232,7 +232,12 @@ export default function CharacterEdit() {
     }
   }
 
-  if (loading) return <p>Loading character info...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-dots loading-5xl" />
+      </div>
+    );
   if (error) return <p>Error: {error}</p>;
 
   return (

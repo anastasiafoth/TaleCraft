@@ -60,7 +60,12 @@ export default function Reading() {
     load();
   }, [token, childId, personalizationId, pageId]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-dots loading-5xl" />
+      </div>
+    );
   if (error) return <p>Error: {error.message}</p>;
 
   const layout = currentPage?.layout_data;
@@ -68,7 +73,6 @@ export default function Reading() {
   const currentIndex = pages.findIndex((p) => p.id === currentPage?.id);
 
   const handleNavigate = async (page) => {
-    console.log(pages[currentIndex]);
     await updateReadingProgress(
       progress.id,
       { current_page_id: page.id },
@@ -81,7 +85,7 @@ export default function Reading() {
   return (
     <>
       <section className="flex">
-        <ChapterCards id={bookId} />
+        <ChapterCards id={bookId} mode="reading" />
         <div className="relative w-200 h-150 overflow-hidden bg-white">
           {["background", "middle", "foreground"].map((layerName) =>
             layout?.[layerName]?.map((obj) => (

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../src/AuthContext";
 import { getChaptersByBook, deleteChapter } from "../../src/api";
 
-export default function ChapterCards({ id }) {
+export default function ChapterCards({ id, mode }) {
   const { user, token } = useAuth();
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +13,7 @@ export default function ChapterCards({ id }) {
   const { id: paramBookId } = useParams();
   const bookId = id ?? paramBookId;
   const navigate = useNavigate();
+  const format = user.role === "Author" ? ("grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3"):("flex flex-col")
 
   useEffect(() => {
     getChaptersByBook(bookId)
@@ -21,7 +22,12 @@ export default function ChapterCards({ id }) {
       .finally(() => setLoading(false));
   }, [bookId]);
 
-  if (loading) return <span className="loading loading-dots loading-md" />;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-dots loading-5xl" />
+      </div>
+    );
   if (error) return <p className="text-error">{error.message}</p>;
 
   async function handleDelete(chapter) {
@@ -72,7 +78,7 @@ export default function ChapterCards({ id }) {
     ));
 
   return (
-    <section className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+    <section className={format}>
       {user.role === "Author" && (
         <Card
           title={

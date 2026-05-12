@@ -15,7 +15,12 @@ export default function Books() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <span className="loading loading-dots loading-md" />;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-dots loading-5xl" />
+      </div>
+    );
   if (error) return <p className="text-error">{error.message}</p>;
 
   return (

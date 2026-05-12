@@ -1,4 +1,4 @@
-const LAYER_ORDER = ["legs", "torso", "head", "hair", "glasses"];
+const LAYER_ORDER = ["body", "outfits", "head", "hair", "glasses"];
 
 function TintLayer({ src, color, zIndex, onClick }) {
   return (
@@ -83,7 +83,7 @@ export default function CharacterCanvas({
     }
 
     // Haut einfärben
-    if (layer === "head" || layer === "legs") {
+    if (layer === "head" || layer === "body") {
       return (
         <TintLayer
           key={`${layer}-${src}-${colors.main}`}
