@@ -10,37 +10,18 @@ import {
   updateCharacterTemplate,
 } from "../src/api";
 
-import CharacterCanvas from "../components/Books/CharacterEditor/CharacterCanvas";
-import CharacterEditorSidebar from "../components/Books/CharacterEditor/CharacterEditorSidebar";
-
 const DEFAULT_COLORS = {
   main: "#f2c6a0",
   hair: "#3b2f2f",
 };
 
 const DEFAULT_PARTS = {
-  hair: "/characters/hair/hair_long_1.png",
-  head: "/characters/head/head_1.png",
-  legs: "/characters/legs/legs_1.png",
-  torso: "/characters/torso/dress_long_1.png",
-  glasses: "/characters/glasses/glasses_1.png",
+  head: "head_1",
+  hair: "hair_long",
+  torso: "shirt_basic",
+  legs: "pants_blue",
+  glasses: null,
 };
-
-const ASSET_BASE = "https://character-proxy.anastasiafoth9.workers.dev";
-
-function toProxyUrl(pathOrUrl) {
-  try {
-    const url = new URL(pathOrUrl);
-
-    if (url.hostname.endsWith(".r2.dev")) {
-      return `${ASSET_BASE}${url.pathname}${url.search}`;
-    }
-
-    return url.toString();
-  } catch {
-    return new URL(pathOrUrl, ASSET_BASE).toString();
-  }
-}
 
 export default function CharacterEdit() {
   const { user, token } = useAuth();
@@ -74,8 +55,6 @@ export default function CharacterEdit() {
           customizable: true,
         },
   );
-  const [activeLayer, setActiveLayer] = useState("hair");
-  const [activeCategory, setActiveCategory] = useState("hair");
 
   useEffect(() => {
     if (!token) return;
@@ -257,94 +236,98 @@ export default function CharacterEdit() {
         </Link>
       )}
 
-      <form
-        className="card-body p-4 gap-2 flex flex-row h-full"
-        onSubmit={handleSubmit}
-      >
-        <section className="flex-shrink-0">
-          {user.role === "Parent" ? (
-            <h1>Role: {character?.role}</h1>
-          ) : (
-            <>
-              <h1>Role:</h1>
-              <input
-                type="text"
-                name="role"
-                value={editForm.role}
-                onChange={handleChange}
-                className="input input-bordered input-sm "
-                placeholder="e.g. protagonist"
-              />
-            </>
-          )}
+      <form className="card-body p-4 gap-2" onSubmit={handleSubmit}>
+        {user.role === "Parent" ? (
+          <h1>Role: {character?.role}</h1>
+        ) : (
+          <>
+            <h1>Role:</h1>
+            <input
+              type="text"
+              name="role"
+              value={editForm.role}
+              onChange={handleChange}
+              className="input input-bordered input-sm w-full"
+              placeholder="e.g. protagonist"
+            />
+          </>
+        )}
 
-          <h1>Name:</h1>
-          <input
-            type="text"
-            name="name"
-            value={editForm.name}
-            onChange={handleChange}
-            className="input input-bordered input-sm "
-            placeholder="Name"
-          />
+        <h1>Name:</h1>
+        <input
+          type="text"
+          name="name"
+          value={editForm.name}
+          onChange={handleChange}
+          className="input input-bordered input-sm w-full"
+          placeholder="Name"
+        />
 
-          <h1>Gender:</h1>
-          <div className="flex gap-4">
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="female"
-                checked={editForm.gender === "female"}
-                onChange={handleChange}
-              />{" "}
-              Female
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="male"
-                checked={editForm.gender === "male"}
-                onChange={handleChange}
-              />{" "}
-              Male
-            </label>
+        <h1>Gender:</h1>
+        <div className="flex gap-4">
+          <label>
+            <input
+              type="radio"
+              name="gender"
+              value="female"
+              checked={editForm.gender === "female"}
+              onChange={handleChange}
+            />{" "}
+            Female
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="gender"
+              value="male"
+              checked={editForm.gender === "male"}
+              onChange={handleChange}
+            />{" "}
+            Male
+          </label>
+        </div>
+
+        <h1>Colors:</h1>
+        <label>Skin / Main Color:</label>
+        <input
+          type="color"
+          value={editForm.colors.main}
+          onChange={(e) => handleColorChange("main", e.target.value)}
+          className="input input-bordered input-sm"
+        />
+        <label>Hair Color:</label>
+        <input
+          type="color"
+          value={editForm.colors.hair}
+          onChange={(e) => handleColorChange("hair", e.target.value)}
+          className="input input-bordered input-sm"
+        />
+
+        <h1>Parts:</h1>
+        {Object.entries(editForm.parts).map(([key, value]) => (
+          <div key={key}>
+            <label className="capitalize">{key}:</label>
+            <input
+              type="text"
+              value={value ?? ""}
+              onChange={(e) => handlePartChange(key, e.target.value)}
+              className="input input-bordered input-sm w-full"
+              placeholder={`e.g. ${key}_1`}
+            />
           </div>
+        ))}
 
-          {user.role === "Author" && (
-            <label className="flex gap-2 items-center">
-              Customizable:
-              <input
-                type="checkbox"
-                name="customizable"
-                checked={editForm.customizable}
-                onChange={handleChange}
-              />
-            </label>
-          )}
-          <CharacterEditorSidebar
-            token={token}
-            parts={editForm.parts}
-            colors={editForm.colors}
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-            onPartChange={handlePartChange}
-            onColorChange={handleColorChange}
-            toProxyUrl={toProxyUrl}
-          />
-        </section>
-
-        <section className="flex flex-col  border border-base-300 rounded-lg overflow-hidden">
-          <h1>Character:</h1>
-          <CharacterCanvas
-            token={token}
-            parts={editForm.parts}
-            colors={editForm.colors}
-            onPartClick={(category) => setActiveCategory(category)}
-            toProxyUrl={toProxyUrl}
-          />
-        </section>
+        {user.role === "Author" && (
+          <label className="flex gap-2 items-center">
+            Customizable:
+            <input
+              type="checkbox"
+              name="customizable"
+              checked={editForm.customizable}
+              onChange={handleChange}
+            />
+          </label>
+        )}
 
         <div className="flex gap-2 mt-4">
           <button

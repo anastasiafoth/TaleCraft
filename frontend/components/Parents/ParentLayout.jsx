@@ -5,7 +5,7 @@ const links = [
   { to: ".", end: true, label: "All children" },
   { to: "children/new", label: "Add new child" },
   { to: "personalizations", end: true, label: "Browse all personalized books" },
-  { to: "personalizations/new", label: "Add new personalized book" },
+  { to: "/books", label: "Add new personalized book" },
 ];
 
 export default function ParentLayout() {
