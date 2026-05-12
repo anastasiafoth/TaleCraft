@@ -37,7 +37,7 @@ class PersonalizationCharactersManager:
     def update_personalization_character(character_id, parent_id, data):
         character = PersonalizationCharactersManager._get_authorized_character(character_id, parent_id)
 
-        updatable_fields = ["name", "gender", "colors", "parts", "customizable"]
+        updatable_fields = ["name", "gender", "colors", "parts", "rendered_url"]
         for field in updatable_fields:
             if field in data:
                 setattr(character, field, data[field])

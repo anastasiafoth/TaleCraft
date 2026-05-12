@@ -70,7 +70,7 @@ class BookCharacterTemplateManager:
         if not template:
             raise ValueError("Template not found or not authorized")
 
-        updatable_fields = ["role", "name", "gender", "parts", "colors", "customizable"]
+        updatable_fields = ["role", "name", "gender", "parts", "colors", "customizable", "rendered_url"]
         for field in updatable_fields:
             if field in data:
                 setattr(template, field, data[field])
