@@ -74,7 +74,7 @@ export default function CharacterEdit() {
           customizable: true,
         },
   );
-  const [activeLayer, setActiveLayer] = useState("hair");
+
   const [activeCategory, setActiveCategory] = useState("hair");
 
   useEffect(() => {

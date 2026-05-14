@@ -79,7 +79,8 @@ export default function ChildrenCards({ children, setChildren }) {
         >
           <figure className="relative">
             <img
-              src={child.profile_img || null}
+              src={child.profile_img ||
+              `https://placehold.co/600x400?text=${child.first_name}`}
               alt={`Profile picture of ${child.first_name}`}
               className="w-full h-48 object-cover"
             />

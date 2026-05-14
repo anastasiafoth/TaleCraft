@@ -46,6 +46,7 @@ const EditorCanvas = forwardRef(function EditorCanvas(
         type: "image",
         kind: isCharacter ? "character" : "asset",
         src,
+        updatedAt: isCharacter ? data.updated_at : null,
         x: 100,
         y: 100,
         width: isCharacter ? img.width * 0.35 : img.width * 0.1,

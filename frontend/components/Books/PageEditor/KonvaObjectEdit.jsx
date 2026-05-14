@@ -9,7 +9,12 @@ export default function KonvaObjectEdit({
   onChange,
   onDelete,
 }) {
-  const [image] = useImage(obj.src);
+  const src =
+    obj.kind === "character" && obj.updatedAt
+      ? `${obj.src}?t=${obj.updatedAt}`
+      : obj.src;
+
+  const [image] = useImage(src);
   const shapeRef = useRef();
   const trRef = useRef();
 

@@ -5,6 +5,7 @@ import {
   updateReadingProgress,
   getPageById,
   getPagesByBook,
+  getPersonalizationCharacters,
 } from "../../../src/api";
 import { useAuth } from "../../../src/AuthContext";
 import PageObject from "../../../components/Books/PageObject";
@@ -16,6 +17,7 @@ export default function Reading() {
   const [progress, setProgress] = useState(null);
   const [currentPage, setCurrentPage] = useState(null);
   const [pages, setPages] = useState([]);
+  const [characterMap, setCharacterMap] = useState({});
   const bookId = progress?.book_id;
   const location = useLocation();
   const pageId = location.state?.pageId;
@@ -51,6 +53,16 @@ export default function Reading() {
 
         const fetchedPages = await getPagesByBook(fetchedProgress.book_id);
         setPages(fetchedPages);
+
+        const fetchedCharacters = await getPersonalizationCharacters(
+          personalizationId,
+          token,
+        );
+        const map = {};
+        fetchedCharacters.forEach((c) => {
+          if (c.template_id) map[c.template_id] = c.rendered_url;
+        });
+        setCharacterMap(map);
       } catch (err) {
         setError(err);
       } finally {
@@ -87,10 +99,19 @@ export default function Reading() {
       <section className="flex">
         <ChapterCards id={bookId} mode="reading" />
         <div className="relative w-200 h-150 overflow-hidden bg-white">
-          {["background", "middle", "foreground"].map((layerName) =>
-            layout?.[layerName]?.map((obj) => (
-              <PageObject key={obj.id} obj={obj} />
-            )),
+          {["background", "middleground", "foreground"].map((layerName) =>
+            layout?.[layerName]?.map((obj) => {
+              const resolvedObj =
+                obj.kind === "character" &&
+                obj.characterId &&
+                characterMap[obj.characterId]
+                  ? {
+                      ...obj,
+                      src: `${characterMap[obj.characterId]}?t=${obj.updatedAt ?? 0}`,
+                    }
+                  : obj;
+              return <PageObject key={obj.id} obj={resolvedObj} />;
+            }),
           )}
         </div>
       </section>

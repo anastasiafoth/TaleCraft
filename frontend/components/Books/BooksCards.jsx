@@ -38,7 +38,12 @@ export default function BooksCards({ books, role = null, setBooks }) {
         <Card
           key={book.id}
           obj={book}
-          img={{ src: book.cover_thumbnail_url, alt: `Cover of ${book.title}` }}
+          img={{
+            src:
+              book.cover_thumbnail_url ||
+              `https://placehold.co/600x400?text=${book.title}`,
+            alt: `Cover of ${book.title}`,
+          }}
           title={
             <Link to={`/books/${book.id}`}>
               <h2 className="card-title text-lg font-bold hover:text-primary line-clamp-2">
@@ -52,7 +57,9 @@ export default function BooksCards({ books, role = null, setBooks }) {
               ? {
                   [book.is_published ? "Unpublish" : "Publish"]: {
                     fn: (obj) => handlePublish(obj, token),
-                    className: book.is_published ? "btn-ghost btn-outline btn-secondary" : "btn-secondary",
+                    className: book.is_published
+                      ? "btn-ghost btn-outline btn-secondary"
+                      : "btn-secondary",
                   },
                   Edit: {
                     fn: (obj) => navigate(`books/${obj.id}/edit`),
