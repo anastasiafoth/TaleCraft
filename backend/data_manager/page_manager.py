@@ -84,34 +84,53 @@ class PageManager:
 
     @staticmethod
     def update_page(page_id, data, author_id):
-        page = Page.query.join(Chapter).join(Book).filter(
-            Page.id == page_id,
-            Book.author_id == author_id
-        ).first()
+        page = (
+            Page.query
+            .join(Chapter, Page.chapter_id == Chapter.id)
+            .join(Book, Chapter.book_id == Book.id)
+            .filter(
+                Page.id == page_id,
+                Book.author_id == author_id,
+            )
+            .first()
+        )
 
         if not page:
             raise ValueError("Page not found or not authorized")
+
+        chapter = Chapter.query.get(page.chapter_id)
+        if not chapter:
+            raise ValueError("Chapter not found")
+
+        book = Book.query.get(chapter.book_id)
+        if not book:
+            raise ValueError("Book not found")
 
         if "layout_data" in data:
             page.layout_data = data["layout_data"]
 
         if "is_cover" in data:
-            page.is_cover = data["is_cover"]
+            new_is_cover = bool(data["is_cover"])
+            page.is_cover = new_is_cover
 
-            if data["is_cover"]:
-                # book_id via Chapter
-                chapter = Chapter.query.get(page.chapter_id)
-                book_id = chapter.book_id
+            if new_is_cover:
+                chapter_ids = [
+                    row.id for row in Chapter.query.filter_by(book_id=book.id).all()
+                ]
 
-                Page.query.join(Chapter).filter(
-                    Chapter.book_id == book_id,
-                    Page.id != page_id
-                ).update({"is_cover": False}, synchronize_session="fetch")
+                if chapter_ids:
+                    Page.query.filter(
+                        Page.chapter_id.in_(chapter_ids),
+                        Page.id != page.id,
+                    ).update(
+                        {"is_cover": False},
+                        synchronize_session=False,
+                    )
 
-                Book.query.filter_by(id=book_id).update(
-                    {"cover_page_id": page_id},
-                    synchronize_session=False
-                )
+                book.cover_page_id = page.id
+            else:
+                if book.cover_page_id == page.id:
+                    book.cover_page_id = None
 
         db.session.commit()
 
@@ -122,6 +141,7 @@ class PageManager:
             "layout_data": page.layout_data,
             "is_cover": page.is_cover,
         }
+
 
     @staticmethod
     def delete_page(page_id, author_id):
