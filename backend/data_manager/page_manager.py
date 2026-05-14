@@ -99,16 +99,15 @@ class PageManager:
             page.is_cover = data["is_cover"]
 
             if data["is_cover"]:
-                # book? via Chapter
-                book_id = page.chapter.book_id
+                # book_id via Chapter
+                chapter = Chapter.query.get(page.chapter_id)
+                book_id = chapter.book_id
 
-                # Set all other pages of this book to is_cover = False
                 Page.query.join(Chapter).filter(
                     Chapter.book_id == book_id,
                     Page.id != page_id
                 ).update({"is_cover": False}, synchronize_session="fetch")
 
-                # Book.cover_page_id = page_id
                 Book.query.filter_by(id=book_id).update(
                     {"cover_page_id": page_id},
                     synchronize_session=False
