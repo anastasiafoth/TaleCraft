@@ -84,7 +84,6 @@ class PageManager:
 
     @staticmethod
     def update_page(page_id, data, author_id):
-        # checks if page belongs to author (via chapter -> book)
         page = Page.query.join(Chapter).join(Book).filter(
             Page.id == page_id,
             Book.author_id == author_id
@@ -99,17 +98,31 @@ class PageManager:
         if "is_cover" in data:
             page.is_cover = data["is_cover"]
 
+            if data["is_cover"]:
+                # book? via Chapter
+                book_id = page.chapter.book_id
+
+                # Set all other pages of this book to is_cover = False
+                Page.query.join(Chapter).filter(
+                    Chapter.book_id == book_id,
+                    Page.id != page_id
+                ).update({"is_cover": False}, synchronize_session="fetch")
+
+                # Book.cover_page_id = page_id
+                Book.query.filter_by(id=book_id).update(
+                    {"cover_page_id": page_id},
+                    synchronize_session=False
+                )
+
         db.session.commit()
 
-        page_dict = {
+        return {
             "id": page.id,
             "chapter_id": page.chapter_id,
             "order_index": page.order_index,
             "layout_data": page.layout_data,
             "is_cover": page.is_cover,
         }
-
-        return page_dict
 
     @staticmethod
     def delete_page(page_id, author_id):
