@@ -1,5 +1,6 @@
 from . import db
 from sqlalchemy.dialects.postgresql import JSONB
+from datetime import datetime, timezone
 
 def default_parts():
     return {
@@ -29,6 +30,12 @@ class BookCharacterTemplate(db.Model):
     colors = db.Column(JSONB, nullable=False, default=default_colors)
     customizable = db.Column(db.Boolean, nullable=False, default=True)
     rendered_url = db.Column(db.String(200), nullable=True)
+    updated_at = db.Column(
+        db.DateTime,
+        nullable=True,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
 
     #Relationship
     book = db.relationship('Book', back_populates='character_templates')
@@ -47,6 +54,7 @@ class BookCharacterTemplate(db.Model):
             "parts": self.parts,
             "colors": self.colors,
             "customizable": self.customizable,
-            "rendered_url": self.rendered_url
+            "rendered_url": self.rendered_url,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
             }
 

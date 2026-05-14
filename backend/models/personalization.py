@@ -2,6 +2,7 @@ from . import db
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import JSONB
 from .book_character_template import BookCharacterTemplate
+from datetime import datetime, timezone
 
 class Personalization(db.Model):
     __tablename__ = 'personalizations'
@@ -55,6 +56,12 @@ class PersonalizationCharacters(db.Model):
     parts = db.Column(JSONB, nullable=False)
     customizable = db.Column(db.Boolean, nullable=False)
     rendered_url = db.Column(db.String(200), nullable=True)
+    updated_at = db.Column(
+        db.DateTime,
+        nullable=True,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
 
     # Relationships
     template = db.relationship('BookCharacterTemplate', back_populates="personalization_characters")
@@ -72,7 +79,8 @@ class PersonalizationCharacters(db.Model):
             colors=template.colors.copy(),
             parts=template.parts.copy() if template.parts else None,
             customizable=template.customizable,
-            rendered_url=template.rendered_url
+            rendered_url=template.rendered_url,
+            updated_at=template.updated_at if template.updated_at else datetime.now(timezone.utc)
         )
 
     def to_dict(self):
@@ -87,5 +95,6 @@ class PersonalizationCharacters(db.Model):
             "colors": self.colors,
             "parts": self.parts,
             "customizable": self.customizable,
-            "rendered_url": self.rendered_url
+            "rendered_url": self.rendered_url,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }
