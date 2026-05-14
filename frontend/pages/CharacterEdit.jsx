@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../src/AuthContext";
 import {
   getPersonalizationCharacterById,
@@ -121,73 +121,6 @@ export default function CharacterEdit() {
     fetchCharacter();
   }, [characterId, templateId, token, user?.role]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setStatus("submitting");
-
-    try {
-      const patch = {};
-
-      if (character) {
-        if (user?.role === "Parent") {
-          if (editForm.name !== character.name) patch.name = editForm.name;
-
-          if (editForm.gender !== character.gender)
-            patch.gender = editForm.gender;
-
-          if (
-            JSON.stringify(editForm.parts) !== JSON.stringify(character.parts)
-          )
-            patch.parts = editForm.parts;
-
-          if (
-            JSON.stringify(editForm.colors) !== JSON.stringify(character.colors)
-          )
-            patch.colors = editForm.colors;
-
-          await updatePersonalizationCharacter(character.id, patch, token);
-
-          navigate(`/parent/personalizations/${personalizationId}`);
-        } else {
-          if (editForm.role !== character.role) patch.role = editForm.role;
-
-          if (editForm.name !== character.name) patch.name = editForm.name;
-
-          if (editForm.gender !== character.gender)
-            patch.gender = editForm.gender;
-
-          if (
-            JSON.stringify(editForm.parts) !== JSON.stringify(character.parts)
-          )
-            patch.parts = editForm.parts;
-
-          if (
-            JSON.stringify(editForm.colors) !== JSON.stringify(character.colors)
-          )
-            patch.colors = editForm.colors;
-
-          if (editForm.customizable !== character.customizable)
-            patch.customizable = editForm.customizable;
-
-          await updateCharacterTemplate(character.id, patch, token);
-
-          navigate(`/author/books/${bookId}/character_templates`);
-        }
-      } else {
-        console.log(editForm);
-        const newTemplate = await addCharacterTemplate(bookId, editForm, token);
-      }
-
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 2000);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setStatus("idle");
-    }
-  };
-
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
     setEditForm((prev) => ({
@@ -232,6 +165,90 @@ export default function CharacterEdit() {
     }
   }
 
+  function buildPatch() {
+    const patch = {};
+
+    if (user?.role === "Parent") {
+      if (editForm.name !== character.name) patch.name = editForm.name;
+      if (editForm.gender !== character.gender) patch.gender = editForm.gender;
+      if (JSON.stringify(editForm.parts) !== JSON.stringify(character.parts))
+        patch.parts = editForm.parts;
+      if (JSON.stringify(editForm.colors) !== JSON.stringify(character.colors))
+        patch.colors = editForm.colors;
+    } else {
+      if (editForm.role !== character.role) patch.role = editForm.role;
+      if (editForm.name !== character.name) patch.name = editForm.name;
+      if (editForm.gender !== character.gender) patch.gender = editForm.gender;
+      if (JSON.stringify(editForm.parts) !== JSON.stringify(character.parts))
+        patch.parts = editForm.parts;
+      if (JSON.stringify(editForm.colors) !== JSON.stringify(character.colors))
+        patch.colors = editForm.colors;
+      if (editForm.customizable !== character.customizable)
+        patch.customizable = editForm.customizable;
+    }
+
+    return patch;
+  }
+
+  async function uploadRenderedCharacter(characterId) {
+    const blob = await canvasRef.current.exportToPng();
+    const filename = `characters/rendered/${characterId}.png`;
+
+    const res = await fetch(
+      `https://character-proxy.anastasiafoth9.workers.dev/upload/${filename}`,
+      {
+        method: "PUT",
+        body: blob,
+        headers: {
+          "Content-Type": "image/png",
+          Authorization: `Bearer ${import.meta.env.VITE_UPLOAD_SECRET}`,
+        },
+      },
+    );
+
+    const { url } = await res.json();
+    return url;
+  }
+
+  const canvasRef = useRef(null);
+
+  async function handleExportAndUpload() {
+    setStatus("submitting");
+    setError(null);
+
+    try {
+      if (character) {
+        const patch = buildPatch();
+        patch.rendered_url = await uploadRenderedCharacter(character.id);
+
+        if (user?.role === "Parent") {
+          await updatePersonalizationCharacter(character.id, patch, token);
+        } else {
+          await updateCharacterTemplate(character.id, patch, token);
+        }
+      } else {
+        const newTemplate = await addCharacterTemplate(bookId, editForm, token);
+        const renderedUrl = await uploadRenderedCharacter(newTemplate.id);
+
+        await updateCharacterTemplate(
+          newTemplate.id,
+          { rendered_url: renderedUrl },
+          token,
+        );
+        navigate(
+          `/author/books/${bookId}/character_templates/${newTemplate.id}`,
+        );
+      }
+
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 2000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setStatus("idle");
+    }
+  }
+
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -262,11 +279,8 @@ export default function CharacterEdit() {
         </Link>
       )}
 
-      <form
-        className="card-body p-4 gap-2 flex flex-row h-full"
-        onSubmit={handleSubmit}
-      >
-        <section className="flex-shrink-0">
+      <form className="card-body p-4 gap-2 flex flex-row h-full">
+        <section className="shrink-0">
           {user.role === "Parent" ? (
             <h1>Role: {character?.role}</h1>
           ) : (
@@ -343,6 +357,7 @@ export default function CharacterEdit() {
         <section className="flex flex-col  border border-base-300 rounded-lg overflow-hidden">
           <h1>Character:</h1>
           <CharacterCanvas
+            ref={canvasRef}
             token={token}
             parts={editForm.parts}
             colors={editForm.colors}
@@ -353,8 +368,10 @@ export default function CharacterEdit() {
 
         <div className="flex gap-2 mt-4">
           <button
+            type="button"
             disabled={status !== "idle"}
             className="btn btn-primary flex-1"
+            onClick={handleExportAndUpload}
           >
             {status == "submitting" ? "Saving..." : "Save"}
           </button>

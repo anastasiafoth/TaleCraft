@@ -1,10 +1,12 @@
 // Konva Stage with 3 Layers
-import { useRef, useState, useEffect } from "react";
-import { Stage, Layer, Image, Text, Transformer } from "react-konva";
-import useImage from "use-image";
+import { useState, forwardRef } from "react";
+import { Stage, Layer } from "react-konva";
 import KonvaObjectEdit from "./KonvaObjectEdit";
 
-export default function EditorCanvas({ page, onLayoutChange }) {
+const EditorCanvas = forwardRef(function EditorCanvas(
+  { page, onLayoutChange },
+  ref,
+) {
   const [selectedId, setSelectedId] = useState(null);
   const EMPTY_LAYOUT = { background: [], middleground: [], foreground: [] };
   const layout = page?.layout_data ?? EMPTY_LAYOUT;
@@ -22,24 +24,34 @@ export default function EditorCanvas({ page, onLayoutChange }) {
   function handleDrop(e) {
     e.preventDefault();
 
-    const data = JSON.parse(e.dataTransfer.getData("application/json"));
+    const raw = e.dataTransfer.getData("application/json");
+    if (!raw) return;
 
-    if (data.type !== "asset") return;
+    const data = JSON.parse(raw);
 
-    const targetLayerRaw = data.layer ?? "foreground";
+    const targetLayer = String(data.layer ?? "foreground")
+      .trim()
+      .toLowerCase();
 
-    const targetLayer = String(targetLayerRaw).trim().toLowerCase();
+    const src = data.type === "character" ? data.rendered_url : data.file_url;
+
+    if (!src) return;
 
     const img = new window.Image();
     img.onload = () => {
+      const isCharacter = data.type === "character";
+
       const newAsset = {
         id: crypto.randomUUID(),
         type: "image",
-        src: data.file_url,
+        kind: isCharacter ? "character" : "asset",
+        src,
         x: 100,
         y: 100,
-        width: img.width * 0.1,
-        height: img.height * 0.1,
+        width: isCharacter ? img.width * 0.35 : img.width * 0.1,
+        height: isCharacter ? img.height * 0.35 : img.height * 0.1,
+        characterId: isCharacter ? data.id : null,
+        name: isCharacter ? data.name : null,
       };
 
       onLayoutChange({
@@ -50,7 +62,7 @@ export default function EditorCanvas({ page, onLayoutChange }) {
       });
     };
 
-    img.src = data.file_url;
+    img.src = src;
   }
 
   function handleDelete(layerName, id) {
@@ -70,6 +82,7 @@ export default function EditorCanvas({ page, onLayoutChange }) {
       onDrop={handleDrop}
     >
       <Stage
+        ref={ref}
         width={800}
         height={600}
         onMouseDown={(e) => {
@@ -93,4 +106,6 @@ export default function EditorCanvas({ page, onLayoutChange }) {
       </Stage>
     </div>
   );
-}
+});
+
+export default EditorCanvas;

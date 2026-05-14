@@ -132,9 +132,9 @@ function CharacterList({ characters, loading, onDragStart }) {
             onDragStart={(e) => onDragStart(e, char)}
             className="flex items-center gap-2.5 p-2 border border-base-300 rounded-lg cursor-grab active:cursor-grabbing hover:bg-base-200 hover:border-base-content/30 transition-colors"
           >
-            {char.profile_img ? (
+            {char.rendered_url ? (
               <img
-                src={char.profile_img}
+                src={`${char.rendered_url}?t=${Date.now()}`}
                 alt={name}
                 className="w-8 h-8 rounded-full object-cover shrink-0"
               />
@@ -230,13 +230,14 @@ export default function PageEditorSidebar({
   }, [id, token]);
 
   // Assets nach Dateiname auf Layer aufteilen
-  const bgAssets = assets.filter((a) => /background|weather|house|cloud|field|garden|bg_/i.test(a.object_key));
+  const bgAssets = assets.filter((a) =>
+    /background|weather|house|cloud|field|garden|bg_/i.test(a.object_key),
+  );
   const midAssets = assets.filter((a) =>
     /middle|mid_|tree|bush|rock|house|cloud/i.test(a.object_key),
   );
   const fgAssets = assets.filter(
-    (a) =>
-      !/(background|bg_|tree|bush|rock|cloud)/i.test(a.object_key),
+    (a) => !/(background|bg_|tree|bush|rock|cloud)/i.test(a.object_key),
   );
 
   const handleDragAsset = useCallback(

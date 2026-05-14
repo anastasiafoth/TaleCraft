@@ -116,7 +116,7 @@ export default function CharacterEditorSidebar({
   }, [token, activeCategory, toProxyUrl]);
 
   return (
-    <aside className="w-64 h-full flex flex-col bg-base-100 border-l border-base-300">
+    <aside className="w-64 h-auto flex flex-col bg-base-100 border-l border-base-300">
       <div className="px-4 py-3 border-b border-base-300 shrink-0">
         <p className="font-medium text-base-content/50 uppercase tracking-widest text-xs">
           Character Editor

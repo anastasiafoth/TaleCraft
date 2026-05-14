@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../src/AuthContext";
-import { getPageById, addPage, updatePage } from "../../src/api";
+import { getPageById, addPage, updatePage, updateBook } from "../../src/api";
 import EditorCanvas from "../../components/Books/PageEditor/EditorCanvas";
 import PageEditorSidebar from "../../components/Books/PageEditor/PageEditorSidebar";
 
@@ -48,14 +48,42 @@ export default function PageEdit() {
     fetchPage();
   }, [pageId, token]);
 
+  const canvasRef = useRef(null);
+
+  async function uploadCoverSnapshot(pageId) {
+    const blob = await new Promise((resolve, reject) => {
+      const stage = canvasRef.current;
+      if (!stage) return reject(new Error("Stage not ready"));
+      stage.toBlob({ mimeType: "image/png", callback: resolve });
+    });
+
+    console.log("blob:", blob);
+
+    const res = await fetch(
+      `https://character-proxy.anastasiafoth9.workers.dev/upload/pages/covers/${pageId}.png`,
+      {
+        method: "PUT",
+        body: blob,
+        headers: {
+          "Content-Type": "image/png",
+          Authorization: `Bearer ${import.meta.env.VITE_UPLOAD_SECRET}`,
+        },
+      },
+    );
+
+    const { url } = await res.json();
+    return url;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError(null);
     setStatus("submitting");
+
     try {
+      let savedPageId;
+
       if (page) {
-        // page patched
         const patch = {};
         if (editForm.layout_data !== page.layout_data)
           patch.layout_data = editForm.layout_data;
@@ -63,14 +91,27 @@ export default function PageEdit() {
           patch.is_cover = editForm.is_cover;
 
         await updatePage(page.id, patch, token);
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 2000);
+        savedPageId = page.id;
       } else {
-        // create new page
         const newPage = await addPage(chapterId, editForm, token);
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 2000);
+        savedPageId = newPage.id;
       }
+
+      // If this is a cover page → snapshot + update book
+      if (editForm.is_cover) {
+        const coverUrl = await uploadCoverSnapshot(savedPageId);
+        await updateBook(
+          id,
+          {
+            // id = bookId from useParams
+            cover_thumbnail_url: coverUrl,
+          },
+          token,
+        );
+      }
+
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 2000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -138,6 +179,7 @@ export default function PageEdit() {
         <h1>Page Editor:</h1>
         <section className="flex w-full h-150">
           <EditorCanvas
+            ref={canvasRef}
             page={{
               ...page,
               layout_data: editForm.layout_data || page?.layout_data,
