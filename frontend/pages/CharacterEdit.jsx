@@ -10,6 +10,8 @@ import {
   updateCharacterTemplate,
 } from "../src/api";
 
+import { toProxyUrl } from "../src/utils/assets";
+
 import CharacterCanvas from "../components/Books/CharacterEditor/CharacterCanvas";
 import CharacterEditorSidebar from "../components/Books/CharacterEditor/CharacterEditorSidebar";
 
@@ -26,21 +28,7 @@ const DEFAULT_PARTS = {
   glasses: "/characters/glasses/glasses_1.png",
 };
 
-const ASSET_BASE = "https://character-proxy.anastasiafoth9.workers.dev";
 
-function toProxyUrl(pathOrUrl) {
-  try {
-    const url = new URL(pathOrUrl);
-
-    if (url.hostname.endsWith(".r2.dev")) {
-      return `${ASSET_BASE}${url.pathname}${url.search}`;
-    }
-
-    return url.toString();
-  } catch {
-    return new URL(pathOrUrl, ASSET_BASE).toString();
-  }
-}
 
 export default function CharacterEdit() {
   const { user, token } = useAuth();

@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Image, Text, Transformer } from "react-konva";
 import useImage from "use-image";
+import { toProxyUrl } from "../../../src/utils/assets";
 
 export default function KonvaObjectEdit({
   obj,
@@ -14,7 +15,8 @@ export default function KonvaObjectEdit({
       ? `${obj.src}?t=${obj.updatedAt}`
       : obj.src;
 
-  const [image] = useImage(src);
+  const imageSrc = obj.type === "image" ? toProxyUrl(obj.src) : null;
+  const [image] = useImage(imageSrc, "anonymous");
   const shapeRef = useRef();
   const trRef = useRef();
 

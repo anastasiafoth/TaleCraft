@@ -1,9 +1,16 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../src/AuthContext";
-import { getPageById, addPage, updatePage, updateBook } from "../../src/api";
+import {
+  getPageById,
+  addPage,
+  updatePage,
+  updateBook,
+  getCharacterTemplates,
+} from "../../src/api";
 import EditorCanvas from "../../components/Books/PageEditor/EditorCanvas";
 import PageEditorSidebar from "../../components/Books/PageEditor/PageEditorSidebar";
+import { normalizeLayout } from "../../src/utils/assets";
 
 export default function PageEdit() {
   const { token } = useAuth();
@@ -15,13 +22,38 @@ export default function PageEdit() {
   const [editForm, setEditForm] = useState({
     layout_data: {
       background: [],
-      middle: [],
+      middleground: [],
       foreground: [],
     },
     is_cover: false,
   });
 
   const { id, chapterId, pageId } = useParams();
+
+  function syncCharacterTimestamps(layout, characters) {
+    const charMap = Object.fromEntries(characters.map((c) => [c.id, c]));
+
+    const syncLayer = (layer) =>
+      layer.map((obj) => {
+        if (
+          obj.kind === "character" &&
+          obj.characterId &&
+          charMap[obj.characterId]
+        ) {
+          return {
+            ...obj,
+            updatedAt: charMap[obj.characterId].updated_at,
+          };
+        }
+        return obj;
+      });
+
+    return {
+      background: syncLayer(layout.background ?? []),
+      middleground: syncLayer(layout.middleground ?? []),
+      foreground: syncLayer(layout.foreground ?? []),
+    };
+  }
 
   useEffect(() => {
     if (!pageId) return;
@@ -31,12 +63,13 @@ export default function PageEdit() {
         setLoading(true);
         const fetchedPage = await getPageById(pageId);
         setPage(fetchedPage);
+        const characters = await getCharacterTemplates(id, token);
+        const syncedLayout = syncCharacterTimestamps(
+          normalizeLayout(fetchedPage.layout_data),
+          characters,
+        );
         setEditForm({
-          layout_data: fetchedPage?.layout_data ?? {
-            background: [],
-            middle: [],
-            foreground: [],
-          },
+          layout_data: syncedLayout,
           is_cover: fetchedPage?.is_cover ?? false,
         });
       } catch (err) {
@@ -56,8 +89,6 @@ export default function PageEdit() {
       if (!stage) return reject(new Error("Stage not ready"));
       stage.toBlob({ mimeType: "image/png", callback: resolve });
     });
-
-    console.log("blob:", blob);
 
     const res = await fetch(
       `https://character-proxy.anastasiafoth9.workers.dev/upload/pages/covers/${pageId}.png`,

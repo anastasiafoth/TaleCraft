@@ -2,6 +2,7 @@
 import { useState, forwardRef } from "react";
 import { Stage, Layer } from "react-konva";
 import KonvaObjectEdit from "./KonvaObjectEdit";
+import { toProxyUrl } from "../../../src/utils/assets";
 
 const EditorCanvas = forwardRef(function EditorCanvas(
   { page, onLayoutChange },
@@ -33,7 +34,9 @@ const EditorCanvas = forwardRef(function EditorCanvas(
       .trim()
       .toLowerCase();
 
-    const src = data.type === "character" ? data.rendered_url : data.file_url;
+    const src = toProxyUrl(
+      data.type === "character" ? data.rendered_url : data.file_url,
+    );
 
     if (!src) return;
 
