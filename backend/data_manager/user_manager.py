@@ -1,5 +1,6 @@
 from models import db, User
 import re
+from flask_mail import Message
 
 class UserManager:
     @staticmethod
@@ -8,7 +9,7 @@ class UserManager:
         return re.match(pattern, email) is not None
 
     @staticmethod
-    def create_user(guard, data):
+    def create_user(guard, data, mail):
         """Adds a new user to database"""
         if not data:
             raise ValueError("Please enter information.")
@@ -52,6 +53,15 @@ class UserManager:
         )
         db.session.add(new_user)
         db.session.commit()
+
+        """mail send"""
+        msg = Message(
+            subject="Hello",
+            recipients=[new_user.email],
+            html = "<b>testing</b>"
+        )
+        mail.send(msg)
+
 
         return {
                 "id": new_user.id,

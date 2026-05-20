@@ -13,6 +13,9 @@ import uuid
 import boto3
 from botocore.exceptions import ClientError
 
+# mail config
+from flask_mail import Mail
+
 load_dotenv()
 
 NEON_KEY = os.getenv("NEON_KEY")
@@ -34,6 +37,9 @@ app.config['SECRET_KEY'] = 'a_very_long_random_secret_key_at_least_32_chars'
 app.config['JWT_ACCESS_LIFESPAN'] = {'hours': 24}
 app.config['JWT_REFRESH_LIFESPAN'] = {'days': 30}
 
+# mail
+mail = Mail(app)
+mail.MAIL_DEFAULT_SENDER="anastasiafoth9@gmail.com"
 
 #jwt auth
 guard = flask_praetorian.Praetorian()
@@ -235,7 +241,7 @@ def create_user():
     if data is None:
         return jsonify({"error": "Invalid or missing JSON body."}), 400
 
-    new_user = user_manager.create_user(guard, data)
+    new_user = user_manager.create_user(guard, data, mail)
     return jsonify(new_user), 201
 
 
