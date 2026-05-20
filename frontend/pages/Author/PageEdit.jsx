@@ -158,25 +158,29 @@ export default function PageEdit() {
     }));
   }
 
-  function onAddText(text) {
-    setEditForm((prev) => ({
-      ...prev,
-      layout_data: {
-        ...prev.layout_data,
-        foreground: [
-          ...(prev.layout_data?.foreground || []),
-          {
-            id: Math.random().toString(36).substring(2, 9),
-            key: Math.random().toString(36).substring(2, 9),
-            type: "text",
-            content: text,
-            x: 100,
-            y: 100,
-          },
-        ],
-      },
-    }));
-  }
+  function onAddText(textConfig) {
+  setEditForm((prev) => ({
+    ...prev,
+    layout_data: {
+      ...prev.layout_data,
+      foreground: [
+        ...(prev.layout_data?.foreground || []),
+        {
+          id: Math.random().toString(36).substring(2, 9),
+          key: Math.random().toString(36).substring(2, 9),
+          type: "text",
+          content: textConfig.content,
+          font_size: textConfig.font_size,
+          font_family: textConfig.font_family,
+          font_style: textConfig.font_style,
+          color: textConfig.color,
+          x: 100,
+          y: 100,
+        },
+      ],
+    },
+  }));
+}
 
   function onDragAsset(e, asset) {
     console.log("Dragging asset:", asset);

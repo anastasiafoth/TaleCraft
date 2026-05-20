@@ -163,24 +163,104 @@ function CharacterList({ characters, loading, onDragStart }) {
 
 // ─── Text section ────────────────────────────────────────────────────
 const FONT_SIZES = [10, 12, 14, 16, 18, 24, 32, 48];
+const FONT_FAMILIES = [
+  "Arial",
+  "Georgia",
+  "Times New Roman",
+  "Verdana",
+  "Courier New",
+  "Comic Sans MS",
+];
 
 function TextSection({ onAddText }) {
   const [value, setValue] = useState("");
   const [fontSize, setFontSize] = useState(16);
+  const [fontFamily, setFontFamily] = useState("Arial");
+  const [fontStyle, setFontStyle] = useState({
+    bold: false,
+    italic: false,
+  });
+
+  function buildFontStyle() {
+    if (fontStyle.bold && fontStyle.italic) return "bold italic";
+    if (fontStyle.bold) return "bold";
+    if (fontStyle.italic) return "italic";
+    return "normal";
+  }
+
+  function handleSubmit() {
+    if (!value.trim()) return;
+
+    onAddText?.({
+      content: value,
+      font_size: fontSize,
+      font_family: fontFamily,
+      font_style: buildFontStyle(),
+      color: "#111111",
+    });
+
+    setValue("");
+  }
 
   return (
     <div className="flex flex-col gap-2">
       <textarea
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        rows={2}
+        rows={3}
         className="textarea textarea-bordered textarea-sm w-full resize-none text-sm"
-        placeholder="text..."
+        placeholder="Text..."
       />
+
+      <div className="flex gap-2">
+        <button
+          type="button"
+          className={`btn btn-sm flex-1 ${fontStyle.bold ? "btn-primary" : "btn-outline"}`}
+          onClick={() =>
+            setFontStyle((prev) => ({ ...prev, bold: !prev.bold }))
+          }
+        >
+          B
+        </button>
+        <button
+          type="button"
+          className={`btn btn-sm flex-1 ${fontStyle.italic ? "btn-primary" : "btn-outline"}`}
+          onClick={() =>
+            setFontStyle((prev) => ({ ...prev, italic: !prev.italic }))
+          }
+        >
+          I
+        </button>
+      </div>
+
+      <select
+        value={fontFamily}
+        onChange={(e) => setFontFamily(e.target.value)}
+        className="select select-bordered select-sm w-full"
+      >
+        {FONT_FAMILIES.map((font) => (
+          <option key={font} value={font}>
+            {font}
+          </option>
+        ))}
+      </select>
+
+      <select
+        value={fontSize}
+        onChange={(e) => setFontSize(Number(e.target.value))}
+        className="select select-bordered select-sm w-full"
+      >
+        {FONT_SIZES.map((size) => (
+          <option key={size} value={size}>
+            {size}px
+          </option>
+        ))}
+      </select>
+
       <button
         type="button"
-        className="btn btn-sm btn-primary w-full gap-1.5"
-        onClick={() => onAddText?.(value)}
+        className="btn btn-sm btn-primary w-full"
+        onClick={handleSubmit}
       >
         Add text to page
       </button>
@@ -229,15 +309,19 @@ export default function PageEditorSidebar({
       .finally(() => setCharsLoading(false));
   }, [id, token]);
 
-  // Assets nach Dateiname auf Layer aufteilen
-  const bgAssets = assets.filter((a) =>
-    /background|weather|house|cloud|field|garden|bg_/i.test(a.object_key),
+  // filter assets in layers
+  const visibleAssets = assets.filter(
+    (a) => a.object_key && !/^(main page|characters|pages)(\/|$)/i.test(a.object_key),
   );
-  const midAssets = assets.filter((a) =>
-    /middle|mid_|tree|bush|rock|house|cloud/i.test(a.object_key),
+
+  const bgAssets = visibleAssets.filter((a) =>
+    /background|weather|house|cloud|field|garden/i.test(a.object_key),
   );
-  const fgAssets = assets.filter(
-    (a) => !/(background|bg_|tree|bush|rock|cloud)/i.test(a.object_key),
+  const midAssets = visibleAssets.filter((a) =>
+    /middle|tree|bush|rock|house|cloud/i.test(a.object_key),
+  );
+  const fgAssets = visibleAssets.filter(
+    (a) => !/(foreground|tree|bush|rock|cloud)/i.test(a.object_key),
   );
 
   const handleDragAsset = useCallback(

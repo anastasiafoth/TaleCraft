@@ -89,12 +89,14 @@ export default function KonvaObjectEdit({
           {...commonProps}
           id={obj.id}
           text={obj.content}
-          fontSize={obj.font_size}
-          fill={obj.color}
+          fontSize={obj.font_size || 16}
+          fontFamily={obj.font_family || "Arial"}
+          fontStyle={obj.font_style || "normal"}
+          fill={obj.color || "#111111"}
         />
-      ) : (
+      ) : image ? (
         <Image {...commonProps} image={image} scaleX={obj.flip_x ? -1 : 1} />
-      )}
+      ) : null}
       {isSelected && <Transformer ref={trRef} />}
     </>
   );
