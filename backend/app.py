@@ -36,10 +36,15 @@ app.debug = True
 app.config['SECRET_KEY'] = 'a_very_long_random_secret_key_at_least_32_chars'
 app.config['JWT_ACCESS_LIFESPAN'] = {'hours': 24}
 app.config['JWT_REFRESH_LIFESPAN'] = {'days': 30}
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
 
 # mail
 mail = Mail(app)
-mail.MAIL_DEFAULT_SENDER="anastasiafoth9@gmail.com"
 
 #jwt auth
 guard = flask_praetorian.Praetorian()
@@ -66,14 +71,10 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 # Link the database and the app. This is the reason you need to import db from models
 db.init_app(app)
 
-# Initializes CORS so that the api_tool can talk to the app
-flask_cors.CORS().init_app(app)
-
 # Initializes Flask Migrate, for updating db
 migrate = Migrate(app, db)
 
 # Run only once to create tables
-
 with app.app_context():
     db.create_all()
 

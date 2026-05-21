@@ -55,12 +55,11 @@ class UserManager:
         db.session.commit()
 
         """mail send"""
-        msg = Message(
-            subject="Hello",
-            recipients=[new_user.email],
-            html = "<b>testing</b>"
-        )
-        mail.send(msg)
+        try:
+            msg = Message(subject="Welcome", recipients=[new_user.email], html="<b>Welcome!</b>")
+            mail.send(msg)
+        except Exception as e:
+            print(f"Mail send failed: {e}")
 
 
         return {
