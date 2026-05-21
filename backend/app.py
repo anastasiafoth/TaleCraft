@@ -48,7 +48,7 @@ guard.init_app(app, User)
 
 flask_cors.CORS(
     app,
-    resources={r"/api/*": {"origins": ["http://localhost:5173", "https://talecraft-owts.onrender.com"]}},
+    resources={r"/api/*": {"origins": ["http://localhost:5173", "https://talecraft-owts.onrender.com", "https://tale-craft-orpin.vercel.app",]}},
     allow_headers=["Content-Type", "Authorization"],
     expose_headers=["Authorization"],
     methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
