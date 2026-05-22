@@ -1,8 +1,12 @@
 # TaleCraft
-**Backend-focused full-stack application for a personalized children's story platform.**  
+**Full-stack application for a personalized children's story platform.**  
 TaleCraft provides a fully implemented REST API that allows authors to create interactive books and parents to personalize them for their children.
 
 ---
+## Live Demo
+
+The project is now live at:  
+https://tale-craft-orpin.vercel.app/
 
 ## UI/UX Design
 Figma Prototype Wireframe: **https://www.figma.com/proto/3Cw9fF3ghzzTsbQy4NOGt6/TaleCraft---Wireframe?node-id=0-1&t=W6hqUzyR7QKuspKS-1**
