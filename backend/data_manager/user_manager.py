@@ -67,6 +67,11 @@ class UserManager:
         db.session.commit()
 
         # SEND EMAIL ASYNC
+        user_id = new_user.id
+        user_first_name = new_user.first_name
+        user_last_name = new_user.last_name
+        user_email = new_user.email
+        user_role = new_user.role
 
         # Store real app object BEFORE thread starts
         app = current_app._get_current_object()
@@ -76,7 +81,7 @@ class UserManager:
                 try:
                     msg = Message(
                         subject="Welcome",
-                        recipients=[new_user.email],
+                        recipients=[user_email],
                         html="<b>Welcome!</b>"
                     )
 
@@ -91,11 +96,11 @@ class UserManager:
         ).start()
 
         return {
-            "id": new_user.id,
-            "first_name": new_user.first_name,
-            "last_name": new_user.last_name,
-            "email": new_user.email,
-            "role": new_user.role
+            "id": user_id,
+            "first_name": user_first_name,
+            "last_name": user_last_name,
+            "email": user_email,
+            "role": user_role
         }
 
     @staticmethod
