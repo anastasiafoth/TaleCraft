@@ -67,8 +67,12 @@ class UserManager:
         db.session.commit()
 
         # SEND EMAIL ASYNC
-        def send_email():
-            with current_app.app_context():
+
+        # Store real app object BEFORE thread starts
+        app = current_app._get_current_object()
+
+        def send_email(app):
+            with app.app_context():
                 try:
                     msg = Message(
                         subject="Welcome",
@@ -81,7 +85,10 @@ class UserManager:
                 except Exception as e:
                     print(f"Mail send failed: {e}")
 
-        threading.Thread(target=send_email).start()
+        threading.Thread(
+            target=send_email,
+            args=(app,)
+        ).start()
 
         return {
             "id": new_user.id,
