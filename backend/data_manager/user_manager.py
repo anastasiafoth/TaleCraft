@@ -84,8 +84,9 @@ class UserManager:
                         recipients=[user_email],
                         html="<b>Welcome!</b>"
                     )
-
+                    print("Sending email...")
                     mail.send(msg)
+                    print("Email sent!")
 
                 except Exception as e:
                     print(f"Mail send failed: {e}")
