@@ -91,6 +91,7 @@ class UserManager:
                 except Exception as e:
                     print(f"Mail send failed: {e}")
 
+
         threading.Thread(
             target=send_email,
             args=(app,)
