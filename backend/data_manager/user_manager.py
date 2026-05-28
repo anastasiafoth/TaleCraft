@@ -3,6 +3,7 @@ import re
 from flask_mail import Message
 import threading
 from flask import current_app
+import traceback
 
 class UserManager:
     @staticmethod
@@ -84,12 +85,30 @@ class UserManager:
                         recipients=[user_email],
                         html="<b>Welcome!</b>"
                     )
+
                     print("Sending email...")
                     mail.send(msg)
                     print("Email sent!")
 
                 except Exception as e:
-                    print(f"Mail send failed: {e}")
+                    print("MAIL ERROR:")
+                    print(str(e))
+                    traceback.print_exc()
+
+        """def send_email(app):
+            with app.app_context():
+                try:
+                    msg = Message(
+                        subject="Welcome",
+                        recipients=[user_email],
+                        html="<b>Welcome!</b>"
+                    )
+                    print("Sending email...")
+                    mail.send(msg)
+                    print("Email sent!")
+
+                except Exception as e:
+                    print(f"Mail send failed: {e}")"""
 
 
         threading.Thread(
