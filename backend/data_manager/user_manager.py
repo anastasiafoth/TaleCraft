@@ -75,25 +75,25 @@ class UserManager:
         user_role = new_user.role
 
         # Store real app object BEFORE thread starts
-        app = current_app._get_current_object()
+        """app = current_app._get_current_object()
 
-        def send_email(app):
-            with app.app_context():
-                try:
-                    msg = Message(
-                        subject="Welcome",
-                        recipients=[user_email],
-                        html="<b>Welcome!</b>"
-                    )
+        def send_email(app):"""
+        with app.app_context():
+            try:
+                msg = Message(
+                    subject="Welcome",
+                    recipients=[user_email],
+                    html="<b>Welcome!</b>"
+                )
 
-                    print("Sending email...")
-                    mail.send(msg)
-                    print("Email sent!")
+                print("Sending email...")
+                mail.send(msg)
+                print("Email sent!")
 
-                except Exception as e:
-                    print("MAIL ERROR:")
-                    print(str(e))
-                    traceback.print_exc()
+            except Exception as e:
+                print("MAIL ERROR:")
+                print(str(e))
+                traceback.print_exc()
 
         """def send_email(app):
             with app.app_context():
@@ -111,10 +111,10 @@ class UserManager:
                     print(f"Mail send failed: {e}")"""
 
 
-        threading.Thread(
+        """threading.Thread(
             target=send_email,
             args=(app,)
-        ).start()
+        ).start()"""
 
         return {
             "id": user_id,
