@@ -75,9 +75,9 @@ class UserManager:
         user_role = new_user.role
 
         # Store real app object BEFORE thread starts
-        """app = current_app._get_current_object()
+        app = current_app._get_current_object()
 
-        def send_email(app):"""
+        #def send_email(app):
         with app.app_context():
             try:
                 msg = Message(
