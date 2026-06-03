@@ -1,9 +1,7 @@
 from models import db, User
 import re
 from flask_mail import Message
-import threading
 from flask import current_app
-import traceback
 
 class UserManager:
     @staticmethod
@@ -77,13 +75,13 @@ class UserManager:
         # Store real app object BEFORE thread starts
         app = current_app._get_current_object()
 
-        #def send_email(app):
         with app.app_context():
             try:
                 msg = Message(
-                    subject="Welcome",
+                    subject="Welcome to TaleCraft.",
                     recipients=[user_email],
-                    html="<b>Welcome!</b>"
+                    html=f"<h1>Welcome {user_role} {user_first_name} {user_last_name}! </h1>"
+                         f"<b>You have successfully registered with TaleCraft.</b>"
                 )
 
                 print("Sending email...")
@@ -93,28 +91,6 @@ class UserManager:
             except Exception as e:
                 print("MAIL ERROR:")
                 print(str(e))
-                traceback.print_exc()
-
-        """def send_email(app):
-            with app.app_context():
-                try:
-                    msg = Message(
-                        subject="Welcome",
-                        recipients=[user_email],
-                        html="<b>Welcome!</b>"
-                    )
-                    print("Sending email...")
-                    mail.send(msg)
-                    print("Email sent!")
-
-                except Exception as e:
-                    print(f"Mail send failed: {e}")"""
-
-
-        """threading.Thread(
-            target=send_email,
-            args=(app,)
-        ).start()"""
 
         return {
             "id": user_id,
