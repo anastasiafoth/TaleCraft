@@ -52,6 +52,8 @@ class PersonalizationCharacters(db.Model):
     role = db.Column(db.String(200), nullable=False)  # example: "main", "friend", "pet"
     name = db.Column(db.String(200), nullable=False)
     gender = db.Column(db.String(50), nullable=False)  # "male"/"female"
+    original_name = db.Column(db.String(200))
+    original_gender = db.Column(db.String(50))
     colors = db.Column(JSONB, nullable=False)  # {"main": "#f2c6a0", "hair": "#3b2f2f"}
     parts = db.Column(JSONB, nullable=False)
     customizable = db.Column(db.Boolean, nullable=False)
@@ -76,6 +78,8 @@ class PersonalizationCharacters(db.Model):
             role=template.role,
             name=template.name,
             gender=template.gender,
+            original_name=template.name,
+            original_gender=template.gender,
             colors=template.colors.copy(),
             parts=template.parts.copy() if template.parts else None,
             customizable=template.customizable,
@@ -92,6 +96,8 @@ class PersonalizationCharacters(db.Model):
             "role": self.role,
             "name": self.name,
             "gender": self.gender,
+            "original_name": self.original_name,
+            "original_gender": self.original_gender,
             "colors": self.colors,
             "parts": self.parts,
             "customizable": self.customizable,
