@@ -95,5 +95,3 @@ class UserManager:
             "last_name": user.last_name,
             "is_active": user.is_active
         }
-
-
