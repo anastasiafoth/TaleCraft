@@ -24,7 +24,7 @@ export default function Reading() {
   const pageId = location.state?.pageId;
 
   const { token } = useAuth();
-  const { childId, personalizationId } = useParams();
+  const { childId, personalizationId } = useParams(); 
 
   useEffect(() => {
     async function load() {
