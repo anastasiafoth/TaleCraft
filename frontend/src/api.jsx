@@ -1,6 +1,4 @@
-// const DEV_URL = "https://talecraft-owts.onrender.com";
-// const DEV_URL = "http://127.0.0.1:5000";
-const DEV_URL = "https://tale-craft-zawe.vercel.app";
+const DEV_URL = import.meta.env.VITE_API_URL;
 
 // __________________ User __________________________
 

@@ -31,7 +31,6 @@ export default function KonvaObjectEdit({
     if (!isSelected) return;
 
     function handleKeyDown(e) {
-      console.log(document);
       const tag = document.activeElement?.tagName?.toLowerCase();
       const isEditable = document.activeElement?.isContentEditable;
       if (

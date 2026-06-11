@@ -6,6 +6,7 @@ import {
   getPageById,
   getPagesByBook,
   getPersonalizationCharacters,
+  getCharacterTemplates,
 } from "../../../src/api";
 import { useAuth } from "../../../src/AuthContext";
 import PageObject from "../../../components/Books/PageObject";
@@ -17,7 +18,7 @@ export default function Reading() {
   const [progress, setProgress] = useState(null);
   const [currentPage, setCurrentPage] = useState(null);
   const [pages, setPages] = useState([]);
-  const [characterMap, setCharacterMap] = useState({});
+  const [characters, setCharacters] = useState([]);
   const bookId = progress?.book_id;
   const location = useLocation();
   const pageId = location.state?.pageId;
@@ -58,11 +59,7 @@ export default function Reading() {
           personalizationId,
           token,
         );
-        const map = {};
-        fetchedCharacters.forEach((c) => {
-          if (c.template_id) map[c.template_id] = c.rendered_url;
-        });
-        setCharacterMap(map);
+        setCharacters(fetchedCharacters);
       } catch (err) {
         setError(err);
       } finally {
@@ -101,14 +98,25 @@ export default function Reading() {
         <div className="relative w-200 h-150 overflow-hidden bg-white">
           {["background", "middleground", "foreground"].map((layerName) =>
             layout?.[layerName]?.map((obj) => {
+              const character = characters.find(
+                (c) => c.template_id === obj.characterId,
+              );
+
               const resolvedObj =
-                obj.kind === "character" &&
-                obj.characterId &&
-                characterMap[obj.characterId]
+                obj.kind === "character" && character
                   ? {
                       ...obj,
-                      src: `${characterMap[obj.characterId]}?t=${obj.updatedAt ?? 0}`,
+                      src: `${character?.rendered_url}?t=${obj.updatedAt ?? 0}`,
                     }
+                  : obj.type === "text" 
+                  ? {
+                    ...obj, 
+                    content : characters.reduce(
+                      (text, c) =>
+                        text.replaceAll(c.original_name, c.name),
+                      obj.content
+                    )
+                  }
                   : obj;
               return <PageObject key={obj.id} obj={resolvedObj} />;
             }),

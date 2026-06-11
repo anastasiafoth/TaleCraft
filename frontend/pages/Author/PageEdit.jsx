@@ -211,7 +211,6 @@ export default function PageEdit() {
         className="card-body p-4 gap-2 flex flex-col items-start"
         onSubmit={handleSubmit}
       >
-        <h1>Page Editor:</h1>
         <section className="flex w-full h-150">
           <EditorCanvas
             ref={canvasRef}
