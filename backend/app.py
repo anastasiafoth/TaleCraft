@@ -278,6 +278,41 @@ def handle_user():
 
     return jsonify({"error": "Method not allowed"}), 405
 
+@app.route('/api/auth/forgot-password', methods=['POST'])
+def handle_forgot_password():
+    if request.method == 'POST':
+        data = request.get_json(silent=True)
+
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
+
+        response = user_manager.forgot_password(data, mail)
+        return jsonify(response), 200
+
+    return jsonify({"error": "Method not allowed"}), 405
+
+
+@app.route('/api/auth/reset-password', methods=['POST'])
+def handle_reset_password():
+
+    if request.method == 'POST':
+        data = request.get_json(silent=True)
+
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
+
+        auth_header = request.headers.get("Authorization")
+
+        if not auth_header:
+            return jsonify({"error": "Missing token"}), 401
+
+        reset_token = auth_header.replace("Bearer ", "")
+        updated_user = user_manager.reset_password(guard, data, reset_token)
+
+        return jsonify(updated_user), 200
+
+    return jsonify({"error": "Method not allowed"}), 405
+
 
 """ __________________ Children ________________________"""
 @app.route('/api/children', methods=['GET', 'POST'])
