@@ -158,7 +158,7 @@ class UserManager:
         )
 
         reset_link = (
-            f"http://localhost:5173/reset-password?token={reset_token}"
+            f"https://tale-craft-orpin.vercel.app/reset_password?token={reset_token}"
         )
 
         msg = Message(
