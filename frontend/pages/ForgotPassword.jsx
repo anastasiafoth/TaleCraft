@@ -1,17 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../src/AuthContext";
+import { forgotPassword } from "../src/api.jsx"
 import { useNavigate, useLocation } from "react-router-dom";
 import EmailInput from "../components/User/EmailInput";
-import PasswordInput from "../components/User/PasswordInput";
 
-export default function Login() {
-  const { login } = useAuth();
+export default function ForgotPassword() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from;
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: ""});
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
 
@@ -21,17 +16,8 @@ export default function Login() {
     setError(null);
     setStatus("submitting");
     try {
-      const userData = await login(form);
-      if (userData != null) {
-        // Checks for role and navigates to dashboard
-        if (from) {
-          navigate(from);
-        } else if (userData.role === "Author") {
-          navigate("/author");
-        } else if (userData.role === "Parent") {
-          navigate("/parent");
-        }
-      }
+      const message = await forgotPassword(form);
+      console.log(message);  
     } catch (err) {
       if (err.status === 403) {
         navigate("/login", {
@@ -56,7 +42,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center min-h-screen m-20">
-      <h1>Sign in to your account</h1>
+      <h1>Enter your Email: </h1>
       {error && <h3 className="login-error">{error}</h3>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
@@ -71,28 +57,10 @@ export default function Login() {
           }
         />
 
-        <PasswordInput
-          input={
-            <input
-              name="password"
-              onChange={handleChange}
-              type="password"
-              placeholder="Password"
-            />
-          }
-        />
-
         <button disabled={status === "submitting"} className="btn btn-primary">
-          {status === "submitting" ? "Logging in..." : "Login"}
+          {status === "submitting" ? "Submitting..." : "Submit"}
         </button>
       </form>
-
-      <Link
-        to="/forgot_password"
-        className="text-sm mt-2 underline cursor-pointer"
-      >
-        Forgot Password?
-      </Link>
     </div>
   );
 }

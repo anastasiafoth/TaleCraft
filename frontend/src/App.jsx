@@ -6,6 +6,8 @@ import About from "../pages/About.jsx";
 import Login from "../pages/Login.jsx";
 import Register from "../pages/Register.jsx";
 import Logout from "../pages/Logout.jsx";
+import ForgotPassword from "../pages/ForgotPassword.jsx"
+import PasswordRecovery from "../pages/PasswordRecovery.jsx"
 import Contact from "../pages/Contact.jsx";
 import BookDetail from "../pages/BookDetail.jsx";
 
@@ -46,6 +48,8 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="logout" element={<Logout />} />
+        <Route path="forgot_password" element={<ForgotPassword />} />
+        <Route path="reset_password" element={<PasswordRecovery />} />
 
         <Route element={<AuthRequired allowedRoles={["Author"]} />}>
           <Route path="author" element={<AuthorLayout />}>

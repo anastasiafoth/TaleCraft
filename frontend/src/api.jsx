@@ -1,4 +1,5 @@
-const DEV_URL = import.meta.env.VITE_API_URL;
+const DEV_URL = "https://tale-craft-zawe.vercel.app";
+//import.meta.env.VITE_API_URL;
 
 // __________________ User __________________________
 
@@ -105,6 +106,44 @@ export async function getUserData(token) {
 
   const data = await res.json();
   if (!res.ok) throw data;
+
+  return data;
+}
+
+export async function forgotPassword(formData) {
+  const res = await fetch(`${DEV_URL}/api/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
+  const data = await res.json();
+  if (!res.ok)
+    throw {
+      message: data.error || data.message || "Unknown error",
+      status: res.status,
+    };
+  return data;
+}
+
+export async function resetPassword(creds, resetToken) {
+  const res = await fetch(`${DEV_URL}/api/auth/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${resetToken}`,
+    },
+    body: JSON.stringify(creds),
+  })
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw {
+      message: data.message || "Unknown error",
+      status: res.status,
+      error: data.error,
+    };
+  }
 
   return data;
 }

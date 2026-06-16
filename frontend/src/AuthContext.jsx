@@ -40,10 +40,8 @@ export const AuthProvider = ({ children }) => {
   const register = async (creds) => {
     try {
       const registerData = await registerUser(creds);
-      console.log(registerData);
       return registerData;
     } catch (err) {
-      console.error(err);
       throw err;
     }
   };

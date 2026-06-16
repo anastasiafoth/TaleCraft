@@ -29,7 +29,7 @@ export default function Books() {
   return (
     <section>
       <div
-        className="h-96 flex items-center justify-center hero-content flex-col lg:flex-row gap-10 bg-no-repeat bg-cover bg-center"
+        className="min-h-screen flex items-center justify-center bg-repeat"
         style={{ backgroundImage: `url(${heroBg})` }}
       >
         <h1 className="text-3xl font-bold md:text-5xl">
