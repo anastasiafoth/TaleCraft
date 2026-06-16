@@ -179,6 +179,8 @@ class UserManager:
     def reset_password(guard, data, reset_token):
         new_password = data.get("password")
 
+
+
         if not new_password:
             raise ValueError("Password is required")
 
@@ -204,7 +206,7 @@ class UserManager:
         if not user:
             raise ValueError("User not found")
 
-        user.password = guard.hash_password(new_password)
+        user.password_hash = guard.hash_password(new_password)
 
         db.session.commit()
 
