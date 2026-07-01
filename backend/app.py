@@ -320,6 +320,12 @@ def contact():
 
         if data is None:
             return jsonify({"error": "Invalid or missing JSON body."}), 400
+
+        if (data["first_name"] == "" == ""
+                or data["email"] == ""
+                or data["message"] == ""
+                or data["privacy_policy"] == False):
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
         else:
             return jsonify({"message": "Contact request received"}), 200
 
