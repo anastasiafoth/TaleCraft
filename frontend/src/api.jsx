@@ -133,7 +133,7 @@ export async function resetPassword(creds, resetToken) {
       Authorization: `Bearer ${resetToken}`,
     },
     body: JSON.stringify(creds),
-  })
+  });
 
   const data = await res.json();
 

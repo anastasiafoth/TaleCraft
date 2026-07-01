@@ -3,6 +3,7 @@ import { useAuth } from "../src/AuthContext";
 import { useNavigate } from "react-router-dom";
 import EmailInput from "../components/User/EmailInput";
 import PasswordInput from "../components/User/PasswordInput";
+import Redirection from "../components/User/Redirection";
 
 export default function Register() {
   const { register } = useAuth();
@@ -51,17 +52,11 @@ export default function Register() {
       [name]: value,
     }));
   }
-  
 
   return (
     <div className="flex flex-col items-center min-h-screen m-20">
       {success ? (
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="text-success text-5xl">✓</div>
-          <h2 className="text-xl font-bold">Registration successful!</h2>
-          <p className="text-sm opacity-70">Redirecting to login page...</p>
-          <span className="loading loading-dots loading-5xl"></span>
-        </div>
+        <Redirection message="Registration was successfull!" />
       ) : (
         <>
           <h1>Create an account</h1>
