@@ -325,7 +325,7 @@ def contact():
                 or data["email"] == ""
                 or data["message"] == ""
                 or data["privacy_policy"] == False):
-            return jsonify({"error": "Invalid or missing JSON body."}), 400
+            return jsonify({"error": "Please fill out required fields."}), 400
         else:
             return jsonify({"message": "Contact request received"}), 200
 
