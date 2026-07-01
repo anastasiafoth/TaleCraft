@@ -313,6 +313,18 @@ def handle_reset_password():
 
     return jsonify({"error": "Method not allowed"}), 405
 
+@app.route('/api/contact', methods=['POST'])
+def contact():
+    if request.method == 'POST':
+        data = request.get_json(silent=True)
+
+        if data is None:
+            return jsonify({"error": "Invalid or missing JSON body."}), 400
+        else:
+            return jsonify({"message": "Contact request received"}), 200
+
+    return jsonify({"error": "Method not allowed"}), 405
+
 
 """ __________________ Children ________________________"""
 @app.route('/api/children', methods=['GET', 'POST'])
