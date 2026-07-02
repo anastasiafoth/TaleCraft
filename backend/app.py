@@ -317,17 +317,19 @@ def handle_reset_password():
 def contact():
     if request.method == 'POST':
         data = request.get_json(silent=True)
+        print(data)
 
         if data is None:
             return jsonify({"error": "Invalid or missing JSON body."}), 400
 
-        if (data["first_name"] == "" == ""
+        if (data["first_name"] == ""
                 or data["email"] == ""
                 or data["message"] == ""
                 or data["privacy_policy"] == False):
             return jsonify({"error": "Please fill out required fields."}), 400
         else:
-            return jsonify({"message": "Contact request received"}), 200
+            response = user_manager.contact_handler(data, mail)
+            return jsonify(response), 200
 
     return jsonify({"error": "Method not allowed"}), 405
 

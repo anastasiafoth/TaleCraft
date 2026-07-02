@@ -1,4 +1,4 @@
-from models import db, User
+from models import db, User, Contact
 import re
 import jwt
 from datetime import datetime, timedelta
@@ -212,6 +212,70 @@ class UserManager:
 
         return {
             "message": "Password updated successfully"
+        }
+
+    @staticmethod
+    def contact_handler(data, mail):
+        """Saves contact message in databank and sends a confirmation email"""
+
+        first_name = data.get("first_name")
+        if first_name:
+            first_name = first_name.strip()
+
+        last_name = data.get("last_name")
+        if last_name:
+            last_name = last_name.strip()
+
+        phone = data.get("phone")
+        if phone:
+            phone = phone.strip()
+
+        email = data.get("email")
+        if email:
+            email = email.strip().lower()
+
+        message = data.get("message")
+        if message:
+            message = message.strip()
+
+        # VALIDATION
+        if not first_name:
+            raise ValueError("Please enter a first name.")
+
+        if not message:
+            raise ValueError("Please enter a message.")
+
+        # EMAIL VALIDATION
+        if not email:
+            raise ValueError("Please enter an email.")
+
+        if not UserManager.is_valid_email(email):
+            raise ValueError("Please enter a valid email.")
+
+        new_contact = Contact(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone=phone,
+            message=message
+        )
+
+        db.session.add(new_contact)
+        db.session.commit()
+
+        msg = Message(
+            subject="Your Contact Message at TaleCraft.",
+            recipients=[email],
+            html=f"<h1>Hello {new_contact.first_name}! We have received the following message from you: </h1>"
+                 f"<b>{new_contact.message}</b>"
+                 f"<b>We will come back to you as soon as possible.</b>"
+                 f"<b>Best regards!</b>"
+        )
+
+        mail.send(msg)
+
+        return {
+            "message": "Contact message sent successfully. You will receive an confirmation email."
         }
 
 
