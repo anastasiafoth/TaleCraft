@@ -1,3 +1,5 @@
+//const DEV_URL = "127.0.0.1:5000";
+
 const DEV_URL = "https://tale-craft-zawe.vercel.app";
 //import.meta.env.VITE_API_URL;
 
@@ -145,6 +147,27 @@ export async function resetPassword(creds, resetToken) {
     };
   }
 
+  return data;
+}
+
+export async function contact(creds) {
+  const res = await fetch(`${DEV_URL}/api/contact`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(creds),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw {
+      message: data.message || "Unknown error",
+      status: res.status,
+      error: data.error,
+    };
+  }
   return data;
 }
 // __________________ Children __________________________
